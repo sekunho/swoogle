@@ -1,0 +1,41 @@
+cabal-version:      3.0
+name:               swapi-client
+version:            0.1.0.0
+maintainer:         SEKUN <sekun@hey.com>
+author:             SEKUN <sekun@hey.com>
+homepage:           https://swapi.sekun.dev
+bug-reports:        https://github.com/sekunho/swapi
+synopsis:           A Haskell client for SWAPI
+category:           Web
+extra-source-files: CHANGELOG.md
+
+library
+    exposed-modules:    SwapiClient
+    hs-source-dirs:     src
+    default-language:   Haskell2010
+    default-extensions: OverloadedStrings
+                      , InstanceSigs
+                      , TypeApplications
+    ghc-options:        -Wall
+    build-depends:
+        base ^>=4.14.3.0,
+        aeson >=2.0 && <2.1,
+        req >=3.9 && <3.10,
+        containers >=0.6 && <0.7,
+        text >=1.2 && <1.3
+
+test-suite swapi-client-test
+    type:               exitcode-stdio-1.0
+    main-is:            MyLibTest.hs
+    hs-source-dirs:     test
+    default-language:   Haskell2010
+    default-extensions: OverloadedStrings
+                      , InstanceSigs
+                      , TypeApplications
+    ghc-options:        -Wall
+    build-depends:
+        base ^>=4.14.3.0,
+        aeson >=2.0 && <2.1,
+        req >=3.9 && <3.10,
+        containers >=0.6 && <0.7,
+        text >=1.2 && <1.3
