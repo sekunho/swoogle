@@ -1,0 +1,7 @@
+cradle:
+  cabal:
+    - path: "src"
+      component: "lib:swapi-client"
+
+    - path: "test"
+      component: "swapi-client:test:swapi-client-test"
