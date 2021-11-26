@@ -12,11 +12,6 @@ Dates are formatted in DD-MM-YYYY.
 
 ### Day 2 - 26/11/2021
 
-#### Commit hash(es): 
-
-- ac5014b
-- 22c3a3c
-
 - I just found out that `text` had some handy functions in the `Data.Text.Read`
 module that does what I was annoyed with - parsing something like `"20BBY"`! How
 I've initially done it was because the time periods `BBY` and `ABY` had 3 chars,
@@ -75,12 +70,6 @@ back to `String`s. `"19.1BBY"` to `BBY 19.1` to `"19.1BBY"` is expected. But
 be turned to a whole number.
 
 ### Day 1 - 25/11/2021
-
-#### Commit hash(es):
-
-- 94840174f3b888eea786afa5b5728b0af274de67
-- 00e8e8a5db05de86f2d55a4965241836fade9a19 (I rebased it) 
-- fbc724f0f21c4c406206d369ebe7638b8472aa50 (I rebased it)
 
 Unfortunately, I did not start taking down notes on day 1. So I might have
 forgotten some of the things.
