@@ -54,8 +54,8 @@ I would just turn it into a sum type, and add an extra constructor `UnknownMass`
 Currently just using `error` which sounds OK in my head because I'm alright with
 things failing at the boundary of the library. I think I remember something about
 using `throwError` instead, or something like that, because you have to add it 
-to the type constraints, but I can't remember exactly what it was called. For now
-it isn't too bad to use `error`, I think.
+to the type constraints, but I can't remember exactly what it was called. Although
+I did find in the `aeson` docs that they used `fail` cause of `MonadFail`.
 - I enabled the `StrictData` language extension cause it seems to be a general
 enough consensus to use it.
 - Before I wrote the entire instance for `FromJSON Homeworld`, GHC got confused

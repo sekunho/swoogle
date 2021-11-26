@@ -54,35 +54,38 @@ newtype Homeworld = Homeworld Int
 
 -- TODO(sekun): Add other person attributes
 data Person = Person
-  { pName      :: PersonName            -- Name of person
-  , pHeight    :: Height        -- Height of person can be Nothing
-  , pMass      :: Mass            -- Mass of person can be Nothing
-  , pHairColor :: HairColor
-  , pSkinColor :: SkinColor
-  , pEyeColor  :: EyeColor    -- Uh, eye color.
-  , pBirthYear :: BirthYear  -- Relative to before/after Battle of Yavin
-  , pGender    :: Gender           -- Gender according to SWAPI
-  , pHomeworld :: Homeworld        -- TODO: Should this be something else?
+  { pName        :: PersonName     -- Name of person
+  , pHeight      :: Height         -- Height of person can be Nothing
+  , pMass        :: Mass           -- Mass of person can be Nothing
+  , pHairColor   :: HairColor
+  , pSkinColor   :: SkinColor
+  , pEyeColor    :: EyeColor       -- Uh, eye color.
+  , pBirthYear   :: BirthYear      -- Relative to before/after Battle of Yavin
+  , pGender      :: Gender         -- Gender according to SWAPI
+  , pHomeworld   :: Homeworld      -- TODO: Should this be something else?
   }
   deriving (Show)
 
--- HACK: Maybe there are better ways to handle unexpected inputs?
-
 instance FromJSON PersonName where
-  parseJSON (String name) = pure $ PersonName name
-  parseJSON _ = error "ERROR: Unexpected type for person's name"
+  parseJSON =
+    withText "PersonName"
+      $ \name ->
+          pure $ PersonName name
 
 instance ToJSON PersonName where
   toJSON :: PersonName -> Value
   toJSON (PersonName name) = String name
 
 instance FromJSON Height where
-  parseJSON (String "unknown") = pure UnknownHeight
-  parseJSON (String height) =
-    case Text.Read.decimal height of
-      Left e -> error $ mconcat ["ERROR: ", e]
-      Right (numHeight, _) -> pure $ Height numHeight
-  parseJSON _ = error "ERROR: Unexpected type for person's height"
+  parseJSON =
+    withText "Height" $
+      \case
+        "unknown" -> pure UnknownHeight
+        strHeight ->
+          case Text.Read.decimal strHeight of
+            Right (numHeight, "") -> pure (Height numHeight)
+            Left e -> fail e
+            _ -> fail "Unexpected format for height"
 
 instance ToJSON Height where
   toJSON height =
@@ -93,13 +96,13 @@ instance ToJSON Height where
       UnknownHeight -> String "unknown"
 
 instance FromJSON Mass where
-  parseJSON (String "unknown") = pure UnknownMass
-  parseJSON (String mass) =
-    case Text.Read.double mass of
-      Left e -> error $ mconcat ["ERROR: ", e]
-      Right (numMass, _) -> pure $ Mass numMass
-
-  parseJSON _ = error "ERROR: Unexpected type for mass"
+  parseJSON =
+    withText "Mass"
+      $ \mass ->
+          case Text.Read.double mass of
+            Left e -> fail e
+            Right (numMass, "") -> pure . Mass $ numMass
+            Right (_, _) -> fail "ERROR: Unexpected format"
 
 instance ToJSON Mass where
   toJSON mass =
@@ -109,16 +112,16 @@ instance ToJSON Mass where
 
 -- TODO: Consider `DerivingVia`  for colors? A bit tiring to do by hand. :(
 instance FromJSON HairColor where
-  parseJSON (String hairColor) =
-    case hairColor of
-      "blue" -> pure (HairColor Blue)
-      "yellow" -> pure (HairColor Yellow)
-      "red" -> pure (HairColor Red)
-      "hazel" -> pure (HairColor Hazel)
-      "none" -> pure (HairColor NoColor)
-      _ -> error "ERROR: Unexpected hair color value"
+  parseJSON =
+    withText "HairColor"
+      $ \case
+          "blue" -> pure (HairColor Blue)
+          "yellow" -> pure (HairColor Yellow)
+          "red" -> pure (HairColor Red)
+          "hazel" -> pure (HairColor Hazel)
+          "none" -> pure (HairColor NoColor)
+          _ -> fail "ERROR: Unexpected hair color value"
 
-  parseJSON _ = error "ERROR: Unexpected hair color type"
 
 instance ToJSON HairColor where
   toJSON (HairColor color) =
@@ -130,16 +133,15 @@ instance ToJSON HairColor where
       NoColor -> String "none"
 
 instance FromJSON SkinColor where
-  parseJSON (String skinColor) =
-    case skinColor of
-      "blue" -> pure (SkinColor Blue)
-      "yellow" -> pure (SkinColor Yellow)
-      "red" -> pure (SkinColor Red)
-      "hazel" -> pure (SkinColor Hazel)
-      "none" -> pure (SkinColor NoColor)
-      _ -> error "ERROR: Unexpected skin color value"
-
-  parseJSON _ = error "ERROR: Unexpected skin color type"
+  parseJSON = withText "SkinColor"
+    $ \skinColor ->
+      case skinColor of
+        "blue" -> pure (SkinColor Blue)
+        "yellow" -> pure (SkinColor Yellow)
+        "red" -> pure (SkinColor Red)
+        "hazel" -> pure (SkinColor Hazel)
+        "none" -> pure (SkinColor NoColor)
+        _ -> fail "ERROR: Unexpected skin color value"
 
 instance ToJSON SkinColor where
   toJSON (SkinColor color) =
@@ -151,15 +153,14 @@ instance ToJSON SkinColor where
       NoColor -> String "none"
 
 instance FromJSON EyeColor where
-  parseJSON (String eyeColor) =
-    case eyeColor of
-      "blue" -> pure (EyeColor Blue)
-      "yellow" -> pure (EyeColor Yellow)
-      "red" -> pure (EyeColor Red)
-      "hazel" -> pure (EyeColor Hazel)
-      _ -> error "ERROR: Unexpected eye color value"
-
-  parseJSON _ = error "ERROR: Unexpected type for eye color"
+  parseJSON =
+    withText "EyeColor" $
+      \case
+        "blue" -> pure (EyeColor Blue)
+        "yellow" -> pure (EyeColor Yellow)
+        "red" -> pure (EyeColor Red)
+        "hazel" -> pure (EyeColor Hazel)
+        _ -> fail "ERROR: Unexpected eye color value"
 
 instance ToJSON EyeColor where
   toJSON :: EyeColor -> Value
@@ -173,16 +174,14 @@ instance ToJSON EyeColor where
 
 instance FromJSON BirthYear where
   -- TODO(sekun): Add instance type signature
-  parseJSON (String "unknown") = pure UnknownBirthYear
-  parseJSON (String t) =
-    case Text.Read.double t of
-      Right (numYear, "BBY") -> pure $ BBY numYear
-      Right (numYear, "ABY") -> pure $ ABY numYear
-      Right (_, _) -> error "ERROR: Unexpected format for birth year"
-      -- TODO: I should probably include the error from `double`.
-      Left _ -> error "ERROR: Unexpected type for birth year"
-
-  parseJSON _ = error "ERROR: Unexpected type for birth year"
+  parseJSON =
+    withText "BirthYear" $
+      \birthYear ->
+        case Text.Read.double birthYear of
+          Right (numYear, "BBY") -> pure $ BBY numYear
+          Right (numYear, "ABY") -> pure $ ABY numYear
+          Right (_, _) -> fail "ERROR: Unexpected format for birth year"
+          Left _ -> fail "ERROR: Unexpected type for birth year"
 
 -- TODO: If it's `*.0` then it would be cool to format it as just a whole number
 instance ToJSON BirthYear where
@@ -192,13 +191,12 @@ instance ToJSON BirthYear where
   toJSON UnknownBirthYear = String "unknown"
 
 instance FromJSON Gender where
-  parseJSON (String gender) =
-    case gender of
-      "male" -> pure Male
-      "female" -> pure Female
-      _ -> error "ERROR: Unexpected value for gender"
-
-  parseJSON _ = error "ERROR: Unexpected type for gender"
+  parseJSON =
+    withText "Gender" $
+      \case
+        "male" -> pure Male
+        "female" -> pure Female
+        _ -> fail "ERROR: Unexpected value for gender"
 
 instance ToJSON Gender where
   toJSON gender =
@@ -207,41 +205,40 @@ instance ToJSON Gender where
       Female -> String "female"
 
 instance FromJSON Homeworld where
-  parseJSON (Number homeworldId) =
-    case Scientific.toBoundedInteger homeworldId of
-      Nothing -> error "ERROR: Homeworld ID must be a valid integer"
-      Just intId -> pure $ Homeworld intId
-
-  parseJSON _ = error "ERROR: Unexpected type for homeworld ID"
+  parseJSON =
+    withScientific "Homeworld" $
+      \homeworldId ->
+        case Scientific.toBoundedInteger homeworldId of
+          Just intId -> pure $ Homeworld intId
+          Nothing -> fail "ERROR: Homeworld ID must be a valid integer"
 
 instance ToJSON Homeworld where
   toJSON (Homeworld homeworldId) = Number . fromIntegral $ homeworldId
 
 instance FromJSON Person where
-  parseJSON (Object v) =
-    Person
-      <$> v .: "name"
-      <*> v .: "height"
-      <*> v .: "mass"
-      <*> v .: "hair_color"
-      <*> v .: "skin_color"
-      <*> v .: "eye_color"
-      <*> v .: "birth_year"
-      <*> v .: "gender"
-      <*> v .: "homeworld"
-
-  parseJSON _ = error "Bruh"
+  parseJSON =
+    withObject "Person" $
+      \objPerson ->
+        Person
+          <$> objPerson .: "name"
+          <*> objPerson .: "height"
+          <*> objPerson .: "mass"
+          <*> objPerson .: "hair_color"
+          <*> objPerson .: "skin_color"
+          <*> objPerson .: "eye_color"
+          <*> objPerson .: "birth_year"
+          <*> objPerson .: "gender"
+          <*> objPerson .: "homeworld"
 
 instance ToJSON Person where
   toJSON person =
     object
-      [ "name" .= pName person,
-        "height" .= pHeight person,
-        "mass" .= pMass person,
+      [ "name"       .= pName person,
+        "height"     .= pHeight person,
+        "mass"       .= pMass person,
         "hair_color" .= pHairColor person,
         "skin_color" .= pSkinColor person,
-        "eye_color" .= pEyeColor person,
+        "eye_color"  .= pEyeColor person,
         "birth_year" .= pBirthYear person,
-        "gender" .= pGender person,
-        "homeworld" .= pHomeworld person
-      ]
+        "gender"     .= pGender person,
+        "homeworld"  .= pHomeworld person ]

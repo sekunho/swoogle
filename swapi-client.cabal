@@ -16,6 +16,8 @@ library
     default-extensions: OverloadedStrings
                       , InstanceSigs
                       , TypeApplications
+                      , StrictData
+                      , LambdaCase
     ghc-options:        -Wall
     build-depends:
         base ^>=4.14.3.0,
@@ -33,7 +35,6 @@ test-suite swapi-client-test
     default-extensions: OverloadedStrings
                       , InstanceSigs
                       , TypeApplications
-                      , StrictData
     ghc-options:        -Wall
     build-depends:
         base ^>=4.14.3.0,
