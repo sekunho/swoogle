@@ -15,7 +15,7 @@ Dates are formatted in DD-MM-YYYY.
 #### Commit hash(es): 
 
 - ac5014b
-
+- 22c3a3c
 
 - I just found out that `text` had some handy functions in the `Data.Text.Read`
 module that does what I was annoyed with - parsing something like `"20BBY"`! How
