@@ -18,6 +18,7 @@ newtype HomeworldId = HomeworldId Int
 --------------------------------------------------------------------------------
 -- INSTANCES
 
+-- TODO(sekun): Parse URL rather than assume it's a number (because it isn't).
 instance FromJSON (HomeworldId :: Type) where
   parseJSON =
     Aeson.withScientific "HomeworldId" $
