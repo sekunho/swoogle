@@ -11,6 +11,7 @@ import qualified Data.Scientific as Scientific (toBoundedInteger)
 newtype FilmId = FilmId Int
   deriving Show
 
+-- TODO(sekun): Parse URL rather than assume it's a number (because it isn't).
 instance FromJSON (FilmId :: Type) where
   parseJSON =
     Aeson.withScientific "FilmId" $

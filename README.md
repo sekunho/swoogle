@@ -10,6 +10,33 @@ thanks to Fly.io.
 
 Dates are formatted in DD-MM-YYYY.
 
+### Day 3 - 27/11/2021
+
+- I was a bit confused why I was able to use `fail`. I don't know why I was even
+confused. I realized that `Parser` has a `MonadFail` instance so that's why.
+Cool. To avoid going down a rabbit hole again, I'll avoid the technicalities of
+`MonadFail` for now.
+- I don't think I should've implemented the `ToJSON` instances cause I don't 
+really need them. I'm just decoding JSON to domain types after all. But I guess
+this would be useful when I make a replacement API for SWAPI in the future? For
+now I'll just leave these here.
+- I enabled `KindSignatures` to make things more explicit. Helps me out quite a
+bit.
+- It isn't really helpful to have `Homeworld` but it's actually just an ID. Later
+on I'll be making a `Homeoworld` type with the actual data, not just a reference
+through an ID. So to make that distinction, I'm gonna suffix the types and field
+names with `Id`(s) if they deal with Ids, and none if without.
+- I have to find a way to organize the modules that doesn't cause circular 
+imports. Right now I have imported `HomeworldId` from `SwapiClient.Homeworld`
+and `FilmId` from `SwapiClient.Film`. If I put the `Homeworld` and `Film` records
+in the corresponding modules, then I'll have to import some things from other
+modules that already have those modules imported. I don't know how to word it 
+better, but the idea is that I think I have to put the `Id` types in separate
+modules as well. I could also just make a module `Id` that has all of the ID
+types instead, that way it won't be too annoying to keep track of? I don't know
+yet.
+
+
 ### Day 2 - 26/11/2021
 
 - I just found out that `text` had some handy functions in the `Data.Text.Read`
