@@ -11,7 +11,7 @@ import qualified Data.Scientific as Scientific (toBoundedInteger)
 newtype FilmId = FilmId Int
   deriving Show
 
-instance FromJSON FilmId where
+instance FromJSON (FilmId :: Type) where
   parseJSON =
     Aeson.withScientific "FilmId" $
       \filmId ->
