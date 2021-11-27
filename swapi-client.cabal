@@ -11,6 +11,9 @@ extra-source-files: CHANGELOG.md
 
 library
     exposed-modules:    SwapiClient
+                      , SwapiClient.Person
+                      , SwapiClient.Homeworld
+                      , SwapiClient.Film
     hs-source-dirs:     src
     default-language:   Haskell2010
     default-extensions: OverloadedStrings
@@ -18,6 +21,8 @@ library
                       , TypeApplications
                       , StrictData
                       , LambdaCase
+                      , KindSignatures
+                      , NoStarIsType
     ghc-options:        -Wall
     build-depends:
         base ^>=4.14.3.0,
