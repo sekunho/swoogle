@@ -83,7 +83,7 @@ data Person = Person
 --------------------------------------------------------------------------------
 -- INSTANCES
 
-instance FromJSON Height where
+instance FromJSON (Height :: Type) where
   parseJSON =
     withText "Height" $
       \case
@@ -94,7 +94,7 @@ instance FromJSON Height where
             Left e -> fail e
             _ -> fail "Unexpected format for height"
 
-instance ToJSON Height where
+instance ToJSON (Height :: Type) where
   toJSON height =
     case height of
       -- There's no `Integral a => a -> Text` apparently. So this is a hack for
@@ -102,7 +102,7 @@ instance ToJSON Height where
       Height n -> String . Text.pack . show $ n
       UnknownHeight -> String "unknown"
 
-instance FromJSON Mass where
+instance FromJSON (Mass :: Type) where
   parseJSON =
     withText "Mass"
       $ \mass ->
@@ -111,14 +111,14 @@ instance FromJSON Mass where
             Right (numMass, "") -> pure . Mass $ numMass
             Right (_, _) -> fail "ERROR: Unexpected format"
 
-instance ToJSON Mass where
+instance ToJSON (Mass :: Type) where
   toJSON mass =
     case mass of
       Mass numMass -> String . Text.pack . show $ numMass
       UnknownMass -> String "unknown"
 
 -- TODO(sekun): Consider `DerivingVia`  for colors? A bit tiring to do by hand. :(
-instance FromJSON HairColor where
+instance FromJSON (HairColor :: Type) where
   parseJSON =
     withText "HairColor"
       $ \case
@@ -129,7 +129,7 @@ instance FromJSON HairColor where
           "none" -> pure (HairColor NoColor)
           _ -> fail "ERROR: Unexpected hair color value"
 
-instance ToJSON HairColor where
+instance ToJSON (HairColor :: Type) where
   toJSON (HairColor color) =
     case color of
       Blue -> String "blue"
@@ -138,7 +138,7 @@ instance ToJSON HairColor where
       Hazel -> String "hazel"
       NoColor -> String "none"
 
-instance FromJSON SkinColor where
+instance FromJSON (SkinColor :: Type) where
   parseJSON = withText "SkinColor" $
     \case
       "blue" -> pure (SkinColor Blue)
@@ -148,7 +148,7 @@ instance FromJSON SkinColor where
       "none" -> pure (SkinColor NoColor)
       _ -> fail "ERROR: Unexpected skin color value"
 
-instance ToJSON SkinColor where
+instance ToJSON (SkinColor :: Type) where
   toJSON (SkinColor color) =
     case color of
       Blue -> String "blue"
@@ -157,7 +157,7 @@ instance ToJSON SkinColor where
       Hazel -> String "hazel"
       NoColor -> String "none"
 
-instance FromJSON EyeColor where
+instance FromJSON (EyeColor :: Type) where
   parseJSON =
     withText "EyeColor" $
       \case
@@ -167,7 +167,7 @@ instance FromJSON EyeColor where
         "hazel" -> pure (EyeColor Hazel)
         _ -> fail "ERROR: Unexpected eye color value"
 
-instance ToJSON EyeColor where
+instance ToJSON (EyeColor :: Type) where
   toJSON :: EyeColor -> Value
   toJSON (EyeColor eyeColor) =
     case eyeColor of
@@ -177,7 +177,7 @@ instance ToJSON EyeColor where
       Hazel -> String "hazel"
       NoColor -> String "none"
 
-instance FromJSON BirthYear where
+instance FromJSON (BirthYear :: Type) where
   -- TODO(sekun): Add instance type signature
   parseJSON =
     withText "BirthYear" $
@@ -189,13 +189,13 @@ instance FromJSON BirthYear where
           Left _ -> fail "ERROR: Unexpected type for birth year"
 
 -- TODO(sekun): If it's `*.0` then it would be cool to format it as just a whole number
-instance ToJSON BirthYear where
+instance ToJSON (BirthYear :: Type) where
   toJSON :: BirthYear -> Value
   toJSON (BBY years) = String $ Text.pack $ mconcat [show years, "BBY"]
   toJSON (ABY years) = String $ Text.pack $ mconcat [show years, "ABY"]
   toJSON UnknownBirthYear = String "unknown"
 
-instance FromJSON Gender where
+instance FromJSON (Gender :: Type) where
   parseJSON =
     withText "Gender" $
       \case
@@ -203,7 +203,7 @@ instance FromJSON Gender where
         "female" -> pure Female
         _ -> fail "ERROR: Unexpected value for gender"
 
-instance ToJSON Gender where
+instance ToJSON (Gender :: Type) where
   toJSON gender =
     case gender of
       Male -> String "male"
@@ -215,11 +215,11 @@ instance FromJSON (PersonName :: Type) where
       $ \name ->
           pure $ PersonName name
 
-instance ToJSON PersonName where
+instance ToJSON (PersonName :: Type) where
   toJSON :: PersonName -> Value
   toJSON (PersonName name) = String name
 
-instance FromJSON Person where
+instance FromJSON (Person :: Type) where
   parseJSON =
     withObject "Person" $
       \objPerson ->
@@ -235,7 +235,7 @@ instance FromJSON Person where
           <*> objPerson .: "homeworld"
           <*> objPerson .: "films"
 
-instance ToJSON Person where
+instance ToJSON (Person :: Type) where
   toJSON person =
     object
       [ "name"       .= pName person,
