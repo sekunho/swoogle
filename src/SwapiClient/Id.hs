@@ -8,11 +8,10 @@ module SwapiClient.Id
 import Data.Aeson
   ( FromJSON (parseJSON)
   , ToJSON (toJSON)
-  , Value (Number, String)
+  , Value (String)
   )
-import Data.Aeson qualified as Aeson (withText, withScientific)
+import Data.Aeson qualified as Aeson (withText)
 import Data.Kind (Type)
-import Data.Scientific qualified as Scientific (toBoundedInteger)
 import Data.Text (Text)
 import Data.Text qualified as Text (split, append)
 import Data.Text.Read qualified as Text.Read (decimal)
@@ -20,7 +19,7 @@ import TextShow qualified as Text.Show (showt)
 
 --------------------------------------------------------------------------------
 
-import SwapiClient.Url (Resource (Film), resourceUrl)
+import SwapiClient.Url (Resource (Film, Planet), resourceUrl)
 
 --------------------------------------------------------------------------------
 -- DATA TYPES
@@ -33,7 +32,6 @@ newtype HomeworldId = HomeworldId Int
 
 --------------------------------------------------------------------------------
 -- INSTANCES
--- TODO(sekun): Parse URL rather than assume it's a number (because it isn't).
 
 instance FromJSON (FilmId :: Type) where
   parseJSON =
@@ -53,18 +51,28 @@ instance ToJSON (FilmId :: Type) where
 
 instance FromJSON (HomeworldId :: Type) where
   parseJSON =
-    Aeson.withScientific "HomeworldId" $
-      \homeworldId ->
-        case Scientific.toBoundedInteger homeworldId of
-          Just intId -> pure $ HomeworldId intId
-          Nothing -> fail "ERROR: Homeworld id must be a valid integer"
+    Aeson.withText "HomeworldId" $
+      \homeworldUrl ->
+        case Text.split (== '/') homeworldUrl of
+          [_, _, _, _, _, strId, _] ->
+            case Text.Read.decimal strId of
+              Right (homeworldId, "") -> pure . HomeworldId $ homeworldId
+              Right (_, _) -> fail "ERROR: Unexpected format for film ID value"
+              Left e -> fail e
+
+          _ -> fail "ERROR: Invalid URL format"
 
 instance ToJSON (HomeworldId :: Type) where
-  toJSON (HomeworldId homeworldId) = Number . fromIntegral $ homeworldId
+  toJSON = String . buildPlanetUrl
 
 --------------------------------------------------------------------------------
 -- FUNCTIONS
+-- TODO(sekun): How do I guarantee that this is a URL? Text can be anything.
 
 buildFilmUrl :: FilmId -> Text
 buildFilmUrl (FilmId filmId) =
   Text.append (resourceUrl Film) . Text.Show.showt $ filmId
+
+buildPlanetUrl :: HomeworldId -> Text
+buildPlanetUrl (HomeworldId homeworldId) =
+  Text.append (resourceUrl Planet) . Text.Show.showt $ homeworldId

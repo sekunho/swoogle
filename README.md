@@ -13,7 +13,8 @@ Dates are formatted in DD-MM-YYYY.
 ### Day 4 - 28/11/2021
 
 - Moved `*Ids` into an `Id` module
-- Films: decode film URL to film ID; encode film ID to film URL
+- Films: decode URL to ID; encode ID to URL
+- Homeworld: decode URL to ID; encode ID to URL
 
 ### Day 3 - 27/11/2021
 
