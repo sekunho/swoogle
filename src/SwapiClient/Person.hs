@@ -17,8 +17,7 @@ import Data.Text (Text)
 import qualified Data.Text as Text (pack)
 import qualified Data.Text.Read as Text.Read (decimal, double)
 import Data.Kind (Type)
-import SwapiClient.Film (FilmId)
-import SwapiClient.Homeworld (HomeworldId (HomeworldId))
+import SwapiClient.Id (FilmId (FilmId), HomeworldId (HomeworldId))
 
 --------------------------------------------------------------------------------
 -- DATA TYPES
@@ -265,5 +264,5 @@ lukeSkywalker =
     , pBirthYear = BBY 19
     , pGender = Male
     , pHomeworldId = HomeworldId 1
-    , pFilmIds = []
+    , pFilmIds = [FilmId 2, FilmId 6, FilmId 3, FilmId 1, FilmId 7]
     }
