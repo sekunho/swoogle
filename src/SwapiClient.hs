@@ -14,5 +14,6 @@ module SwapiClient
   ) where
 
 import SwapiClient.Person
-import SwapiClient.Homeworld
-import SwapiClient.Film
+import SwapiClient.Homeworld ()
+import SwapiClient.Film ()
+import SwapiClient.Id (FilmId (FilmId), HomeworldId (HomeworldId))

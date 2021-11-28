@@ -14,6 +14,8 @@ library
                       , SwapiClient.Person
                       , SwapiClient.Homeworld
                       , SwapiClient.Film
+                      , SwapiClient.Id
+                      , SwapiClient.Url
     hs-source-dirs:     src
     default-language:   Haskell2010
     default-extensions: OverloadedStrings
@@ -23,6 +25,7 @@ library
                       , LambdaCase
                       , KindSignatures
                       , NoStarIsType
+                      , ImportQualifiedPost
     ghc-options:        -Wall
     build-depends:
         base ^>=4.14.3.0,
@@ -30,7 +33,8 @@ library
         req >=3.9 && <3.10,
         containers >=0.6 && <0.7,
         text >=1.2 && <1.3,
-        scientific >=0.3.6.2 && <0.4
+        scientific >=0.3.6.2 && <0.4,
+        text-show >= 3.9.3 && <3.10
 
 test-suite swapi-client-test
     type:               exitcode-stdio-1.0
