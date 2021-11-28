@@ -239,14 +239,14 @@ instance ToJSON (Person :: Type) where
     object
       [ "name"       .= pName person
       , "height"     .= pHeight person
-      ,  "mass"       .= pMass person
-      ,  "hair_color" .= pHairColor person
-      ,  "skin_color" .= pSkinColor person
-      ,  "eye_color"  .= pEyeColor person
-      ,  "birth_year" .= pBirthYear person
-      ,  "gender"     .= pGender person
-      ,  "homeworld"  .= pHomeworldId person
-      ,  "films"      .= pFilmIds person
+      , "mass"       .= pMass person
+      , "hair_color" .= pHairColor person
+      , "skin_color" .= pSkinColor person
+      , "eye_color"  .= pEyeColor person
+      , "birth_year" .= pBirthYear person
+      , "gender"     .= pGender person
+      , "homeworld"  .= pHomeworldId person
+      , "films"      .= pFilmIds person
       ]
 
 --------------------------------------------------------------------------------
@@ -255,14 +255,14 @@ instance ToJSON (Person :: Type) where
 lukeSkywalker :: Person
 lukeSkywalker =
   Person
-    { pName = PersonName "Luke Skywalker"
-    , pHeight = Height 172
-    , pMass = Mass 77
-    , pHairColor = HairColor Yellow
-    , pSkinColor = SkinColor Blue
-    , pEyeColor = EyeColor Blue
-    , pBirthYear = BBY 19
-    , pGender = Male
+    { pName        = PersonName "Luke Skywalker"
+    , pHeight      = Height 172
+    , pMass        = Mass 77
+    , pHairColor   = HairColor Yellow
+    , pSkinColor   = SkinColor Blue
+    , pEyeColor    = EyeColor Blue
+    , pBirthYear   = BBY 19
+    , pGender      = Male
     , pHomeworldId = HomeworldId 1
-    , pFilmIds = [FilmId 2, FilmId 6, FilmId 3, FilmId 1, FilmId 7]
+    , pFilmIds     = [FilmId 2, FilmId 6, FilmId 3, FilmId 1, FilmId 7]
     }
