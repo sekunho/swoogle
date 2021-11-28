@@ -6,6 +6,16 @@ up with practical experience. I'm also noting down some of the things I learned
 or realized in the README; something I realized I should be doing more often
 thanks to Fly.io.
 
+## Table of Contents
+
+- [SWAPI Client](#swapi-client)
+- [Features](#features)
+- [Notes](#notes)
+  - [Day 4 - 28/11/2021](#day-4---28112021)
+  - [Day 3 - 27/11/2021](#day-3---27112021)
+  - [Day 2 - 26/11/2021](#day-2---26112021)
+  - [Day 1 - 25/11/2021](#day-1---25112021)
+
 ## Features
 
 Queryable resources:
@@ -80,11 +90,11 @@ data BirthYear
   | UnknownBirthYear
   deriving Show
 
-foo = 
+foo =
   let str = "20BBY"
   in case decimal str of
         Left e -> error "Does not start with a number"
-        Right (years, "BBY") -> BBY years 
+        Right (years, "BBY") -> BBY years
         Right (years, "ABY") -> ABY years
 ```
 
