@@ -6,6 +6,29 @@ up with practical experience. I'm also noting down some of the things I learned
 or realized in the README; something I realized I should be doing more often
 thanks to Fly.io.
 
+## Features
+
+Queryable resources:
+
+- [ ] Root
+- [ ] People
+- [ ] Film
+- [ ] Starship
+- [ ] Vehicle
+- [ ] Specie
+- [ ] Planet
+
+Parseable resources:
+
+- [ ] Root
+- [x] People
+- [ ] Film
+- [ ] Starship
+- [ ] Vehicle
+- [ ] Specie
+- [ ] Planet
+
+
 ## Notes
 
 Dates are formatted in DD-MM-YYYY.
