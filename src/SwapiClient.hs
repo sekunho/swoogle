@@ -7,15 +7,15 @@ module SwapiClient
   , SkinColor (SkinColor)
   , EyeColor (EyeColor)
   , BirthYear (ABY, BBY, UnknownBirthYear)
-  , HomeworldId (HomeworldId)
-  , FilmId (FilmId)
+  , HomeworldId
+  , FilmId
   , Gender (Male, Female)
   , Resource (People, Film, Planet)
-  , lukeSkywalker -- TODO: Remove because I'm only using this for convenience
+  , lukeSkywalker
   ) where
 
 import SwapiClient.Person
 import SwapiClient.Homeworld ()
 import SwapiClient.Film ()
-import SwapiClient.Id (FilmId (FilmId), HomeworldId (HomeworldId))
+import SwapiClient.Id (FilmId, HomeworldId)
 import SwapiClient.Url (Resource (People, Film, Planet))

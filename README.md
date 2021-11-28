@@ -8,9 +8,12 @@ thanks to Fly.io.
 
 ## Table of Contents
 
-- [SWAPI Client](#swapi-client)
+- [Table of Contents](#table-of-contents)
 - [Features](#features)
+  - [Queryable resources](#queryable-resources)
+  - [Parseable resources](#parseable-resources)
 - [Notes](#notes)
+  - [Day 5 - 29/11/2021](#day-5---29112021)
   - [Day 4 - 28/11/2021](#day-4---28112021)
   - [Day 3 - 27/11/2021](#day-3---27112021)
   - [Day 2 - 26/11/2021](#day-2---26112021)
@@ -18,24 +21,24 @@ thanks to Fly.io.
 
 ## Features
 
-Queryable resources:
+### Queryable resources
 
 - [ ] Root
 - [ ] People
 - [ ] Film
 - [ ] Starship
 - [ ] Vehicle
-- [ ] Specie
+- [ ] Species
 - [ ] Planet
 
-Parseable resources:
+### Parseable resources
 
 - [ ] Root
 - [x] People
 - [ ] Film
 - [ ] Starship
 - [ ] Vehicle
-- [ ] Specie
+- [ ] Species
 - [ ] Planet
 
 
@@ -43,11 +46,32 @@ Parseable resources:
 
 Dates are formatted in DD-MM-YYYY.
 
+### Day 5 - 29/11/2021
+
+- I added the remaining list of resources associated with `Person`.
+- Made smart constructors for creating an ID. Can't be negative, ever.
+- Fixed the incorrect implementation of the ID newtypes' `ToJSON` instances. It
+had to have a trailing forward slash otherwise it would've been parsed 
+incorrectly. 
+- Refactored the aeson instances for the ID newtypes to use the smart 
+constructors.
+- In the `parseJSON` implementation for the ID newtypes, I think this is where
+monads would be useful, especially since I could avoid the nested cases. For now
+I wrote them all manually. I'm a bit sleepy.
+
 ### Day 4 - 28/11/2021
 
 - Moved `*Ids` into an `Id` module
 - Films: decode URL to ID; encode ID to URL
 - Homeworld: decode URL to ID; encode ID to URL
+- There are cases where I had to deal with `Int -> Text`, but there is no such
+signature for `show`. I just used `Text.pack . show`, but then wondered if there
+was a better way in terms of ergonomics and performance. I found `text-show`,
+and tried it out in some cases. Not sure how I feel about it overall, since I'm
+not sure if it really makes that big of a difference for this tiny application.
+- Decided to make the `*Id` types as opaque types - where I can't touch the data
+constructors, and have to rely on the smart constructors. I think it's better
+this way, so I can ensure that it's at least a non-negative number.
 
 ### Day 3 - 27/11/2021
 
