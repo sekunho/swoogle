@@ -8,7 +8,17 @@ module SwapiClient.Person
   , Mass (Mass, UnknownMass)
   , Gender (Male, Female)
   , PersonName (PersonName)
-  , Person (pName, pHeight, pMass, pHairColor, pSkinColor, pEyeColor, pBirthYear, pGender, pHomeworldId, pFilmIds)
+  , Person
+      ( pName
+      , pHeight
+      , pMass
+      , pHairColor
+      , pSkinColor
+      , pEyeColor
+      , pBirthYear
+      , pGender
+      , pHomeworldId
+      , pFilmIds )
   , lukeSkywalker
   ) where
 
@@ -17,7 +27,29 @@ import Data.Text (Text)
 import Data.Text qualified as Text (pack)
 import Data.Text.Read qualified as Text.Read (decimal, double)
 import Data.Kind (Type)
-import SwapiClient.Id (FilmId (FilmId), HomeworldId (HomeworldId))
+
+--------------------------------------------------------------------------------
+
+import SwapiClient.Id
+  ( FilmId
+  , HomeworldId
+  , SpeciesId
+  , VehicleId
+  , StarshipId
+  )
+
+import SwapiClient.Id qualified as Id
+  ( lukeFilmIds
+  , lukeHomeworldId
+  , lukeSpeciesIds
+  , lukeVehicleIds
+  , lukeStarshipIds
+  -- , mkHomeworldId
+  -- , mkFilmId
+  -- , mkSpeciesId
+  -- , mkVehicleId
+  -- , mkStarshipId
+  )
 
 --------------------------------------------------------------------------------
 -- DATA TYPES
@@ -66,16 +98,19 @@ newtype PersonName = PersonName Text
 
 -- TODO(sekun): Add other person attributes
 data Person = Person
-  { pName          :: PersonName     -- Name of person
-  , pHeight        :: Height         -- Height of person can be Nothing
-  , pMass          :: Mass           -- Mass of person can be Nothing
-  , pHairColor     :: HairColor
-  , pSkinColor     :: SkinColor
-  , pEyeColor      :: EyeColor       -- Uh, eye color.
-  , pBirthYear     :: BirthYear      -- Relative to before/after Battle of Yavin
-  , pGender        :: Gender         -- Gender according to SWAPI
-  , pHomeworldId   :: HomeworldId    -- Homeworld IDs of character
-  , pFilmIds       :: [FilmId]       -- Film IDs of character appearance
+  { pName             :: PersonName     -- Name of person
+  , pHeight           :: Height         -- Height of person can be Nothing
+  , pMass             :: Mass           -- Mass of person can be Nothing
+  , pHairColor        :: HairColor
+  , pSkinColor        :: SkinColor
+  , pEyeColor         :: EyeColor       -- Uh, eye color.
+  , pBirthYear        :: BirthYear      -- Relative to before/after Battle of Yavin
+  , pGender           :: Gender         -- Gender according to SWAPI
+  , pHomeworldId      :: HomeworldId    -- Homeworld IDs of character
+  , pFilmIds          :: [FilmId]       -- Film IDs of character appearance
+  , pSpeciesIds       :: [SpeciesId]
+  , pVehicleIds       :: [VehicleId]
+  , pStarshipIds      :: [StarshipId]
   }
   deriving (Show)
 
@@ -190,6 +225,7 @@ instance FromJSON (BirthYear :: Type) where
 -- TODO(sekun): If it's `*.0` then it would be cool to format it as just a whole number
 instance ToJSON (BirthYear :: Type) where
   toJSON :: BirthYear -> Value
+  -- FIXME(sekun): Maybe use `showt` rather than `Text.pack . show`?
   toJSON (BBY years) = String $ Text.pack $ mconcat [show years, "BBY"]
   toJSON (ABY years) = String $ Text.pack $ mconcat [show years, "ABY"]
   toJSON UnknownBirthYear = String "unknown"
@@ -233,6 +269,9 @@ instance FromJSON (Person :: Type) where
           <*> objPerson .: "gender"
           <*> objPerson .: "homeworld"
           <*> objPerson .: "films"
+          <*> objPerson .: "species"
+          <*> objPerson .: "vehicles"
+          <*> objPerson .: "starships"
 
 instance ToJSON (Person :: Type) where
   toJSON person =
@@ -247,6 +286,9 @@ instance ToJSON (Person :: Type) where
       , "gender"     .= pGender person
       , "homeworld"  .= pHomeworldId person
       , "films"      .= pFilmIds person
+      , "species"    .= pSpeciesIds person
+      , "vehicles"   .= pVehicleIds person
+      , "starships"  .= pStarshipIds person
       ]
 
 --------------------------------------------------------------------------------
@@ -263,6 +305,9 @@ lukeSkywalker =
     , pEyeColor    = EyeColor Blue
     , pBirthYear   = BBY 19
     , pGender      = Male
-    , pHomeworldId = HomeworldId 1
-    , pFilmIds     = [FilmId 2, FilmId 6, FilmId 3, FilmId 1, FilmId 7]
+    , pHomeworldId = Id.lukeHomeworldId
+    , pFilmIds     = Id.lukeFilmIds
+    , pSpeciesIds  = Id.lukeSpeciesIds
+    , pVehicleIds  = Id.lukeVehicleIds
+    , pStarshipIds = Id.lukeStarshipIds
     }
