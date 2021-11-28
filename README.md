@@ -10,6 +10,10 @@ thanks to Fly.io.
 
 Dates are formatted in DD-MM-YYYY.
 
+### Day 4 - 28/11/2021
+
+- Moved `*Ids` into an `Id` module
+
 ### Day 3 - 27/11/2021
 
 - I was a bit confused why I was able to use `fail`. I don't know why I was even
@@ -35,7 +39,6 @@ better, but the idea is that I think I have to put the `Id` types in separate
 modules as well. I could also just make a module `Id` that has all of the ID
 types instead, that way it won't be too annoying to keep track of? I don't know
 yet.
-
 
 ### Day 2 - 26/11/2021
 

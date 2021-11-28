@@ -238,16 +238,17 @@ instance FromJSON (Person :: Type) where
 instance ToJSON (Person :: Type) where
   toJSON person =
     object
-      [ "name"       .= pName person,
-        "height"     .= pHeight person,
-        "mass"       .= pMass person,
-        "hair_color" .= pHairColor person,
-        "skin_color" .= pSkinColor person,
-        "eye_color"  .= pEyeColor person,
-        "birth_year" .= pBirthYear person,
-        "gender"     .= pGender person,
-        "homeworld"  .= pHomeworldId person,
-        "films"      .= pFilmIds person]
+      [ "name"       .= pName person
+      , "height"     .= pHeight person
+      ,  "mass"       .= pMass person
+      ,  "hair_color" .= pHairColor person
+      ,  "skin_color" .= pSkinColor person
+      ,  "eye_color"  .= pEyeColor person
+      ,  "birth_year" .= pBirthYear person
+      ,  "gender"     .= pGender person
+      ,  "homeworld"  .= pHomeworldId person
+      ,  "films"      .= pFilmIds person
+      ]
 
 --------------------------------------------------------------------------------
 -- FUNCTIONS
@@ -264,4 +265,5 @@ lukeSkywalker =
     , pBirthYear = BBY 19
     , pGender = Male
     , pHomeworldId = HomeworldId 1
-    , pFilmIds = [] }
+    , pFilmIds = []
+    }
