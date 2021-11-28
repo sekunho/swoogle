@@ -29,7 +29,7 @@ now I'll just leave these here.
 - I enabled `KindSignatures` to make things more explicit. Helps me out quite a
 bit.
 - It isn't really helpful to have `Homeworld` but it's actually just an ID. Later
-on I'll be making a `Homeoworld` type with the actual data, not just a reference
+on I'll be making a `Homeworld` type with the actual data, not just a reference
 through an ID. So to make that distinction, I'm gonna suffix the types and field
 names with `Id`(s) if they deal with Ids, and none if without.
 - I have to find a way to organize the modules that doesn't cause circular 
