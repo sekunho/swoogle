@@ -14,8 +14,8 @@ module SwapiClient.Person
 
 import Data.Aeson
 import Data.Text (Text)
-import qualified Data.Text as Text (pack)
-import qualified Data.Text.Read as Text.Read (decimal, double)
+import Data.Text qualified as Text (pack)
+import Data.Text.Read qualified as Text.Read (decimal, double)
 import Data.Kind (Type)
 import SwapiClient.Id (FilmId (FilmId), HomeworldId (HomeworldId))
 
