@@ -8,7 +8,7 @@ thanks to Fly.io.
 
 ## Table of Contents
 
-- [Table of Contents](#table-of-contents)
+- [Video](#video)
 - [Features](#features)
   - [Queryable resources](#queryable-resources)
   - [Parseable resources](#parseable-resources)
@@ -18,6 +18,13 @@ thanks to Fly.io.
   - [Day 3 - 27/11/2021](#day-3---27112021)
   - [Day 2 - 26/11/2021](#day-2---26112021)
   - [Day 1 - 25/11/2021](#day-1---25112021)
+
+## Video
+
+This isn't completed yet so I haven't put together a video to summarize a lot of
+what I encountered. But it'll be up in my 
+[YouTube channel](https://www.youtube.com/channel/UCUa0_AVebTfZzyzXjfB4dJQ/) 
+when I'm done.
 
 ## Features
 
