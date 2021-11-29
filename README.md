@@ -41,13 +41,12 @@ when I'm done.
 ### Parseable resources
 
 - [ ] Root
-- [x] People
+- [ ] People
 - [ ] Film
 - [ ] Starship
 - [ ] Vehicle
 - [ ] Species
 - [ ] Planet
-
 
 ## Notes
 
@@ -56,6 +55,9 @@ Dates are formatted in DD-MM-YYYY.
 ### Day 5 - 29/11/2021
 
 - I added the remaining list of resources associated with `Person`.
+- Refactored the colors for hair, skin, and eye, and just made them all sum types
+instead. Turns out the colors vary from each other to a certain degree, and it
+is pretty odd if I just use a general sum type for all colors.
 - Made smart constructors for creating an ID. Can't be negative, ever.
 - Fixed the incorrect implementation of the ID newtypes' `ToJSON` instances. It
 had to have a trailing forward slash otherwise it would've been parsed 
@@ -65,6 +67,54 @@ constructors.
 - In the `parseJSON` implementation for the ID newtypes, I think this is where
 monads would be useful, especially since I could avoid the nested cases. For now
 I wrote them all manually. I'm a bit sleepy.
+- SWAPI sometimes formats a collection of things as a text that is comma 
+separated. A bit annoying, but nothing too bad. I did run into an issue though
+where I couldn't just simply parse a text value into a list of constructors.
+Here's an example:
+
+``` haskell
+import Data.Aeson qualified as (withText)
+import Data.Text qualified as Text (split)
+
+-- This is just an example, not the complete type.
+data HairColor = Red | Blue
+
+instance FromJSON (HairColor :: Type) where
+  parseJSON =
+    Aeson.withText "HairColor" $
+      \(hairColorText :: Text) ->
+        let hairColors :: Either String [HairColor]
+            hairColors = mapM textToHairColor . Text.split (== ',')
+              $ hairColorText
+        in case hairColors of
+             Right hcs = pure hcs
+             Left e -> fail e
+
+textToHairColor :: Text -> Either String HairColor
+textToHairColor hct = case hct of
+  "red" -> Right Red
+  "blue" -> Right Blue
+  _ -> Left "ERROR: Unexpected color value/format"
+```
+
+The problem would be that for this instance, it's
+`parseJSON :: Value -> Parser HairColor`, but instead it's going to be
+`Value -> Parser [HairColor]`. Hmm.
+
+The first thing that came to mind was to just simply enable `FlexibleInstances`
+and just swap `FromJSON (HairColor :: Type)` with `FromJSON ([HairColor :: Type])`.
+Easy huh. Well, no, because I quickly ran into another issue about overlapping
+instances! I definitely don't want to override anything, if ever that's what I'm
+doing. I did some digging and found [this](https://stackoverflow.com/questions/53478455/aeson-parse-json-object-to-list)
+which is pretty handy. It didn't really answer my question but I noticed that
+the asker just wrapped it in a `newtype`, and then used it for the instance.
+A bit annoying that I have to add one more type, but it seems convenient enough.
+There might be a better way, which I'll ask the community in the future. But for
+now, this works just fine.
+
+- I have to reimplement the `aeson` instances for the colors. I've already done
+the one for `HairColors`, but I have lots more to go. I should probably start
+moving some things into their own modules as well; maybe in the future.
 
 ### Day 4 - 28/11/2021
 
