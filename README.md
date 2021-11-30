@@ -13,6 +13,7 @@ thanks to Fly.io.
   - [Queryable resources](#queryable-resources)
   - [Parseable resources](#parseable-resources)
 - [Notes](#notes)
+  - [Day 6 - 30/11/2021](#day-6---30112021)
   - [Day 5 - 29/11/2021](#day-5---29112021)
   - [Day 4 - 28/11/2021](#day-4---28112021)
   - [Day 3 - 27/11/2021](#day-3---27112021)
@@ -51,6 +52,38 @@ when I'm done.
 ## Notes
 
 Dates are formatted in DD-MM-YYYY.
+
+### Day 6 - 30/11/2021
+
+- I didn't have to make individual functions for converting the colors to `Text`
+, I could just implement the instances for `TextShow`, and done!
+- With the necessary `TextShow` instances, I could just make a function to:
+
+  1. map `TextShow a => [a]` to `[Text]`
+  2. intercalate `", "` and concatenate the list of `Text` to a single `Text`
+
+  I could just move the function out somewhere if ever I need it elsewhere.
+- Only hair colors and skin colors have multiple values. It's possible for eye
+colors to have, heterochromia and all that, but it doesn't seem like that's the
+case in the SWAPI db dump. So, I'll keep `EyeColor` singular for now.
+- I moved out any color-related type/function/instance to `SwapiClient/Color.hs`
+cause it had a bit too much going on.
+- I had to add functions that unwrap newtypes because it was a bit inconvenient
+to manually pattern match the boxed value. This way I get to compose things
+better!
+
+```diff haskell
+instance ToJSON (SkinColors :: Type) where
+  toJSON :: SkinColors -> Value
+- toJSON (SkinColors scs) = String . commaConcat $ scs
++ toJSON = String . commaConcat . unSkinColors
+  
+unSkinColors :: SkinColors -> [SkinColors]
+unSkinColors (SkinColors scs) = scs
+```
+
+  It's a possibility that I might end up unboxing it elsewhere, given it's a
+  common enough thing to do.
 
 ### Day 5 - 29/11/2021
 
@@ -97,20 +130,20 @@ textToHairColor hct = case hct of
   _ -> Left "ERROR: Unexpected color value/format"
 ```
 
-The problem would be that for this instance, it's
-`parseJSON :: Value -> Parser HairColor`, but instead it's going to be
-`Value -> Parser [HairColor]`. Hmm.
-
-The first thing that came to mind was to just simply enable `FlexibleInstances`
-and just swap `FromJSON (HairColor :: Type)` with `FromJSON ([HairColor :: Type])`.
-Easy huh. Well, no, because I quickly ran into another issue about overlapping
-instances! I definitely don't want to override anything, if ever that's what I'm
-doing. I did some digging and found [this](https://stackoverflow.com/questions/53478455/aeson-parse-json-object-to-list)
-which is pretty handy. It didn't really answer my question but I noticed that
-the asker just wrapped it in a `newtype`, and then used it for the instance.
-A bit annoying that I have to add one more type, but it seems convenient enough.
-There might be a better way, which I'll ask the community in the future. But for
-now, this works just fine.
+  The problem would be that for this instance, it's
+  `parseJSON :: Value -> Parser HairColor`, but instead it's going to be
+  `Value -> Parser [HairColor]`. Hmm.
+  
+  The first thing that came to mind was to just simply enable `FlexibleInstances`
+  and just swap `FromJSON (HairColor :: Type)` with `FromJSON ([HairColor :: Type])`.
+  Easy huh. Well, no, because I quickly ran into another issue about overlapping
+  instances! I definitely don't want to override anything, if ever that's what I'm
+  doing. I did some digging and found [this](https://stackoverflow.com/questions/53478455/aeson-parse-json-object-to-list)
+  which is pretty handy. It didn't really answer my question but I noticed that
+  the asker just wrapped it in a `newtype`, and then used it for the instance.
+  A bit annoying that I have to add one more type, but it seems convenient enough.
+  There might be a better way, which I'll ask the community in the future. But for
+  now, this works just fine.
 
 - I have to reimplement the `aeson` instances for the colors. I've already done
 the one for `HairColors`, but I have lots more to go. I should probably start
