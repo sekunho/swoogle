@@ -19,19 +19,19 @@ module SwapiClient.Person
   ) where
 
 --------------------------------------------------------------------------------
-
-import Data.Aeson
-    ( KeyValue ((.=))
-    , ToJSON (toJSON)
-    , FromJSON (parseJSON)
-    , Value (String)
-    , (.:)
-    )
 import Data.Aeson qualified as Aeson
   ( object
   , withObject
   , withText
   )
+import Data.Aeson.Types
+    ( KeyValue ((.=))
+    , ToJSON (toJSON)
+    , FromJSON (parseJSON)
+    , Value (String)
+    , Parser
+    , (.:)
+    )
 import Data.Text (Text)
 import Data.Text qualified as Text (pack)
 import Data.Text.Read qualified as Text.Read (decimal, double)
@@ -123,6 +123,7 @@ data Person = Person
 -- TODO: Implement `FromJSON` and `ToJSON` instances for `EyeColor`
 
 instance FromJSON (Height :: Type) where
+  parseJSON :: Value -> Parser Height
   parseJSON =
    Aeson.withText "Height" $
       \case
@@ -134,6 +135,7 @@ instance FromJSON (Height :: Type) where
             _ -> fail "Unexpected format for height"
 
 instance ToJSON (Height :: Type) where
+  toJSON :: Height -> Value
   toJSON height =
     case height of
       -- There's no `Integral a => a -> Text` apparently. So this is a hack for
@@ -142,6 +144,7 @@ instance ToJSON (Height :: Type) where
       UnknownHeight -> String "unknown"
 
 instance FromJSON (Mass :: Type) where
+  parseJSON :: Value -> Parser Mass
   parseJSON =
    Aeson.withText "Mass"
       $ \mass ->
@@ -151,6 +154,7 @@ instance FromJSON (Mass :: Type) where
             Right (_, _) -> fail "ERROR: Unexpected format"
 
 instance ToJSON (Mass :: Type) where
+  toJSON :: Mass -> Value
   toJSON mass =
     case mass of
       Mass numMass -> String . Text.pack . show $ numMass
@@ -159,6 +163,7 @@ instance ToJSON (Mass :: Type) where
 
 instance FromJSON (BirthYear :: Type) where
   -- TODO(sekun): Add instance type signature
+  parseJSON :: Value -> Parser BirthYear
   parseJSON =
    Aeson.withText "BirthYear" $
       \birthYear ->
@@ -177,6 +182,7 @@ instance ToJSON (BirthYear :: Type) where
   toJSON UnknownBirthYear = String "unknown"
 
 instance FromJSON (Gender :: Type) where
+  parseJSON :: Value -> Parser Gender
   parseJSON =
    Aeson.withText "Gender" $
       \case
@@ -188,6 +194,7 @@ instance FromJSON (Gender :: Type) where
         _ -> fail "ERROR: Unexpected value for gender"
 
 instance ToJSON (Gender :: Type) where
+  toJSON :: Gender -> Value
   toJSON gender =
     case gender of
       Male -> String "male"
@@ -196,6 +203,7 @@ instance ToJSON (Gender :: Type) where
       NoGender -> String "n/a"
 
 instance FromJSON (PersonName :: Type) where
+  parseJSON :: Value -> Parser PersonName
   parseJSON =
    Aeson.withText "PersonName"
       $ \name ->
@@ -206,6 +214,7 @@ instance ToJSON (PersonName :: Type) where
   toJSON (PersonName name) = String name
 
 instance FromJSON (Person :: Type) where
+  parseJSON :: Value -> Parser Person
   parseJSON =
    Aeson.withObject "Person" $
       \objPerson ->
@@ -225,6 +234,7 @@ instance FromJSON (Person :: Type) where
           <*> objPerson .: "starships"
 
 instance ToJSON (Person :: Type) where
+  toJSON :: Person -> Value
   toJSON person =
     Aeson.object
       [ "name"       .= pName person

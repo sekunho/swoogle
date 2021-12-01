@@ -68,6 +68,7 @@ newtype StarshipId = StarshipId Int
 -- INSTANCES
 
 instance FromJSON (FilmId :: Type) where
+  parseJSON :: Value -> Parser FilmId
   parseJSON =
     Aeson.withText "FilmID" $
       \filmUrl ->
@@ -80,9 +81,11 @@ instance FromJSON (FilmId :: Type) where
           Left e -> fail e
 
 instance ToJSON (FilmId :: Type) where
+  toJSON :: FilmId -> Value
   toJSON = String . buildFilmUrl
 
 instance FromJSON (HomeworldId :: Type) where
+  parseJSON :: Value -> Parser HomeworldId
   parseJSON =
     Aeson.withText "HomeworldId" $
       \homeworldUrl ->
@@ -95,9 +98,11 @@ instance FromJSON (HomeworldId :: Type) where
           Left e -> fail e
 
 instance ToJSON (HomeworldId :: Type) where
+  toJSON :: HomeworldId -> Value
   toJSON = String . buildPlanetUrl
 
 instance FromJSON (SpeciesId :: Type) where
+  parseJSON :: Value -> Parser SpeciesId
   parseJSON =
     Aeson.withText "SpeciesId" $
       \speciesUrl ->
@@ -110,9 +115,11 @@ instance FromJSON (SpeciesId :: Type) where
           Left e -> fail e
 
 instance ToJSON (SpeciesId :: Type) where
+  toJSON :: SpeciesId -> Value
   toJSON = String . buildSpeciesUrl
 
 instance FromJSON (VehicleId :: Type) where
+  parseJSON :: Value -> Parser VehicleId
   parseJSON =
     Aeson.withText "VehicleId" $
       \vehicleUrl ->
@@ -125,9 +132,11 @@ instance FromJSON (VehicleId :: Type) where
           Left e -> fail e
 
 instance ToJSON (VehicleId :: Type) where
+  toJSON :: VehicleId -> Value
   toJSON = String . buildVehicleUrl
 
 instance FromJSON (StarshipId :: Type) where
+  parseJSON :: Value -> Parser StarshipId
   parseJSON =
     Aeson.withText "StarshipId" $
       \starshipUrl ->
@@ -140,6 +149,7 @@ instance FromJSON (StarshipId :: Type) where
           Left e -> fail e
 
 instance ToJSON (StarshipId :: Type) where
+  toJSON :: StarshipId -> Value
   toJSON = String . buildStarshipUrl
 
 --------------------------------------------------------------------------------
