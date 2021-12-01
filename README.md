@@ -13,6 +13,7 @@ thanks to Fly.io.
   - [Queryable resources](#queryable-resources)
   - [Parseable resources](#parseable-resources)
 - [Notes](#notes)
+  - [Day 7 - 01/12/2021](#day-7---01122021)
   - [Day 6 - 30/11/2021](#day-6---30112021)
   - [Day 5 - 29/11/2021](#day-5---29112021)
   - [Day 4 - 28/11/2021](#day-4---28112021)
@@ -26,6 +27,9 @@ This isn't completed yet so I haven't put together a video to summarize a lot of
 what I encountered. But it'll be up in my 
 [YouTube channel](https://www.youtube.com/channel/UCUa0_AVebTfZzyzXjfB4dJQ/) 
 when I'm done.
+
+- Ep. 1: Day 1 to Day 7 (TBA)
+- Ep. 2: TBD
 
 ## Features
 
@@ -52,6 +56,15 @@ when I'm done.
 ## Notes
 
 Dates are formatted in DD-MM-YYYY.
+
+### Day 7 - 01/12/2021
+
+Not much today. Asked the community in the Matrix server (#Haskell), and Twitter
+for some feedback. Got nothing yet. I think I'll wait a bit longer. Thinking of
+pausing this for a bit while I cover some other material.
+
+- Added the remaining instance signatures. I'm honestly surprised that this isn't
+a default extension. It's just too convenient especially to those unfamiliar.
 
 ### Day 6 - 30/11/2021
 
