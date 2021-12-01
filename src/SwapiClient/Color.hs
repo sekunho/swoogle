@@ -46,11 +46,13 @@ module SwapiClient.Color
     )
   ) where
 
-import Data.Aeson
-  ( FromJSON (parseJSON)
-  , ToJSON (toJSON)
-  , Value (String))
 import Data.Aeson qualified as Aeson (withText)
+import Data.Aeson.Types
+    ( FromJSON(parseJSON)
+    , Value(String)
+    , ToJSON(toJSON)
+    , Parser
+    )
 import Data.Kind (Type)
 import Data.Text (Text)
 import Data.Text qualified as Text (splitOn, intercalate)
@@ -167,8 +169,8 @@ instance TextShow (EyeColor :: Type) where
 
 -- Aeson instances
 
--- TODO(sekun): Consider `DerivingVia`  for colors? A bit tiring to do by hand. :(
 instance FromJSON (HairColors :: Type) where
+  parseJSON :: Value -> Parser HairColors
   parseJSON =
    Aeson.withText "HairColor"
       $ \hairText ->
@@ -184,6 +186,7 @@ instance ToJSON (HairColors :: Type) where
   toJSON = String . commaConcat . unHairColors
 
 instance FromJSON (SkinColors :: Type) where
+  parseJSON :: Value -> Parser SkinColors
   parseJSON =
     Aeson.withText "SkinColors" $
       \skinColorText ->
@@ -199,6 +202,7 @@ instance ToJSON (SkinColors :: Type) where
   toJSON = String . commaConcat . unSkinColors
 
 instance FromJSON (EyeColor :: Type) where
+  parseJSON :: Value -> Parser EyeColor
   parseJSON =
    Aeson.withText "EyeColor" $
      \case
