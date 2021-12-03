@@ -43,6 +43,19 @@ when I'm done.
 
 ### Parseable resources
 
+Resources/schemas that can be encoded/decoded to and from JSON respectively.
+
+You play around with it in GHCI if you want to, like so:
+
+``` haskell
+ghci> import Data.Aeson (eitherDecode, encode)
+ghci> sampleJSON = encode "{\"name\":\"Luke Skywalker\",\"height\":\"172\",\"mass\":\"77\",\"hair_color\":\"blond\",\"skin_color\":\"fair\",\"eye_color\":\"blue\",\"birth_year\":\"19BBY\",\"gender\":\"male\",\"homeworld\":\"https://swapi.dev/api/planets/1/\",\"films\":[\"https://swapi.dev/api/films/1/\",\"https://swapi.dev/api/films/2/\",\"https://swapi.dev/api/films/3/\",\"https://swapi.dev/api/films/6/\"],\"species\":[],\"vehicles\":[\"https://swapi.dev/api/vehicles/14/\",\"https://swapi.dev/api/vehicles/30/\"],\"starships\":[\"https://swapi.dev/api/starships/12/\",\"https://swapi.dev/api/starships/22/\"],\"created\":\"2014-12-09T13:50:51.644000Z\",\"edited\":\"2014-12-20T21:17:56.891000Z\",\"url\":\"https://swapi.dev/api/people/1/\"}"
+Right (Person {pName = PersonName "Luke Skywalker", pHeight = Height 172, pMass = Mass 77.0, pHairColor = HairColors [BlondHair], pSkinColor = SkinColors [FairSkin], pEyeColor = BlueEye, pBirthYear = BBY 19.0, pGender = Male, pHomeworldId = HomeworldId 1, pFilmIds = [FilmId 1,FilmId 2,FilmId 3,FilmId 6], pSpeciesIds = [], pVehicleIds = [VehicleId 14,VehicleId 30], pStarshipIds = [StarshipId 12,StarshipId 22], pCreatedAt = 2014-12-09 13:50:51.644 UTC, pEditedAt = 2014-12-20 21:17:56.891 UTC, pId = PersonId 1})
+ghci> Right p1 = eitherDecode @Person sampleJSON
+ghci> encode p1
+"{\"birth_year\":\"19.0BBY\",\"created\":\"2014-12-09T13:50:51.644Z\",\"edited\":\"2014-12-20T21:17:56.891Z\",\"eye_color\":\"blue\",\"films\":[\"https://swapi.dev/api/films/1/\",\"https://swapi.dev/api/films/2/\",\"https://swapi.dev/api/films/3/\",\"https://swapi.dev/api/films/6/\"],\"gender\":\"male\",\"hair_color\":\"blond\",\"height\":\"172\",\"homeworld\":\"https://swapi.dev/api/planets/1/\",\"mass\":\"77.0\",\"name\":\"Luke Skywalker\",\"skin_color\":\"fair\",\"species\":[],\"starships\":[\"https://swapi.dev/api/starships/12/\",\"https://swapi.dev/api/starships/22/\"],\"url\":\"https://swapi.dev/api/people/1/\",\"vehicles\":[\"https://swapi.dev/api/vehicles/14/\",\"https://swapi.dev/api/vehicles/30/\"]}"
+```
+
 - [ ] Root
 - [x] People
 - [ ] Film
