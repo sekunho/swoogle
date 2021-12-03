@@ -45,6 +45,14 @@ when I'm done. So subscribe to stay tuned! :)
 
 Resources/schemas that can be encoded/decoded to and from JSON respectively.
 
+- [x] Root
+- [x] People
+- [ ] Film
+- [ ] Starship
+- [ ] Vehicle
+- [ ] Species
+- [ ] Planet
+
 You play around with it in GHCI if you want to, like so:
 
 ``` haskell
@@ -56,14 +64,6 @@ ghci> encode p1
 "{\"birth_year\":\"19.0BBY\",\"created\":\"2014-12-09T13:50:51.644Z\",\"edited\":\"2014-12-20T21:17:56.891Z\",\"eye_color\":\"blue\",\"films\":[\"https://swapi.dev/api/films/1/\",\"https://swapi.dev/api/films/2/\",\"https://swapi.dev/api/films/3/\",\"https://swapi.dev/api/films/6/\"],\"gender\":\"male\",\"hair_color\":\"blond\",\"height\":\"172\",\"homeworld\":\"https://swapi.dev/api/planets/1/\",\"mass\":\"77.0\",\"name\":\"Luke Skywalker\",\"skin_color\":\"fair\",\"species\":[],\"starships\":[\"https://swapi.dev/api/starships/12/\",\"https://swapi.dev/api/starships/22/\"],\"url\":\"https://swapi.dev/api/people/1/\",\"vehicles\":[\"https://swapi.dev/api/vehicles/14/\",\"https://swapi.dev/api/vehicles/30/\"]}"
 ```
 
-- [ ] Root
-- [x] People
-- [ ] Film
-- [ ] Starship
-- [ ] Vehicle
-- [ ] Species
-- [ ] Planet
-
 ## Notes
 
 Dates are formatted in DD-MM-YYYY.
@@ -74,8 +74,11 @@ Dates are formatted in DD-MM-YYYY.
 smart constructors to ensure that it's at least `> 0`.
 - I changed the smart constructor check from `>= 0` to `> 0` cause I just found
 out that it actually starts with `1`.
-- Add `edited` and `created` fields. So now it converts an ISO8601 UTC timestamp
+- Added `edited` and `created` fields. So now it converts an ISO8601 UTC timestamp
 into the appropriate domain type
+- Added `Root` although I'm not sure what this is used for because I've already
+added data constructors for the different resources. So, just parsing it as if
+the URLs were text.
 
 ### Day 7 - 01/12/2021
 
