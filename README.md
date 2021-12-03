@@ -79,6 +79,10 @@ into the appropriate domain type
 - Added `Root` although I'm not sure what this is used for because I've already
 added data constructors for the different resources. So, just parsing it as if
 the URLs were text.
+- I thought it would be a better idea to expose the data constructors for IDs
+instead since it would be kinda tedious to deal with once the HTTP requests get
+implemented. I don't think ID really has to be validated since it's possible for
+one to have a negative ID (I think). 
 
 ### Day 7 - 01/12/2021
 
