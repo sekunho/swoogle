@@ -70,19 +70,23 @@ Dates are formatted in DD-MM-YYYY.
 
 ### Day 8 - 03/12/2021
 
-- Same thing as some of the fields, I added a `PersonId` newtype with some
-smart constructors to ensure that it's at least `> 0`.
-- I changed the smart constructor check from `>= 0` to `> 0` cause I just found
-out that it actually starts with `1`.
+- ~~Same thing as some of the fields, I added a `PersonId` newtype with some
+smart constructors to ensure that it's at least `> 0`.~~
+- ~~I changed the smart constructor check from `>= 0` to `> 0` cause I just found
+out that it actually starts with `1`.~~ I thought it would be a better idea to 
+expose the data constructors for IDs instead since it would be kinda tedious to 
+deal with once the HTTP requests get implemented. I don't think ID really has to 
+be validated since it's possible for one to have a negative ID (I think). 
 - Added `edited` and `created` fields. So now it converts an ISO8601 UTC timestamp
 into the appropriate domain type
 - Added `Root` although I'm not sure what this is used for because I've already
 added data constructors for the different resources. So, just parsing it as if
 the URLs were text.
-- I thought it would be a better idea to expose the data constructors for IDs
-instead since it would be kinda tedious to deal with once the HTTP requests get
-implemented. I don't think ID really has to be validated since it's possible for
-one to have a negative ID (I think). 
+- I forgot about the index endpoint so that's what I'm working on right now. I 
+think it would be cool if I could parse all the URL attributes. So I wouldn't 
+have to worry if a param goes first or not. All I have to check is if the 
+parameter exists in a map. Maps might be ideal for storing URL attributes in 
+this case. I'll think about it for now.
 
 ### Day 7 - 01/12/2021
 
