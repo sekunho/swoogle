@@ -1,5 +1,6 @@
 module SwapiClient
   ( Person (..)
+  , Root (..)
   , PersonName (PersonName)
   , Height (Height, UnknownHeight)
   , Mass (Mass, UnknownMass)
@@ -143,3 +144,4 @@ import SwapiClient.Color
     , YellowEye
     )
   )
+import SwapiClient.Root (Root (..))
