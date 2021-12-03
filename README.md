@@ -13,6 +13,7 @@ thanks to Fly.io.
   - [Queryable resources](#queryable-resources)
   - [Parseable resources](#parseable-resources)
 - [Notes](#notes)
+  - [Day 8 - 01/12/2021](#day-8---03122021)
   - [Day 7 - 01/12/2021](#day-7---01122021)
   - [Day 6 - 30/11/2021](#day-6---30112021)
   - [Day 5 - 29/11/2021](#day-5---29112021)
@@ -27,9 +28,6 @@ This isn't completed yet so I haven't put together a video to summarize a lot of
 what I encountered. But it'll be up in my 
 [YouTube channel](https://www.youtube.com/channel/UCUa0_AVebTfZzyzXjfB4dJQ/) 
 when I'm done.
-
-- Ep. 1: Day 1 to Day 7 (TBA)
-- Ep. 2: TBD
 
 ## Features
 
@@ -56,6 +54,15 @@ when I'm done.
 ## Notes
 
 Dates are formatted in DD-MM-YYYY.
+
+### Day 8 - 03/12/2021
+
+- Same thing as some of the fields, I added a `PersonId` newtype with some
+smart constructors to ensure that it's at least `> 0`.
+- I changed the smart constructor check from `>= 0` to `> 0` cause I just found
+out that it actually starts with `1`.
+- Add `edited` and `created` fields. So now it converts an ISO8601 UTC timestamp
+into the appropriate domain type
 
 ### Day 7 - 01/12/2021
 
