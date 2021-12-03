@@ -4,9 +4,28 @@ module SwapiClient
   , Height (Height, UnknownHeight)
   , Mass (Mass, UnknownMass)
   , BirthYear (ABY, BBY, UnknownBirthYear)
-  , HomeworldId
+
+  -- IDs and their smart constructors
   , FilmId
-  , Gender (Male, Female)
+  , HomeworldId
+  , SpeciesId
+  , VehicleId
+  , StarshipId
+  , PersonId
+  , mkFilmId
+  , unFilmId
+  , mkHomeworldId
+  , unHomeworldId
+  , mkSpeciesId
+  , unSpeciesId
+  , mkVehicleId
+  , unVehicleId
+  , mkStarshipId
+  , unStarshipId
+  , mkPersonId
+  , unPersonId
+
+  , Gender (Male, Female, Hermaphrodite, NoGender)
   , Resource (People, Film, Planet)
   , HairColors (HairColors)
   , HairColor
@@ -57,7 +76,26 @@ module SwapiClient
 import SwapiClient.Person
 import SwapiClient.Homeworld ()
 import SwapiClient.Film ()
-import SwapiClient.Id (FilmId, HomeworldId)
+import SwapiClient.Id
+  ( FilmId
+  , HomeworldId
+  , SpeciesId
+  , VehicleId
+  , StarshipId
+  , PersonId
+  , mkFilmId
+  , unFilmId
+  , mkHomeworldId
+  , unHomeworldId
+  , mkSpeciesId
+  , unSpeciesId
+  , mkVehicleId
+  , unVehicleId
+  , mkStarshipId
+  , unStarshipId
+  , mkPersonId
+  , unPersonId
+  )
 import SwapiClient.Url (Resource (People, Film, Planet))
 import SwapiClient.Color
   ( HairColors (HairColors)

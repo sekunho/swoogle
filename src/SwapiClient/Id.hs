@@ -68,7 +68,6 @@ newtype StarshipId = StarshipId Int
 newtype PersonId = PersonId Int
   deriving Show
 
-
 --------------------------------------------------------------------------------
 -- Instances
 

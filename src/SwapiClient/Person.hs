@@ -2,7 +2,7 @@ module SwapiClient.Person
   ( BirthYear (BBY, ABY, UnknownBirthYear)
   , Height (Height, UnknownHeight)
   , Mass (Mass, UnknownMass)
-  , Gender (Male, Female)
+  , Gender (Male, Female, Hermaphrodite, NoGender)
   , PersonName (PersonName)
   , Person
       ( pName
@@ -14,7 +14,14 @@ module SwapiClient.Person
       , pBirthYear
       , pGender
       , pHomeworldId
-      , pFilmIds )
+      , pFilmIds
+      , pSpeciesIds
+      , pVehicleIds
+      , pStarshipIds
+      , pCreatedAt
+      , pEditedAt
+      , pId
+      )
   ) where
 
 --------------------------------------------------------------------------------
