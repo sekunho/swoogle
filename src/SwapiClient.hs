@@ -52,7 +52,7 @@ module SwapiClient
     , UnknownEyeColor
     , YellowEye
     )
-  , lukeSkywalker ) where
+  ) where
 
 import SwapiClient.Person
 import SwapiClient.Homeworld ()

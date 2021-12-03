@@ -4,6 +4,7 @@ module SwapiClient.Id
   , SpeciesId
   , VehicleId
   , StarshipId
+  , PersonId
   , mkFilmId
   , unFilmId
   , mkHomeworldId
@@ -14,14 +15,12 @@ module SwapiClient.Id
   , unVehicleId
   , mkStarshipId
   , unStarshipId
-  , lukeFilmIds
-  , lukeHomeworldId
-  , lukeSpeciesIds
-  , lukeVehicleIds
-  , lukeStarshipIds
+  , mkPersonId
+  , unPersonId
   ) where
 
 --------------------------------------------------------------------------------
+-- External
 
 import Data.Aeson
   ( FromJSON (parseJSON)
@@ -29,11 +28,13 @@ import Data.Aeson
   , Value (String)
   )
 import Data.Aeson qualified as Aeson (withText)
+import Data.Aeson.Types (Parser)
 import Data.Kind (Type)
 import Data.Text (Text)
 import TextShow qualified as Text.Show (showt)
 
 --------------------------------------------------------------------------------
+-- Internal
 
 import SwapiClient.Url
   ( Resource
@@ -41,13 +42,13 @@ import SwapiClient.Url
       , Planet
       , Species
       , Vehicle
-      , Starship
+      , Starship, People
       )
   )
 import SwapiClient.Url qualified as Url (resourceUrl, getId)
 
 --------------------------------------------------------------------------------
--- DATA TYPES
+-- Data types
 
 newtype FilmId = FilmId Int
   deriving Show
@@ -64,8 +65,12 @@ newtype VehicleId = VehicleId Int
 newtype StarshipId = StarshipId Int
   deriving Show
 
+newtype PersonId = PersonId Int
+  deriving Show
+
+
 --------------------------------------------------------------------------------
--- INSTANCES
+-- Instances
 
 instance FromJSON (FilmId :: Type) where
   parseJSON :: Value -> Parser FilmId
@@ -152,12 +157,29 @@ instance ToJSON (StarshipId :: Type) where
   toJSON :: StarshipId -> Value
   toJSON = String . buildStarshipUrl
 
+instance FromJSON (PersonId :: Type) where
+  -- Gonna parse it from `url` which is why it's from text
+  parseJSON :: Value -> Parser PersonId
+  parseJSON =
+    Aeson.withText "PersonId" $
+      \personUrl ->
+        case Url.getId personUrl of
+          Right intId ->
+            case mkPersonId intId of
+              Right personId -> pure personId
+              Left e -> fail e
+          Left e -> fail e
+
+instance ToJSON (PersonId :: Type) where
+  toJSON :: PersonId -> Value
+  toJSON = String . buildPersonUrl
+
 --------------------------------------------------------------------------------
 -- Smart constructors
 
 mkFilmId :: Int -> Either String FilmId
 mkFilmId filmId
-  | filmId >= 0 = Right (FilmId filmId)
+  | filmId > 0 = Right (FilmId filmId)
   | otherwise = Left "ERROR: ID cannot be negative"
 
 unFilmId :: FilmId -> Int
@@ -165,7 +187,7 @@ unFilmId (FilmId filmId) = filmId
 
 mkHomeworldId :: Int -> Either String HomeworldId
 mkHomeworldId homeworldId
-  | homeworldId >= 0 = Right (HomeworldId homeworldId)
+  | homeworldId > 0 = Right (HomeworldId homeworldId)
   | otherwise = Left "ERROR: ID cannot be negative"
 
 unHomeworldId :: HomeworldId -> Int
@@ -173,7 +195,7 @@ unHomeworldId (HomeworldId homeworldId) = homeworldId
 
 mkSpeciesId :: Int -> Either String SpeciesId
 mkSpeciesId speciesId
-  | speciesId >= 0 = Right (SpeciesId speciesId)
+  | speciesId > 0 = Right (SpeciesId speciesId)
   | otherwise = Left "ERROR: ID cannot be negative"
 
 unSpeciesId :: SpeciesId -> Int
@@ -181,7 +203,7 @@ unSpeciesId (SpeciesId speciesId) = speciesId
 
 mkVehicleId :: Int -> Either String VehicleId
 mkVehicleId vehicleId
-  | vehicleId >= 0 = Right (VehicleId vehicleId)
+  | vehicleId > 0 = Right (VehicleId vehicleId)
   | otherwise = Left "ERROR: ID cannot be negative"
 
 unVehicleId :: VehicleId -> Int
@@ -189,11 +211,19 @@ unVehicleId (VehicleId vehicleId) = vehicleId
 
 mkStarshipId :: Int -> Either String StarshipId
 mkStarshipId starshipId
-  | starshipId >= 0 = Right (StarshipId starshipId)
+  | starshipId > 0 = Right (StarshipId starshipId)
   | otherwise = Left "ERROR: ID cannot be negative"
 
 unStarshipId :: StarshipId -> Int
 unStarshipId (StarshipId starshipId) = starshipId
+
+mkPersonId :: Int -> Either String PersonId
+mkPersonId pId
+  | pId > 0 = Right (PersonId pId)
+  | otherwise = Left "ERROR: ID must be greater than 0"
+
+unPersonId :: PersonId -> Int
+unPersonId (PersonId pId) = pId
 
 ------------------------------------------------------------------------------
 -- Other functions
@@ -235,20 +265,10 @@ buildStarshipUrl starshipId =
     , "/"
     ]
 
--------------------------------------------------------------------------------
--- Dummy data
-
-lukeHomeworldId :: HomeworldId
-lukeHomeworldId = HomeworldId 1
-
-lukeFilmIds :: [FilmId]
-lukeFilmIds = map FilmId [2, 6, 3, 1, 7]
-
-lukeSpeciesIds :: [SpeciesId]
-lukeSpeciesIds = map SpeciesId [1]
-
-lukeVehicleIds :: [VehicleId]
-lukeVehicleIds = map VehicleId [14, 30]
-
-lukeStarshipIds :: [StarshipId]
-lukeStarshipIds = map StarshipId [12, 22]
+buildPersonUrl :: PersonId -> Text
+buildPersonUrl personId =
+  mconcat
+    [ Url.resourceUrl People
+    , Text.Show.showt . unPersonId $ personId
+    , "/"
+    ]
