@@ -27,7 +27,7 @@ thanks to Fly.io.
 This isn't completed yet so I haven't put together a video to summarize a lot of
 what I encountered. But it'll be up in my 
 [YouTube channel](https://www.youtube.com/channel/UCUa0_AVebTfZzyzXjfB4dJQ/) 
-when I'm done.
+when I'm done. So subscribe to stay tuned! :)
 
 ## Features
 
