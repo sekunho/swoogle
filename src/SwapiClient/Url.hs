@@ -5,7 +5,7 @@ module SwapiClient.Url
   ) where
 
 import Data.Text (Text)
-import Data.Text qualified as Text (append, split)
+import Data.Text qualified as Text (append, split, {- splitOn -})
 import Data.Text.Read qualified as Text.Read (decimal)
 
 --------------------------------------------------------------------------------
@@ -52,3 +52,8 @@ getId url =
         Left e -> Left e
 
     _ -> Left "ERROR: Unexpected URL format"
+
+-- getPageNumber :: Text -> Either String Int
+-- getPageNumber url =
+--   case Text.splitOn "?page=" of
+--     _ -> _

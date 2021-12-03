@@ -110,7 +110,22 @@ data Person = Person
   , pEditedAt         :: UTCTime
   , pId               :: PersonId
   }
-  deriving (Show)
+  deriving Show
+
+data Page
+  = NextPage Int
+  | PreviousPage Int
+  | NoPageAvailable
+  deriving Show
+
+data PersonIndex = PersonIndex
+  { plCount :: Int
+--  , plCurrentPage :: Int
+  , plNextPage :: Page
+  , plPreviousPage :: Page
+  , plResults :: [Person]
+  }
+  deriving Show
 
 --------------------------------------------------------------------------------
 -- INSTANCES
@@ -168,7 +183,6 @@ instance FromJSON (BirthYear :: Type) where
           Right (_, _) -> fail "ERROR: Unexpected format for birth year"
           Left _ -> fail "ERROR: Unexpected type for birth year"
 
--- TODO(sekun): If it's `*.0` then it would be cool to format it as just a whole number
 instance ToJSON (BirthYear :: Type) where
   toJSON :: BirthYear -> Value
   -- FIXME(sekun): Maybe use `showt` rather than `Text.pack . show`?
@@ -251,4 +265,31 @@ instance ToJSON (Person :: Type) where
       , "created"    .= pCreatedAt person
       , "edited"     .= pEditedAt person
       , "url"        .= pId person
+      ]
+
+instance FromJSON (Page :: Type) where
+  parseJSON :: Value -> Parser Page
+  parseJSON =
+    Aeson.withText "Page" $
+      \pageUrl -> _
+
+instance FromJSON (PersonIndex :: Type) where
+  parseJSON :: Value -> Parser PersonIndex
+  parseJSON =
+    Aeson.withObject "PersonIndex" $
+      \indexObject ->
+        PersonIndex
+          <$> indexObject .: "count"
+          <*> indexObject .: "next"
+          <*> indexObject .: "previous"
+          <*> indexObject .: "results"
+
+instance ToJSON (PersonIndex :: Type) where
+  toJSON :: PersonIndex -> Value
+  toJSON indexObject =
+    Aeson.object
+      [ "count" .= plCount indexObject
+      , "next" .= plNextPage indexObject
+      , "previous" .= plPreviousPage indexObject
+      , "results" .= plResults indexObject
       ]
