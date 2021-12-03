@@ -121,8 +121,8 @@ data Page
 data PersonIndex = PersonIndex
   { plCount :: Int
 --  , plCurrentPage :: Int
-  , plNextPage :: Page
-  , plPreviousPage :: Page
+--  , plNextPage :: Page
+--  , plPreviousPage :: Page
   , plResults :: [Person]
   }
   deriving Show
@@ -267,29 +267,29 @@ instance ToJSON (Person :: Type) where
       , "url"        .= pId person
       ]
 
-instance FromJSON (Page :: Type) where
-  parseJSON :: Value -> Parser Page
-  parseJSON =
-    Aeson.withText "Page" $
-      \pageUrl -> _
+--instance FromJSON (Page :: Type) where
+--  parseJSON :: Value -> Parser Page
+--  parseJSON =
+--    Aeson.withText "Page" $
+--      \pageUrl -> _
 
-instance FromJSON (PersonIndex :: Type) where
-  parseJSON :: Value -> Parser PersonIndex
-  parseJSON =
-    Aeson.withObject "PersonIndex" $
-      \indexObject ->
-        PersonIndex
-          <$> indexObject .: "count"
-          <*> indexObject .: "next"
-          <*> indexObject .: "previous"
-          <*> indexObject .: "results"
-
-instance ToJSON (PersonIndex :: Type) where
-  toJSON :: PersonIndex -> Value
-  toJSON indexObject =
-    Aeson.object
-      [ "count" .= plCount indexObject
-      , "next" .= plNextPage indexObject
-      , "previous" .= plPreviousPage indexObject
-      , "results" .= plResults indexObject
-      ]
+-- instance FromJSON (PersonIndex :: Type) where
+--   parseJSON :: Value -> Parser PersonIndex
+--   parseJSON =
+--     Aeson.withObject "PersonIndex" $
+--       \indexObject ->
+--         PersonIndex
+--           <$> indexObject .: "count"
+--           <*> indexObject .: "next"
+--           <*> indexObject .: "previous"
+--           <*> indexObject .: "results"
+--
+-- instance ToJSON (PersonIndex :: Type) where
+--   toJSON :: PersonIndex -> Value
+--   toJSON indexObject =
+--     Aeson.object
+--       [ "count" .= plCount indexObject
+--       , "next" .= plNextPage indexObject
+--       , "previous" .= plPreviousPage indexObject
+--       , "results" .= plResults indexObject
+--       ]
