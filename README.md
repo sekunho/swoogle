@@ -87,6 +87,35 @@ think it would be cool if I could parse all the URL attributes. So I wouldn't
 have to worry if a param goes first or not. All I have to check is if the 
 parameter exists in a map. Maps might be ideal for storing URL attributes in 
 this case. I'll think about it for now.
+- Made a really ugly solution for parsing a URL. I needed to get the subdir,
+and query params. I didn't want to have to use a library for it because:
+
+  1. I have no idea how to use it. Yet another thing to learn.
+  2. The use case is a bit simple. 
+  
+But did it in the end (somewhat) and so here it is:
+
+``` haskell
+data UrlData = UrlData
+  { udSubdir :: [Text]           -- Contains the list of subdirectories in path.
+  , udParams :: Map Text Text    -- Contains query parameters as KV pairs .
+  }
+  deriving Show
+
+-- In ghci
+λ> mkUrlData "https://swapi.dev/api/people/1/?search=r2d2"
+Just (UrlData {udSubdir = ["people","1"], udParams = fromList [("search","r2d2")]})
+
+-- But it's not perfect. I'm supposed to URL encode some characters!
+λ> mkUrlData "https://swapi.dev/api/people/1/?search=&r2d2"
+Just (UrlData {udSubdir = ["people","1"], udParams = fromList [("r2d2",""),("search","")]})
+```
+
+I don't really care about the base URL, so I don't *need* that information. But,
+I do need the subdirectory and the query parameters especially for down the road
+when search and paging are to be implemented. 
+
+Maybe I do need that URL library. Damn it.
 
 ### Day 7 - 01/12/2021
 
