@@ -13,17 +13,11 @@ module SwapiClient
   , VehicleId
   , StarshipId
   , PersonId
-  , mkFilmId
   , unFilmId
-  , mkHomeworldId
   , unHomeworldId
-  , mkSpeciesId
   , unSpeciesId
-  , mkVehicleId
   , unVehicleId
-  , mkStarshipId
   , unStarshipId
-  , mkPersonId
   , unPersonId
 
   , Gender (Male, Female, Hermaphrodite, NoGender)
@@ -84,17 +78,11 @@ import SwapiClient.Id
   , VehicleId
   , StarshipId
   , PersonId
-  , mkFilmId
   , unFilmId
-  , mkHomeworldId
   , unHomeworldId
-  , mkSpeciesId
   , unSpeciesId
-  , mkVehicleId
   , unVehicleId
-  , mkStarshipId
   , unStarshipId
-  , mkPersonId
   , unPersonId
   )
 import SwapiClient.Url (Resource (People, Film, Planet))

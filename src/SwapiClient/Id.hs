@@ -1,22 +1,16 @@
 module SwapiClient.Id
-  ( FilmId
-  , HomeworldId
-  , SpeciesId
-  , VehicleId
-  , StarshipId
-  , PersonId
-  , mkFilmId
+  ( FilmId (FilmId)
+  , HomeworldId (HomeworldId)
+  , SpeciesId (SpeciesId)
+  , VehicleId (VehicleId)
+  , StarshipId (StarshipId)
+  , PersonId (PersonId)
   , unFilmId
-  , mkHomeworldId
   , unHomeworldId
-  , mkSpeciesId
-  , unSpeciesId
-  , mkVehicleId
-  , unVehicleId
-  , mkStarshipId
-  , unStarshipId
-  , mkPersonId
   , unPersonId
+  , unSpeciesId
+  , unStarshipId
+  , unVehicleId
   ) where
 
 --------------------------------------------------------------------------------
@@ -77,11 +71,7 @@ instance FromJSON (FilmId :: Type) where
     Aeson.withText "FilmID" $
       \filmUrl ->
         case Url.getId filmUrl of
-          Right intId ->
-            case mkFilmId intId of
-              Right filmId -> pure filmId
-              Left e -> fail e
-
+          Right intId -> pure . FilmId $ intId
           Left e -> fail e
 
 instance ToJSON (FilmId :: Type) where
@@ -94,11 +84,7 @@ instance FromJSON (HomeworldId :: Type) where
     Aeson.withText "HomeworldId" $
       \homeworldUrl ->
         case Url.getId homeworldUrl of
-          Right intId ->
-            case mkHomeworldId intId of
-              Right homeworldId -> pure homeworldId
-              Left e -> fail e
-
+          Right intId -> pure . HomeworldId $ intId
           Left e -> fail e
 
 instance ToJSON (HomeworldId :: Type) where
@@ -111,11 +97,7 @@ instance FromJSON (SpeciesId :: Type) where
     Aeson.withText "SpeciesId" $
       \speciesUrl ->
         case Url.getId speciesUrl of
-          Right intId ->
-            case mkSpeciesId intId of
-              Right speciesId -> pure speciesId
-              Left e -> fail e
-
+          Right intId -> pure . SpeciesId $ intId
           Left e -> fail e
 
 instance ToJSON (SpeciesId :: Type) where
@@ -128,11 +110,7 @@ instance FromJSON (VehicleId :: Type) where
     Aeson.withText "VehicleId" $
       \vehicleUrl ->
         case Url.getId vehicleUrl of
-          Right intId ->
-            case mkVehicleId intId of
-              Right vehicleId -> pure vehicleId
-              Left e -> fail e
-
+          Right intId -> pure . VehicleId $ intId
           Left e -> fail e
 
 instance ToJSON (VehicleId :: Type) where
@@ -145,11 +123,7 @@ instance FromJSON (StarshipId :: Type) where
     Aeson.withText "StarshipId" $
       \starshipUrl ->
         case Url.getId starshipUrl of
-          Right intId ->
-            case mkStarshipId intId of
-              Right starshipId -> pure starshipId
-              Left e -> fail e
-
+          Right intId -> pure . StarshipId $ intId
           Left e -> fail e
 
 instance ToJSON (StarshipId :: Type) where
@@ -163,10 +137,7 @@ instance FromJSON (PersonId :: Type) where
     Aeson.withText "PersonId" $
       \personUrl ->
         case Url.getId personUrl of
-          Right intId ->
-            case mkPersonId intId of
-              Right personId -> pure personId
-              Left e -> fail e
+          Right intId -> pure . PersonId $ intId
           Left e -> fail e
 
 instance ToJSON (PersonId :: Type) where
@@ -174,52 +145,22 @@ instance ToJSON (PersonId :: Type) where
   toJSON = String . buildPersonUrl
 
 --------------------------------------------------------------------------------
--- Smart constructors
-
-mkFilmId :: Int -> Either String FilmId
-mkFilmId filmId
-  | filmId > 0 = Right (FilmId filmId)
-  | otherwise = Left "ERROR: ID cannot be negative"
+-- Unwrap newtypes
 
 unFilmId :: FilmId -> Int
 unFilmId (FilmId filmId) = filmId
 
-mkHomeworldId :: Int -> Either String HomeworldId
-mkHomeworldId homeworldId
-  | homeworldId > 0 = Right (HomeworldId homeworldId)
-  | otherwise = Left "ERROR: ID cannot be negative"
-
 unHomeworldId :: HomeworldId -> Int
 unHomeworldId (HomeworldId homeworldId) = homeworldId
-
-mkSpeciesId :: Int -> Either String SpeciesId
-mkSpeciesId speciesId
-  | speciesId > 0 = Right (SpeciesId speciesId)
-  | otherwise = Left "ERROR: ID cannot be negative"
 
 unSpeciesId :: SpeciesId -> Int
 unSpeciesId (SpeciesId speciesId) = speciesId
 
-mkVehicleId :: Int -> Either String VehicleId
-mkVehicleId vehicleId
-  | vehicleId > 0 = Right (VehicleId vehicleId)
-  | otherwise = Left "ERROR: ID cannot be negative"
-
 unVehicleId :: VehicleId -> Int
 unVehicleId (VehicleId vehicleId) = vehicleId
 
-mkStarshipId :: Int -> Either String StarshipId
-mkStarshipId starshipId
-  | starshipId > 0 = Right (StarshipId starshipId)
-  | otherwise = Left "ERROR: ID cannot be negative"
-
 unStarshipId :: StarshipId -> Int
 unStarshipId (StarshipId starshipId) = starshipId
-
-mkPersonId :: Int -> Either String PersonId
-mkPersonId pId
-  | pId > 0 = Right (PersonId pId)
-  | otherwise = Left "ERROR: ID must be greater than 0"
 
 unPersonId :: PersonId -> Int
 unPersonId (PersonId pId) = pId
