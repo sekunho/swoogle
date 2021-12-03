@@ -15,10 +15,10 @@ module SwapiClient.Person
       , pGender
       , pHomeworldId
       , pFilmIds )
-  , lukeSkywalker
   ) where
 
 --------------------------------------------------------------------------------
+
 import Data.Aeson qualified as Aeson
   ( object
   , withObject
@@ -35,22 +35,15 @@ import Data.Aeson.Types
 import Data.Text (Text)
 import Data.Text qualified as Text (pack)
 import Data.Text.Read qualified as Text.Read (decimal, double)
+import Data.Time (UTCTime)
 import Data.Kind (Type)
 
 --------------------------------------------------------------------------------
 
 import SwapiClient.Color
-  ( HairColors (HairColors)
-  , HairColor
-    ( BlondHair
-    , BrownHair
-    )
-  , SkinColors (SkinColors)
-  , SkinColor
-    ( BlueSkin
-    , FairSkin
-    )
-  , EyeColor (BlueEye)
+  ( HairColors
+  , SkinColors
+  , EyeColor
   )
 
 import SwapiClient.Id
@@ -59,14 +52,7 @@ import SwapiClient.Id
   , SpeciesId
   , VehicleId
   , StarshipId
-  )
-
-import SwapiClient.Id qualified as Id
-  ( lukeFilmIds
-  , lukeHomeworldId
-  , lukeSpeciesIds
-  , lukeVehicleIds
-  , lukeStarshipIds
+  , PersonId
   )
 
 --------------------------------------------------------------------------------
@@ -77,7 +63,6 @@ data BirthYear
   | ABY Double
   | UnknownBirthYear
   deriving Show
-
 
 data Height
   = Height Int
@@ -114,6 +99,9 @@ data Person = Person
   , pSpeciesIds       :: [SpeciesId]
   , pVehicleIds       :: [VehicleId]
   , pStarshipIds      :: [StarshipId]
+  , pCreatedAt        :: UTCTime
+  , pEditedAt         :: UTCTime
+  , pId               :: PersonId
   }
   deriving (Show)
 
@@ -232,6 +220,9 @@ instance FromJSON (Person :: Type) where
           <*> objPerson .: "species"
           <*> objPerson .: "vehicles"
           <*> objPerson .: "starships"
+          <*> objPerson .: "created"
+          <*> objPerson .: "edited"
+          <*> objPerson .: "url"
 
 instance ToJSON (Person :: Type) where
   toJSON :: Person -> Value
@@ -250,27 +241,7 @@ instance ToJSON (Person :: Type) where
       , "species"    .= pSpeciesIds person
       , "vehicles"   .= pVehicleIds person
       , "starships"  .= pStarshipIds person
+      , "created"    .= pCreatedAt person
+      , "edited"     .= pEditedAt person
+      , "url"        .= pId person
       ]
-
---------------------------------------------------------------------------------
--- Dummy data
--- TODO: Should probably move this to test rather than leave this here.
-
-lukeSkywalker :: Person
-lukeSkywalker =
-  Person
-    { pName        = PersonName "Luke Skywalker"
-    , pHeight      = Height 172
-    , pMass        = Mass 77
-    , pHairColor   = HairColors [BlondHair, BrownHair]
-    , pSkinColor   = SkinColors [FairSkin, BlueSkin]
-    , pEyeColor    = BlueEye
-    , pBirthYear   = BBY 19
-    , pGender      = Male
-    , pHomeworldId = Id.lukeHomeworldId
-    , pFilmIds     = Id.lukeFilmIds
-    , pSpeciesIds  = Id.lukeSpeciesIds
-    , pVehicleIds  = Id.lukeVehicleIds
-    , pStarshipIds = Id.lukeStarshipIds
-    }
-
