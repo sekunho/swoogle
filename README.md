@@ -44,7 +44,7 @@ when I'm done.
 ### Parseable resources
 
 - [ ] Root
-- [ ] People
+- [x] People
 - [ ] Film
 - [ ] Starship
 - [ ] Vehicle
