@@ -1,14 +1,39 @@
 # SWAPI Client
 
-Hello. This is just one of the projects I'm working on just to study Haskell.
-I wanted to start with something simple so I can study things from the ground
-up with practical experience. I'm also noting down some of the things I learned
-or realized in the README; something I realized I should be doing more often
-thanks to Fly.io.
+Hello! This is the first personal project I'm working on to study Haskell, free
+from following a book or tutorial as the main reference because it feels like
+I've been stuck in tutorial hell without any way out.  I wanted to start with 
+something relatively simple so I can study things from the ground up with practical 
+experience. I'm also noting down some of the things I learned or realized in the 
+README; something I realized I should be doing more often thanks to Fly.io.
+
+I don't recommend using this as THE tutorial for this sort of thing because I'm
+just trying to piece things together like a caveman moments before fire was 
+discovered.
+
+## What's this about?
+
+`swapi` is a client library (without much bells and whistles) for SWAPI
+([Star Wars API](https://swapi.dev)). Making this involves some of the commonly 
+used Haskell libraries like `aeson`, `containers`, an HTTP client library I have
+not yet decided on, etc. and other basic Haskell concepts to be aware of – which 
+makes it a good candidate for a starter project! Of course it doesn't require a 
+deep dive in the aforementioned libraries; it's just enough to make things work.
+
+## Will this be a video?
+
+Yeah! So far I've recorded most of each and every session that I worked on this. 
+I'm still assessing if this should be a per episode video or just put the entire 
+journey in one video. I don't have an editor so I usually do all the editing
+myself (which takes a lot of time). There's a lot of raw footage I'm gonna have
+to go through unfortunately.
+
+Whenever it's ready, it'll  be up in my 
+[YouTube channel](https://www.youtube.com/channel/UCUa0_AVebTfZzyzXjfB4dJQ/) 
+when I'm done. Subscribe to stay tuned! :)
 
 ## Table of Contents
 
-- [Video](#video)
 - [Features](#features)
   - [Queryable resources](#queryable-resources)
   - [Parseable resources](#parseable-resources)
@@ -21,13 +46,6 @@ thanks to Fly.io.
   - [Day 3 - 27/11/2021](#day-3---27112021)
   - [Day 2 - 26/11/2021](#day-2---26112021)
   - [Day 1 - 25/11/2021](#day-1---25112021)
-
-## Video
-
-This isn't completed yet so I haven't put together a video to summarize a lot of
-what I encountered. But it'll be up in my 
-[YouTube channel](https://www.youtube.com/channel/UCUa0_AVebTfZzyzXjfB4dJQ/) 
-when I'm done. So subscribe to stay tuned! :)
 
 ## Features
 
