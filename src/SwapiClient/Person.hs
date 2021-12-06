@@ -22,6 +22,7 @@ module SwapiClient.Person
       , pEditedAt
       , pId
       )
+  , PersonIndex ( pCount, pResults, pNextPage, pPreviousPage )
   ) where
 
 --------------------------------------------------------------------------------
@@ -39,11 +40,12 @@ import Data.Aeson.Types
     , Parser
     , (.:)
     )
+
+import Data.Kind (Type)
 import Data.Text (Text)
-import Data.Text qualified as Text (pack)
+import Data.Text qualified as Text (pack, filter)
 import Data.Text.Read qualified as Text.Read (decimal, double)
 import Data.Time (UTCTime)
-import Data.Kind (Type)
 
 --------------------------------------------------------------------------------
 
@@ -61,6 +63,8 @@ import SwapiClient.Id
   , StarshipId
   , PersonId
   )
+
+import SwapiClient.Page (Page)
 
 --------------------------------------------------------------------------------
 -- Data types
@@ -91,14 +95,13 @@ data Gender
 newtype PersonName = PersonName Text
   deriving Show
 
--- TODO(sekun): Add other person attributes
 data Person = Person
   { pName             :: PersonName     -- Name of person
   , pHeight           :: Height         -- Height of person can be Nothing
   , pMass             :: Mass           -- Mass of person can be Nothing
   , pHairColor        :: HairColors
   , pSkinColor        :: SkinColors
-  , pEyeColor         :: EyeColor      -- Uh, eye color.
+  , pEyeColor         :: EyeColor       -- Uh, eye color.
   , pBirthYear        :: BirthYear      -- Relative to before/after Battle of Yavin
   , pGender           :: Gender         -- Gender according to SWAPI
   , pHomeworldId      :: HomeworldId    -- Homeworld IDs of character
@@ -110,12 +113,19 @@ data Person = Person
   , pEditedAt         :: UTCTime
   , pId               :: PersonId
   }
-  deriving (Show)
+  deriving Show
+
+data PersonIndex = PersonIndex
+  { pCount :: Int
+--  , plCurrentPage :: Int
+  , pNextPage :: Page
+  , pPreviousPage :: Page
+  , pResults :: [Person]
+  }
+  deriving Show
 
 --------------------------------------------------------------------------------
--- INSTANCES
--- TODO: Implement `FromJSON` and `ToJSON` instances for `SkinColor`
--- TODO: Implement `FromJSON` and `ToJSON` instances for `EyeColor`
+-- Instances
 
 instance FromJSON (Height :: Type) where
   parseJSON :: Value -> Parser Height
@@ -143,7 +153,7 @@ instance FromJSON (Mass :: Type) where
   parseJSON =
    Aeson.withText "Mass"
       $ \mass ->
-          case Text.Read.double mass of
+          case Text.Read.double $ Text.filter (/= ',') mass of
             Left e -> fail e
             Right (numMass, "") -> pure . Mass $ numMass
             Right (_, _) -> fail "ERROR: Unexpected format"
@@ -155,20 +165,20 @@ instance ToJSON (Mass :: Type) where
       Mass numMass -> String . Text.pack . show $ numMass
       UnknownMass -> String "unknown"
 
-
 instance FromJSON (BirthYear :: Type) where
-  -- TODO(sekun): Add instance type signature
   parseJSON :: Value -> Parser BirthYear
   parseJSON =
    Aeson.withText "BirthYear" $
       \birthYear ->
-        case Text.Read.double birthYear of
-          Right (numYear, "BBY") -> pure $ BBY numYear
-          Right (numYear, "ABY") -> pure $ ABY numYear
-          Right (_, _) -> fail "ERROR: Unexpected format for birth year"
-          Left _ -> fail "ERROR: Unexpected type for birth year"
+        case birthYear of
+          "unknown" -> pure UnknownBirthYear
+          _ ->
+            case Text.Read.double birthYear of
+              Right (numYear, "BBY") -> pure $ BBY numYear
+              Right (numYear, "ABY") -> pure $ ABY numYear
+              Right (_, _) -> fail "ERROR: Unexpected format for birth year"
+              Left _ -> fail "ERROR: Unexpected type for birth year"
 
--- TODO(sekun): If it's `*.0` then it would be cool to format it as just a whole number
 instance ToJSON (BirthYear :: Type) where
   toJSON :: BirthYear -> Value
   -- FIXME(sekun): Maybe use `showt` rather than `Text.pack . show`?
@@ -251,4 +261,25 @@ instance ToJSON (Person :: Type) where
       , "created"    .= pCreatedAt person
       , "edited"     .= pEditedAt person
       , "url"        .= pId person
+      ]
+
+instance FromJSON (PersonIndex :: Type) where
+  parseJSON :: Value -> Parser PersonIndex
+  parseJSON =
+    Aeson.withObject "PersonIndex" $
+      \indexObject ->
+        PersonIndex
+          <$> indexObject .: "count"
+          <*> indexObject .: "next"
+          <*> indexObject .: "previous"
+          <*> indexObject .: "results"
+
+instance ToJSON (PersonIndex :: Type) where
+  toJSON :: PersonIndex -> Value
+  toJSON indexObject =
+    Aeson.object
+      [ "count"     .= pCount indexObject
+      , "next"      .= pNextPage indexObject
+      , "previous"  .= pPreviousPage indexObject
+      , "results"   .= pResults indexObject
       ]

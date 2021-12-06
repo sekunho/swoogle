@@ -36,7 +36,9 @@ module SwapiClient.Color
     ( BlackEye
     , BlueEye
     , BlueGreyEye
+    , BrownEye
     , GoldEye
+    , GreenEye
     , HazelEye
     , OrangeEye
     , PinkEye
@@ -104,7 +106,9 @@ data EyeColor
   = BlackEye
   | BlueEye
   | BlueGreyEye
+  | BrownEye
   | GoldEye
+  | GreenEye
   | HazelEye
   | OrangeEye
   | PinkEye -- lmao
@@ -159,7 +163,9 @@ instance TextShow (EyeColor :: Type) where
     BlackEye -> "black"
     BlueEye -> "blue"
     BlueGreyEye -> "blue-grey"
+    BrownEye -> "brown"
     GoldEye -> "gold"
+    GreenEye -> "green"
     HazelEye -> "hazel"
     OrangeEye -> "orange"
     PinkEye -> "pink"
@@ -208,8 +214,11 @@ instance FromJSON (EyeColor :: Type) where
      \case
        "black" -> pure BlackEye
        "blue" -> pure BlueEye
+       "blue-gray" -> pure BlueGreyEye
        "blue-grey" -> pure BlueGreyEye
+       "brown" -> pure BrownEye
        "gold" -> pure GoldEye
+       "green" -> pure GreenEye
        "hazel" -> pure HazelEye
        "orange" -> pure OrangeEye
        "pink" -> pure PinkEye

@@ -167,7 +167,7 @@ unPersonId (PersonId pId) = pId
 
 ------------------------------------------------------------------------------
 -- Other functions
--- TODO(sekun): How do I guarantee that this is a URL? Text can be anything.
+-- TODO(sekun): Refactor to use `URLData`.
 
 buildFilmUrl :: FilmId -> Text
 buildFilmUrl filmId =
