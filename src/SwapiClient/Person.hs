@@ -22,6 +22,7 @@ module SwapiClient.Person
       , pEditedAt
       , pId
       )
+  , PersonIndex ( pCount, pResults, pNextPage, pPreviousPage )
   ) where
 
 --------------------------------------------------------------------------------
@@ -39,11 +40,12 @@ import Data.Aeson.Types
     , Parser
     , (.:)
     )
+
+import Data.Kind (Type)
 import Data.Text (Text)
-import Data.Text qualified as Text (pack)
+import Data.Text qualified as Text (pack, filter)
 import Data.Text.Read qualified as Text.Read (decimal, double)
 import Data.Time (UTCTime)
-import Data.Kind (Type)
 
 --------------------------------------------------------------------------------
 
@@ -61,6 +63,8 @@ import SwapiClient.Id
   , StarshipId
   , PersonId
   )
+
+import SwapiClient.Page (Page)
 
 --------------------------------------------------------------------------------
 -- Data types
@@ -111,18 +115,12 @@ data Person = Person
   }
   deriving Show
 
-data Page
-  = NextPage Int
-  | PreviousPage Int
-  | NoPageAvailable
-  deriving Show
-
 data PersonIndex = PersonIndex
-  { plCount :: Int
+  { pCount :: Int
 --  , plCurrentPage :: Int
---  , plNextPage :: Page
---  , plPreviousPage :: Page
-  , plResults :: [Person]
+  , pNextPage :: Page
+  , pPreviousPage :: Page
+  , pResults :: [Person]
   }
   deriving Show
 
@@ -155,7 +153,7 @@ instance FromJSON (Mass :: Type) where
   parseJSON =
    Aeson.withText "Mass"
       $ \mass ->
-          case Text.Read.double mass of
+          case Text.Read.double $ Text.filter (/= ',') mass of
             Left e -> fail e
             Right (numMass, "") -> pure . Mass $ numMass
             Right (_, _) -> fail "ERROR: Unexpected format"
@@ -167,17 +165,19 @@ instance ToJSON (Mass :: Type) where
       Mass numMass -> String . Text.pack . show $ numMass
       UnknownMass -> String "unknown"
 
-
 instance FromJSON (BirthYear :: Type) where
   parseJSON :: Value -> Parser BirthYear
   parseJSON =
    Aeson.withText "BirthYear" $
       \birthYear ->
-        case Text.Read.double birthYear of
-          Right (numYear, "BBY") -> pure $ BBY numYear
-          Right (numYear, "ABY") -> pure $ ABY numYear
-          Right (_, _) -> fail "ERROR: Unexpected format for birth year"
-          Left _ -> fail "ERROR: Unexpected type for birth year"
+        case birthYear of
+          "unknown" -> pure UnknownBirthYear
+          _ ->
+            case Text.Read.double birthYear of
+              Right (numYear, "BBY") -> pure $ BBY numYear
+              Right (numYear, "ABY") -> pure $ ABY numYear
+              Right (_, _) -> fail "ERROR: Unexpected format for birth year"
+              Left _ -> fail "ERROR: Unexpected type for birth year"
 
 instance ToJSON (BirthYear :: Type) where
   toJSON :: BirthYear -> Value
@@ -263,29 +263,23 @@ instance ToJSON (Person :: Type) where
       , "url"        .= pId person
       ]
 
---instance FromJSON (Page :: Type) where
---  parseJSON :: Value -> Parser Page
---  parseJSON =
---    Aeson.withText "Page" $
---      \pageUrl -> _
+instance FromJSON (PersonIndex :: Type) where
+  parseJSON :: Value -> Parser PersonIndex
+  parseJSON =
+    Aeson.withObject "PersonIndex" $
+      \indexObject ->
+        PersonIndex
+          <$> indexObject .: "count"
+          <*> indexObject .: "next"
+          <*> indexObject .: "previous"
+          <*> indexObject .: "results"
 
--- instance FromJSON (PersonIndex :: Type) where
---   parseJSON :: Value -> Parser PersonIndex
---   parseJSON =
---     Aeson.withObject "PersonIndex" $
---       \indexObject ->
---         PersonIndex
---           <$> indexObject .: "count"
---           <*> indexObject .: "next"
---           <*> indexObject .: "previous"
---           <*> indexObject .: "results"
---
--- instance ToJSON (PersonIndex :: Type) where
---   toJSON :: PersonIndex -> Value
---   toJSON indexObject =
---     Aeson.object
---       [ "count" .= plCount indexObject
---       , "next" .= plNextPage indexObject
---       , "previous" .= plPreviousPage indexObject
---       , "results" .= plResults indexObject
---       ]
+instance ToJSON (PersonIndex :: Type) where
+  toJSON :: PersonIndex -> Value
+  toJSON indexObject =
+    Aeson.object
+      [ "count"     .= pCount indexObject
+      , "next"      .= pNextPage indexObject
+      , "previous"  .= pPreviousPage indexObject
+      , "results"   .= pResults indexObject
+      ]

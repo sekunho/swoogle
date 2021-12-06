@@ -1,9 +1,11 @@
 module SwapiClient.Url
   ( Resource (Root, People, Film, Starship, Vehicle, Species, Planet)
+  , UrlData (UrlData, udSubdir, udParams)
   , resourceUrl
   , getId
   , parseKeyValue
-  , mkUrlData
+  , urlToUrlData
+  , urlDataToUrl
   ) where
 
 import Data.Text (Text)
@@ -18,10 +20,10 @@ import Data.Text qualified as Text
   )
 import Data.Text.Read qualified as Text.Read (decimal)
 import Data.Map.Strict (Map)
-import Data.Map.Strict qualified as Map (fromList)
+import Data.Map.Strict qualified as Map (fromList, foldlWithKey', null)
 
 --------------------------------------------------------------------------------
--- DATA TYPES
+-- Data types
 
 data Resource
   = Root
@@ -33,15 +35,19 @@ data Resource
   | Planet
   deriving Show
 
--- I don't know what to name this.
 data UrlData = UrlData
-  { udSubdir :: [Text]
+  {
+    -- | The subdirectory of a URL.
+    -- e.g "/hey/1" = ["hey", "1"]
+    udSubdir :: [Text]
+    -- | URL parameters.
+    -- e.g "hello/?key1=val1" = fromList [("key1", "val1")]
   , udParams :: Map Text Text
   }
   deriving Show
 
 --------------------------------------------------------------------------------
--- FUNCTIONS
+-- Functions
 
 baseUrl :: Text
 baseUrl = "https://swapi.dev/api/"
@@ -73,9 +79,9 @@ getId url =
     _ -> Left "ERROR: Unexpected URL format"
 
 -- I do not like this. I'm sure there's a URL library out there but this'll do.
-mkUrlData :: Text -> Maybe UrlData
-mkUrlData strippedUrl = do
-  urlDataText <- Text.stripPrefix "https://swapi.dev/api/" strippedUrl
+urlToUrlData :: Text -> Maybe UrlData
+urlToUrlData strippedUrl = do
+  urlDataText <- Text.stripPrefix baseUrl strippedUrl
 
   let (subdirText:paramsText) = Text.splitOn "/?" urlDataText
 
@@ -83,9 +89,30 @@ mkUrlData strippedUrl = do
       subdirs = Text.split (== '/') . Text.dropWhileEnd (== '/') $ subdirText
 
       params :: Map Text Text
-      params = Map.fromList $ map parseKeyValue $ concatMap (Text.split (== '&')) paramsText
+      params = Map.fromList $
+        map parseKeyValue $
+          concatMap (Text.split (== '&')) paramsText
 
   pure (UrlData { udSubdir = subdirs, udParams = params })
+
+{- TODO: Add URL encoding
+   https://developer.mozilla.org/en-US/docs/Glossary/percent-encoding -}
+urlDataToUrl :: UrlData -> Text
+urlDataToUrl urlData =
+  mconcat
+    [ baseUrl
+    , mconcat . udSubdir $ urlData
+    , paramsToUrlParams . udParams $ urlData
+    ]
+  where
+    paramsToUrlParams :: Map Text Text -> Text
+    paramsToUrlParams params
+      | Map.null params =
+        Map.foldlWithKey'
+          (\acc key val -> acc <> key <> "=" <> val)
+          mempty
+          params
+      | otherwise = mempty
 
 -- TODO: Fix?? I am in pain.
 -- Keeps accumulating as `key` until it encounters the first `=`. Once it does,
