@@ -13,7 +13,8 @@ thanks to Fly.io.
   - [Queryable resources](#queryable-resources)
   - [Parseable resources](#parseable-resources)
 - [Notes](#notes)
-  - [Day 8 - 01/12/2021](#day-8---03122021)
+  - [Day 9 - 06/12/2021](#day-9---06122021)
+  - [Day 8 - 03/12/2021](#day-8---03122021)
   - [Day 7 - 01/12/2021](#day-7---01122021)
   - [Day 6 - 30/11/2021](#day-6---30112021)
   - [Day 5 - 29/11/2021](#day-5---29112021)
@@ -47,6 +48,8 @@ Resources/schemas that can be encoded/decoded to and from JSON respectively.
 
 - [x] Root
 - [x] People
+  - [x] Index
+  - [x] View
 - [ ] Film
 - [ ] Starship
 - [ ] Vehicle
@@ -57,16 +60,59 @@ You play around with it in GHCI if you want to, like so:
 
 ``` haskell
 ghci> import Data.Aeson (eitherDecode, encode)
+
 ghci> sampleJSON = "{\"name\":\"Luke Skywalker\",\"height\":\"172\",\"mass\":\"77\",\"hair_color\":\"blond\",\"skin_color\":\"fair\",\"eye_color\":\"blue\",\"birth_year\":\"19BBY\",\"gender\":\"male\",\"homeworld\":\"https://swapi.dev/api/planets/1/\",\"films\":[\"https://swapi.dev/api/films/1/\",\"https://swapi.dev/api/films/2/\",\"https://swapi.dev/api/films/3/\",\"https://swapi.dev/api/films/6/\"],\"species\":[],\"vehicles\":[\"https://swapi.dev/api/vehicles/14/\",\"https://swapi.dev/api/vehicles/30/\"],\"starships\":[\"https://swapi.dev/api/starships/12/\",\"https://swapi.dev/api/starships/22/\"],\"created\":\"2014-12-09T13:50:51.644000Z\",\"edited\":\"2014-12-20T21:17:56.891000Z\",\"url\":\"https://swapi.dev/api/people/1/\"}"
 Right (Person {pName = PersonName "Luke Skywalker", pHeight = Height 172, pMass = Mass 77.0, pHairColor = HairColors [BlondHair], pSkinColor = SkinColors [FairSkin], pEyeColor = BlueEye, pBirthYear = BBY 19.0, pGender = Male, pHomeworldId = HomeworldId 1, pFilmIds = [FilmId 1,FilmId 2,FilmId 3,FilmId 6], pSpeciesIds = [], pVehicleIds = [VehicleId 14,VehicleId 30], pStarshipIds = [StarshipId 12,StarshipId 22], pCreatedAt = 2014-12-09 13:50:51.644 UTC, pEditedAt = 2014-12-20 21:17:56.891 UTC, pId = PersonId 1})
 ghci> Right p1 = eitherDecode @Person sampleJSON
 ghci> encode p1
 "{\"birth_year\":\"19.0BBY\",\"created\":\"2014-12-09T13:50:51.644Z\",\"edited\":\"2014-12-20T21:17:56.891Z\",\"eye_color\":\"blue\",\"films\":[\"https://swapi.dev/api/films/1/\",\"https://swapi.dev/api/films/2/\",\"https://swapi.dev/api/films/3/\",\"https://swapi.dev/api/films/6/\"],\"gender\":\"male\",\"hair_color\":\"blond\",\"height\":\"172\",\"homeworld\":\"https://swapi.dev/api/planets/1/\",\"mass\":\"77.0\",\"name\":\"Luke Skywalker\",\"skin_color\":\"fair\",\"species\":[],\"starships\":[\"https://swapi.dev/api/starships/12/\",\"https://swapi.dev/api/starships/22/\"],\"url\":\"https://swapi.dev/api/people/1/\",\"vehicles\":[\"https://swapi.dev/api/vehicles/14/\",\"https://swapi.dev/api/vehicles/30/\"]}"
+
+ghci> indexJSON = "{\"count\":18,\"next\":\"https://swapi.dev/api/people/?search=b&page=2&format=json\",\"previous\":null,\"results\":[{\"name\":\"Beru Whitesun lars\",\"height\":\"165\",\"mass\":\"75\",\"hair_color\":\"brown\",\"skin_color\":\"light\",\"eye_color\":\"blue\",\"birth_year\":\"47BBY\",\"gender\":\"female\",\"homeworld\":\"https://swapi.dev/api/planets/1/\",\"films\":[\"https://swapi.dev/api/films/1/\",\"https://swapi.dev/api/films/5/\",\"https://swapi.dev/api/films/6/\"],\"species\":[],\"vehicles\":[],\"starships\":[],\"created\":\"2014-12-10T15:53:41.121000Z\",\"edited\":\"2014-12-20T21:17:50.319000Z\",\"url\":\"https://swapi.dev/api/people/7/\"},{\"name\":\"Biggs Darklighter\",\"height\":\"183\",\"mass\":\"84\",\"hair_color\":\"black\",\"skin_color\":\"light\",\"eye_color\":\"brown\",\"birth_year\":\"24BBY\",\"gender\":\"male\",\"homeworld\":\"https://swapi.dev/api/planets/1/\",\"films\":[\"https://swapi.dev/api/films/1/\"],\"species\":[],\"vehicles\":[],\"starships\":[\"https://swapi.dev/api/starships/12/\"],\"created\":\"2014-12-10T15:59:50.509000Z\",\"edited\":\"2014-12-20T21:17:50.323000Z\",\"url\":\"https://swapi.dev/api/people/9/\"},{\"name\":\"Obi-Wan Kenobi\",\"height\":\"182\",\"mass\":\"77\",\"hair_color\":\"auburn, white\",\"skin_color\":\"fair\",\"eye_color\":\"blue-gray\",\"birth_year\":\"57BBY\",\"gender\":\"male\",\"homeworld\":\"https://swapi.dev/api/planets/20/\",\"films\":[\"https://swapi.dev/api/films/1/\",\"https://swapi.dev/api/films/2/\",\"https://swapi.dev/api/films/3/\",\"https://swapi.dev/api/films/4/\",\"https://swapi.dev/api/films/5/\",\"https://swapi.dev/api/films/6/\"],\"species\":[],\"vehicles\":[\"https://swapi.dev/api/vehicles/38/\"],\"starships\":[\"https://swapi.dev/api/starships/48/\",\"https://swapi.dev/api/starships/59/\",\"https://swapi.dev/api/starships/64/\",\"https://swapi.dev/api/starships/65/\",\"https://swapi.dev/api/starships/74/\"],\"created\":\"2014-12-10T16:16:29.192000Z\",\"edited\":\"2014-12-20T21:17:50.325000Z\",\"url\":\"https://swapi.dev/api/people/10/\"},{\"name\":\"Chewbacca\",\"height\":\"228\",\"mass\":\"112\",\"hair_color\":\"brown\",\"skin_color\":\"unknown\",\"eye_color\":\"blue\",\"birth_year\":\"200BBY\",\"gender\":\"male\",\"homeworld\":\"https://swapi.dev/api/planets/14/\",\"films\":[\"https://swapi.dev/api/films/1/\",\"https://swapi.dev/api/films/2/\",\"https://swapi.dev/api/films/3/\",\"https://swapi.dev/api/films/6/\"],\"species\":[\"https://swapi.dev/api/species/3/\"],\"vehicles\":[\"https://swapi.dev/api/vehicles/19/\"],\"starships\":[\"https://swapi.dev/api/starships/10/\",\"https://swapi.dev/api/starships/22/\"],\"created\":\"2014-12-10T16:42:45.066000Z\",\"edited\":\"2014-12-20T21:17:50.332000Z\",\"url\":\"https://swapi.dev/api/people/13/\"},{\"name\":\"Jabba Desilijic Tiure\",\"height\":\"175\",\"mass\":\"1,358\",\"hair_color\":\"n/a\",\"skin_color\":\"green-tan, brown\",\"eye_color\":\"orange\",\"birth_year\":\"600BBY\",\"gender\":\"hermaphrodite\",\"homeworld\":\"https://swapi.dev/api/planets/24/\",\"films\":[\"https://swapi.dev/api/films/1/\",\"https://swapi.dev/api/films/3/\",\"https://swapi.dev/api/films/4/\"],\"species\":[\"https://swapi.dev/api/species/5/\"],\"vehicles\":[],\"starships\":[],\"created\":\"2014-12-10T17:11:31.638000Z\",\"edited\":\"2014-12-20T21:17:50.338000Z\",\"url\":\"https://swapi.dev/api/people/16/\"},{\"name\":\"Boba Fett\",\"height\":\"183\",\"mass\":\"78.2\",\"hair_color\":\"black\",\"skin_color\":\"fair\",\"eye_color\":\"brown\",\"birth_year\":\"31.5BBY\",\"gender\":\"male\",\"homeworld\":\"https://swapi.dev/api/planets/10/\",\"films\":[\"https://swapi.dev/api/films/2/\",\"https://swapi.dev/api/films/3/\",\"https://swapi.dev/api/films/5/\"],\"species\":[],\"vehicles\":[],\"starships\":[\"https://swapi.dev/api/starships/21/\"],\"created\":\"2014-12-15T12:49:32.457000Z\",\"edited\":\"2014-12-20T21:17:50.349000Z\",\"url\":\"https://swapi.dev/api/people/22/\"},{\"name\":\"Bossk\",\"height\":\"190\",\"mass\":\"113\",\"hair_color\":\"none\",\"skin_color\":\"green\",\"eye_color\":\"red\",\"birth_year\":\"53BBY\",\"gender\":\"male\",\"homeworld\":\"https://swapi.dev/api/planets/29/\",\"films\":[\"https://swapi.dev/api/films/2/\"],\"species\":[\"https://swapi.dev/api/species/7/\"],\"vehicles\":[],\"starships\":[],\"created\":\"2014-12-15T12:53:49.297000Z\",\"edited\":\"2014-12-20T21:17:50.355000Z\",\"url\":\"https://swapi.dev/api/people/24/\"},{\"name\":\"Lobot\",\"height\":\"175\",\"mass\":\"79\",\"hair_color\":\"none\",\"skin_color\":\"light\",\"eye_color\":\"blue\",\"birth_year\":\"37BBY\",\"gender\":\"male\",\"homeworld\":\"https://swapi.dev/api/planets/6/\",\"films\":[\"https://swapi.dev/api/films/2/\"],\"species\":[],\"vehicles\":[],\"starships\":[],\"created\":\"2014-12-15T13:01:57.178000Z\",\"edited\":\"2014-12-20T21:17:50.359000Z\",\"url\":\"https://swapi.dev/api/people/26/\"},{\"name\":\"Ackbar\",\"height\":\"180\",\"mass\":\"83\",\"hair_color\":\"none\",\"skin_color\":\"brown mottle\",\"eye_color\":\"orange\",\"birth_year\":\"41BBY\",\"gender\":\"male\",\"homeworld\":\"https://swapi.dev/api/planets/31/\",\"films\":[\"https://swapi.dev/api/films/3/\"],\"species\":[\"https://swapi.dev/api/species/8/\"],\"vehicles\":[],\"starships\":[],\"created\":\"2014-12-18T11:07:50.584000Z\",\"edited\":\"2014-12-20T21:17:50.362000Z\",\"url\":\"https://swapi.dev/api/people/27/\"},{\"name\":\"Nien Nunb\",\"height\":\"160\",\"mass\":\"68\",\"hair_color\":\"none\",\"skin_color\":\"grey\",\"eye_color\":\"black\",\"birth_year\":\"unknown\",\"gender\":\"male\",\"homeworld\":\"https://swapi.dev/api/planets/33/\",\"films\":[\"https://swapi.dev/api/films/3/\"],\"species\":[\"https://swapi.dev/api/species/10/\"],\"vehicles\":[],\"starships\":[\"https://swapi.dev/api/starships/10/\"],\"created\":\"2014-12-18T11:26:18.541000Z\",\"edited\":\"2014-12-20T21:17:50.371000Z\",\"url\":\"https://swapi.dev/api/people/31/\"}]}"
+ghci> eitherDecode @PersonIndex indexJSON
+Right (PersonIndex {pCount = 18, pNextPage = PersonPage 2, pPreviousPage = NoPage, pResults = [Person {pName = PersonName "Beru Whitesun lars", pHeight = Height 165, pMass = Mass 75.0, pHairColor = HairColors [BrownHair], pSkinColor = SkinColors [LightSkin], pEyeColor = BlueEye, pBirthYear = BBY 47.0, pGender = Female, pHomeworldId = HomeworldId 1, pFilmIds = [FilmId 1,FilmId 5,FilmId 6], pSpeciesIds = [], pVehicleIds = [], pStarshipIds = [], pCreatedAt = 2014-12-10 15:53:41.121 UTC, pEditedAt = 2014-12-20 21:17:50.319 UTC, pId = PersonId 7},Person {pName = PersonName "Biggs Darklighter", pHeight = Height 183, pMass = Mass 84.0, pHairColor = HairColors [BlackHair], pSkinColor = SkinColors [LightSkin], pEyeColor = BrownEye, pBirthYear = BBY 24.0, pGender = Male, pHomeworldId = HomeworldId 1, pFilmIds = [FilmId 1], pSpeciesIds = [], pVehicleIds = [], pStarshipIds = [StarshipId 12], pCreatedAt = 2014-12-10 15:59:50.509 UTC, pEditedAt = 2014-12-20 21:17:50.323 UTC, pId = PersonId 9},Person {pName = PersonName "Obi-Wan Kenobi", pHeight = Height 182, pMass = Mass 77.0, pHairColor = HairColors [AuburnHair,WhiteHair], pSkinColor = SkinColors [FairSkin], pEyeColor = BlueGreyEye, pBirthYear = BBY 57.0, pGender = Male, pHomeworldId = HomeworldId 20, pFilmIds = [FilmId 1,FilmId 2,FilmId 3,FilmId 4,FilmId 5,FilmId 6], pSpeciesIds = [], pVehicleIds = [VehicleId 38], pStarshipIds = [StarshipId 48,StarshipId 59,StarshipId 64,StarshipId 65,StarshipId 74], pCreatedAt = 2014-12-10 16:16:29.192 UTC, pEditedAt = 2014-12-20 21:17:50.325 UTC, pId = PersonId 10},Person {pName = PersonName "Chewbacca", pHeight = Height 228, pMass = Mass 112.0, pHairColor = HairColors [BrownHair], pSkinColor = SkinColors [UnknownSkinColor], pEyeColor = BlueEye, pBirthYear = BBY 200.0, pGender = Male, pHomeworldId = HomeworldId 14, pFilmIds = [FilmId 1,FilmId 2,FilmId 3,FilmId 6], pSpeciesIds = [SpeciesId 3], pVehicleIds = [VehicleId 19], pStarshipIds = [StarshipId 10,StarshipId 22], pCreatedAt = 2014-12-10 16:42:45.066 UTC, pEditedAt = 2014-12-20 21:17:50.332 UTC, pId = PersonId 13},Person {pName = PersonName "Jabba Desilijic Tiure", pHeight = Height 175, pMass = Mass 1358.0, pHairColor = HairColors [NoHairColor], pSkinColor = SkinColors [GreenTanSkin,BrownSkin], pEyeColor = OrangeEye, pBirthYear = BBY 600.0, pGender = Hermaphrodite, pHomeworldId = HomeworldId 24, pFilmIds = [FilmId 1,FilmId 3,FilmId 4], pSpeciesIds = [SpeciesId 5], pVehicleIds = [], pStarshipIds = [], pCreatedAt = 2014-12-10 17:11:31.638 UTC, pEditedAt = 2014-12-20 21:17:50.338 UTC, pId = PersonId 16},Person {pName = PersonName "Boba Fett", pHeight = Height 183, pMass = Mass 78.2, pHairColor = HairColors [BlackHair], pSkinColor = SkinColors [FairSkin], pEyeColor = BrownEye, pBirthYear = BBY 31.5, pGender = Male, pHomeworldId = HomeworldId 10, pFilmIds = [FilmId 2,FilmId 3,FilmId 5], pSpeciesIds = [], pVehicleIds = [], pStarshipIds = [StarshipId 21], pCreatedAt = 2014-12-15 12:49:32.457 UTC, pEditedAt = 2014-12-20 21:17:50.349 UTC, pId = PersonId 22},Person {pName = PersonName "Bossk", pHeight = Height 190, pMass = Mass 113.0, pHairColor = HairColors [NoHairColor], pSkinColor = SkinColors [GreenSkin], pEyeColor = RedEye, pBirthYear = BBY 53.0, pGender = Male, pHomeworldId = HomeworldId 29, pFilmIds = [FilmId 2], pSpeciesIds = [SpeciesId 7], pVehicleIds = [], pStarshipIds = [], pCreatedAt = 2014-12-15 12:53:49.297 UTC, pEditedAt = 2014-12-20 21:17:50.355 UTC, pId = PersonId 24},Person {pName = PersonName "Lobot", pHeight = Height 175, pMass = Mass 79.0, pHairColor = HairColors [NoHairColor], pSkinColor = SkinColors [LightSkin], pEyeColor = BlueEye, pBirthYear = BBY 37.0, pGender = Male, pHomeworldId = HomeworldId 6, pFilmIds = [FilmId 2], pSpeciesIds = [], pVehicleIds = [], pStarshipIds = [], pCreatedAt = 2014-12-15 13:01:57.178 UTC, pEditedAt = 2014-12-20 21:17:50.359 UTC, pId = PersonId 26},Person {pName = PersonName "Ackbar", pHeight = Height 180, pMass = Mass 83.0, pHairColor = HairColors [NoHairColor], pSkinColor = SkinColors [BrownMottleSkin], pEyeColor = OrangeEye, pBirthYear = BBY 41.0, pGender = Male, pHomeworldId = HomeworldId 31, pFilmIds = [FilmId 3], pSpeciesIds = [SpeciesId 8], pVehicleIds = [], pStarshipIds = [], pCreatedAt = 2014-12-18 11:07:50.584 UTC, pEditedAt = 2014-12-20 21:17:50.362 UTC, pId = PersonId 27},Person {pName = PersonName "Nien Nunb", pHeight = Height 160, pMass = Mass 68.0, pHairColor = HairColors [NoHairColor], pSkinColor = SkinColors [GreySkin], pEyeColor = BlackEye, pBirthYear = UnknownBirthYear, pGender = Male, pHomeworldId = HomeworldId 33, pFilmIds = [FilmId 3], pSpeciesIds = [SpeciesId 10], pVehicleIds = [], pStarshipIds = [StarshipId 10], pCreatedAt = 2014-12-18 11:26:18.541 UTC, pEditedAt = 2014-12-20 21:17:50.371 UTC, pId = PersonId 31}]})
 ```
 
 ## Notes
 
 Dates are formatted in DD-MM-YYYY.
+
+### Day 9 - 06/12/2021
+
+- Turns out I missed a few cases of colors
+- I wanted an easier time in getting information out of a URL. Manually parsing 
+it every time wasn't that convenient so I opted for a new type called `UrlData`
+with the following definition:
+
+``` haskell
+data UrlData = UrlData
+  { udSubdir :: [Text]
+  , udParams :: Map Text Text
+  }
+```
+
+The two key things I noticed I needed a lot was the subdirectory and the URL
+parameters. 
+
+#### `udSubdir`
+
+The subdirectory is whatever follows the base URL which in this case
+is anything after `https://swapi.dev/api/`. e.g `people/1/` gets parsed into 
+`["people", "1"] :: [Text]`. Not the _most_ convenient since I still have to
+potentially convert the person ID into a numeric type but I think it's good for
+whatever I need it for.
+
+#### `udParams`
+
+This is useful when trying to get/encode information about, well, URL params.
+In SWAPI there are two that I noticed (so far), which was `search` for any search
+query, and `page` for paginating any indexing/searching of a resource. 
+
+`?search=r2&page=1` gets parsed into `Map.fromList [("search" "r2"), ("page", "1")]`
+. Pretty cool.
+
+Having this domain type makes it easier to deal with this sort of thing. I don't
+have to care about the base URL. I also don't need to care about how the URL is
+structured. I only care about the data I get from it.
 
 ### Day 8 - 03/12/2021
 
