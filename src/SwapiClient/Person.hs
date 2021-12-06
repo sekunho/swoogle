@@ -91,7 +91,6 @@ data Gender
 newtype PersonName = PersonName Text
   deriving Show
 
--- TODO(sekun): Add other person attributes
 data Person = Person
   { pName             :: PersonName     -- Name of person
   , pHeight           :: Height         -- Height of person can be Nothing
@@ -128,9 +127,7 @@ data PersonIndex = PersonIndex
   deriving Show
 
 --------------------------------------------------------------------------------
--- INSTANCES
--- TODO: Implement `FromJSON` and `ToJSON` instances for `SkinColor`
--- TODO: Implement `FromJSON` and `ToJSON` instances for `EyeColor`
+-- Instances
 
 instance FromJSON (Height :: Type) where
   parseJSON :: Value -> Parser Height
@@ -172,7 +169,6 @@ instance ToJSON (Mass :: Type) where
 
 
 instance FromJSON (BirthYear :: Type) where
-  -- TODO(sekun): Add instance type signature
   parseJSON :: Value -> Parser BirthYear
   parseJSON =
    Aeson.withText "BirthYear" $
