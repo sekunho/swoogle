@@ -70,7 +70,7 @@ Resources/schemas that can be encoded/decoded to and from JSON respectively.
   - [x] View
 - [ ] Film
 - [ ] Starship
-- [ ] Vehicle
+- [ ] Vehicle (Try to use the autoderive)
 - [ ] Species
 - [ ] Planet
 
