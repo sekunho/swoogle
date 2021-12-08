@@ -94,6 +94,21 @@ Right (PersonIndex {pCount = 18, pNextPage = PersonPage 2, pPreviousPage = NoPag
 
 Dates are formatted in DD-MM-YYYY.
 
+### Day 10 - 08/12/2021
+
+- Decided to eventually experiment with deriving `aeson` instances with 
+`Generic`, but only for anything related with the `Vehicle` resource. Since I 
+still want to practice the basics more.
+- I've decided to use `tasty` over `sandwich` just because the former has 
+golden tests. Golden tests would be useful for the JSON output in this case since
+it's a bad idea to all that in a source file. Also, pretty annoying to modify
+if that's the case.
+- I *may* include `QuickCheck` but I still have to think for what cases I would
+use it for. Although I do see the value in generating tests just based on the
+properties I state.
+
+Not really doing much today because this day was intended to be a day off.
+
 ### Day 9 - 06/12/2021
 
 - Turns out I missed a few cases of colors
