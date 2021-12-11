@@ -14,7 +14,7 @@ discovered.
 ## What's this about?
 
 `swapi` is a client library (without much bells and whistles) for SWAPI
-([Star Wars API](https://swapi.dev)). Making this involves some of the commonly 
+([Star Wars API](https://swapi.dev)). Making this involves some of the commonly
 used Haskell libraries like `aeson`, `containers`, an HTTP client library I have
 not yet decided on, etc. and other basic Haskell concepts to be aware of – which 
 makes it a good candidate for a starter project! Of course it doesn't require a 
@@ -38,6 +38,8 @@ when I'm done. Subscribe to stay tuned! :)
   - [Queryable resources](#queryable-resources)
   - [Parseable resources](#parseable-resources)
 - [Notes](#notes)
+  - [Day 11 - 11/12/2021](#day-11---11122021)
+  - [Day 10 - 08/12/2021](#day-10---08122021)
   - [Day 9 - 06/12/2021](#day-9---06122021)
   - [Day 8 - 03/12/2021](#day-8---03122021)
   - [Day 7 - 01/12/2021](#day-7---01122021)
@@ -93,6 +95,16 @@ Right (PersonIndex {pCount = 18, pNextPage = PersonPage 2, pPreviousPage = NoPag
 ## Notes
 
 Dates are formatted in DD-MM-YYYY.
+
+### Day 11 - 11/12/2021
+
+- Did some digging around for the `tasty` providers I'll need. I think 
+`tasty-hunit`, and `tasty-golden` are good for now.
+- Added `tasty-discover` to make test files less of a pain to manage. Seems quite
+similar with `hspec-discover`.
+- I just copied the sample test cases from `tasty`'s docs. I'll be replacing it
+with my own soon.
+- I'll probably start testing the `Url` module first since it's pretty tiny.
 
 ### Day 10 - 08/12/2021
 
