@@ -72,5 +72,8 @@ spec_getId =
     Hspec.it "gets ID from planets resource URL" $ do
       Url.getId (Url.baseUrl <> "planets/20/") `Hspec.shouldBe` Just 20
 
+    Hspec.it "gets ID from URL without trailing forwardslash" $ do
+      Url.getId (Url.baseUrl <> "planets/20") `Hspec.shouldBe` Just 20
+
     Hspec.it "gets Nothing from an invalid resource" $ do
       Url.getId (Url.baseUrl <> "peepeepoopoo/1/") `Hspec.shouldBe` Nothing
