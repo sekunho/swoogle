@@ -108,6 +108,21 @@ test are:
 I think it would be cool if I could use `SmallCheck` to handle most of these things
 since it would save a lot of time. I have to read on it though.
 
+- I refactored `getId` to use `urlToUrlData`. So now I don't have any janky 
+pattern matching, and it's much easier to understand what's happening thanks to
+`UrlData` :).
+- I decided to change `getId` to evaluate to a `Maybe Int` rather than an 
+`Either String Int` just so that I could compose things better. This *might* be
+a terrible idea because I lose out on some important errors encoded in `String`.
+- Wrote some test cases for `resourceUrl` and `getId`. It's a bit of a pain to
+deal with `getId` so I added a note to refactor it with property-based testing.
+I used [this](https://github.com/sshine/hs-jq) to check how to work with `Hspec`
+with `tasty-hspec`, and it turns out I had to add the `hspec` library too since
+it doesn't reexport the types and functions for me. Not that inconvenient though.
+- I'm thinking twice about using `SmallCheck` but unfortunately, `validity` is
+not a `tasty` provider. So I still have to compare between `SmallCheck` and
+`Hedgehog`.
+
 ### Day 11 - 11/12/2021
 
 - Did some digging around for the `tasty` providers I'll need. I think 
