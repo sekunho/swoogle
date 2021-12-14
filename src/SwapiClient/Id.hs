@@ -71,8 +71,8 @@ instance FromJSON (FilmId :: Type) where
     Aeson.withText "FilmID" $
       \filmUrl ->
         case Url.getId filmUrl of
-          Right intId -> pure . FilmId $ intId
-          Left e -> fail e
+          Just resourceId -> pure . FilmId $ resourceId
+          Nothing -> fail "Unable to get ID from URL"
 
 instance ToJSON (FilmId :: Type) where
   toJSON :: FilmId -> Value
@@ -84,8 +84,8 @@ instance FromJSON (HomeworldId :: Type) where
     Aeson.withText "HomeworldId" $
       \homeworldUrl ->
         case Url.getId homeworldUrl of
-          Right intId -> pure . HomeworldId $ intId
-          Left e -> fail e
+          Just resourceId -> pure . HomeworldId $ resourceId
+          Nothing -> fail "Unable to get ID from URL"
 
 instance ToJSON (HomeworldId :: Type) where
   toJSON :: HomeworldId -> Value
@@ -97,8 +97,8 @@ instance FromJSON (SpeciesId :: Type) where
     Aeson.withText "SpeciesId" $
       \speciesUrl ->
         case Url.getId speciesUrl of
-          Right intId -> pure . SpeciesId $ intId
-          Left e -> fail e
+          Just resourceId -> pure . SpeciesId $ resourceId
+          Nothing -> fail "Unable to get ID from URL"
 
 instance ToJSON (SpeciesId :: Type) where
   toJSON :: SpeciesId -> Value
@@ -110,8 +110,8 @@ instance FromJSON (VehicleId :: Type) where
     Aeson.withText "VehicleId" $
       \vehicleUrl ->
         case Url.getId vehicleUrl of
-          Right intId -> pure . VehicleId $ intId
-          Left e -> fail e
+          Just resourceId -> pure . VehicleId $ resourceId
+          Nothing -> fail "Unable to get ID from URL"
 
 instance ToJSON (VehicleId :: Type) where
   toJSON :: VehicleId -> Value
@@ -123,8 +123,8 @@ instance FromJSON (StarshipId :: Type) where
     Aeson.withText "StarshipId" $
       \starshipUrl ->
         case Url.getId starshipUrl of
-          Right intId -> pure . StarshipId $ intId
-          Left e -> fail e
+          Just resourceId -> pure . StarshipId $ resourceId
+          Nothing -> fail "Unable to get ID from URL"
 
 instance ToJSON (StarshipId :: Type) where
   toJSON :: StarshipId -> Value
@@ -137,8 +137,8 @@ instance FromJSON (PersonId :: Type) where
     Aeson.withText "PersonId" $
       \personUrl ->
         case Url.getId personUrl of
-          Right intId -> pure . PersonId $ intId
-          Left e -> fail e
+          Just resourceId -> pure . PersonId $ resourceId
+          Nothing -> fail "Unable to get ID from URL"
 
 instance ToJSON (PersonId :: Type) where
   toJSON :: PersonId -> Value

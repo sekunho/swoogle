@@ -38,6 +38,7 @@ when I'm done. Subscribe to stay tuned! :)
   - [Queryable resources](#queryable-resources)
   - [Parseable resources](#parseable-resources)
 - [Notes](#notes)
+  - [Day 12 - 14/12/2021](#day-12---14122021)
   - [Day 11 - 11/12/2021](#day-11---11122021)
   - [Day 10 - 08/12/2021](#day-10---08122021)
   - [Day 9 - 06/12/2021](#day-9---06122021)
@@ -95,6 +96,17 @@ Right (PersonIndex {pCount = 18, pNextPage = PersonPage 2, pPreviousPage = NoPag
 ## Notes
 
 Dates are formatted in DD-MM-YYYY.
+
+### Day 12 - 14/12/2021
+
+I'm gonna spend this day writing tests for the existing code. Parts I want to
+test are:
+
+* `Url` module
+* `aeson` instances
+
+I think it would be cool if I could use `SmallCheck` to handle most of these things
+since it would save a lot of time. I have to read on it though.
 
 ### Day 11 - 11/12/2021
 

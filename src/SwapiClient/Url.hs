@@ -6,6 +6,7 @@ module SwapiClient.Url
   , parseKeyValue
   , urlToUrlData
   , urlDataToUrl
+  , baseUrl
   ) where
 
 import Data.Text (Text)
@@ -67,16 +68,31 @@ resourceUrl resource =
 -- Gets the ID of the resource URL
 -- > getId ("https://swapi.dev/api/people/1/" :: Text)
 -- Right 1
-getId :: Text -> Either String Int
-getId url =
-  case Text.split (== '/') url of
-    [_, _, _, _, _, resourceId, _] ->
-      case Text.Read.decimal resourceId of
-        Right (intId, "") -> Right intId
-        Right _ -> Left "ERROR: Unexpected ID format"
-        Left e -> Left e
+-- TODO: Maybe make a sum type for all the ID newtypes?
+getId :: Text -> Maybe Int
+getId url = do
+  urlData <- urlToUrlData url
+  textId <- f urlData
 
-    _ -> Left "ERROR: Unexpected URL format"
+  decimalMaybe textId
+
+  where
+    f :: UrlData -> Maybe Text
+    f urlData =
+      case udSubdir urlData of
+        ["people", peopleId]      -> Just peopleId
+        ["films", filmId]         -> Just filmId
+        ["starships", starshipId] -> Just starshipId
+        ["vehicles", vehicleId]   -> Just vehicleId
+        ["species", speciesId]    -> Just speciesId
+        ["planets", planetId]     -> Just planetId
+        _                         -> Nothing
+
+decimalMaybe :: Integral a => Text -> Maybe a
+decimalMaybe t = case Text.Read.decimal t of
+  Right (intId, "") -> Just intId
+  Right (_, _) -> Nothing
+  Left _ -> Nothing
 
 -- I do not like this. I'm sure there's a URL library out there but this'll do.
 urlToUrlData :: Text -> Maybe UrlData
