@@ -104,17 +104,138 @@ I wrote more tests for the `Url` module, and discovered some bugs in the process
 I am happy I decided to write tests because without it, I would probably be
 frustrated in the future.
 
-Turns out there was an issue in the parsing of `UrlData` to a url:
+Turns out there was an issue in the parsing of `UrlData` to a url. Here's the
+old version of `urlDataToUrl :: UrlData -> Text`:
 
-- It didn't separate the subdirectories with `/`, and it also did not end with a
-`/`, which it should.
-- I got the logic reversed for parsing URL parameters
-- Didnt' prepend the params with `?`
-- Didn't intersperse the params with `&`
+``` haskell
+urlDataToUrl :: UrlData -> Text
+urlDataToUrl urlData =
+  mconcat
+    [ baseUrl
+    , mconcat . udSubdir $ urlData
+    , paramsToUrlParams . udParams $ urlData
+    ]
+  where
+    ...
+```
 
-There was also an issue with `urlToUrlData`: if there were no subdirs in a URL,
+#### Issue #1: It didn't separate and end the subdirectories with `/`
+
+I must've been extremely sleep deprived when I wrote this because there's no way
+`mconcat . udSubdir $ urlData` would've worked that way. Anyway, because `baseUrl`
+always ends with a `/`, I'm only concerned with interspersing and ending the
+subdirectories with `/`.
+
+I decided to use `foldl'`, not `foldr` since I don't have to deal with infinite
+data, which I had to make a function for it.
+
+
+``` diff
+urlDataToUrl :: UrlData -> Text
+urlDataToUrl urlData =
+  mconcat
+    [ baseUrl
+-   , mconcat . udSubdir $ urlData
++   , subdirToUrlSubdir . udSubdir $ urlData
+    , paramsToUrlParams . udParams $ urlData
+    ]
+  where
++   subdirToUrlSubdir :: [Text] -> Text
++   subdirToUrlSubdir = mconcat . reverse . foldl' (\acc el -> "/":el:acc) []
+```
+
+The reason for prepending the next element to the list and then reversing it is
+because I didn't want to spend O(n) in each iteration. This way it only happens
+during the reverse and the concatenation.
+
+#### Issue #2: I got the logic reversed for parsing URL parameters
+
+This one was also pretty stupid. I have this other helper function in 
+`urlDataToUrl`:
+
+``` diff
+    paramsToUrlParams :: Map Text Text -> Text
+    paramsToUrlParams params
+-     | Map.null params =
+-       Map.foldlWithKey'
+-         (\acc key val -> acc <> key <> "=" <> val)
+-         mempty
+-         params
+-     | otherwise = mempty
++     | Map.null params = mempty
++     | otherwise =
++         Map.foldlWithKey'
++           (\acc key val -> acc <> key <> "=" <> val)
++           mempty
++           params
+```
+
+If there are no parameters (empty map), then it's gonna perform the fold, which
+is supposed to be for when there are parameters. So yeah, just a simple swap
+would do just fine.
+
+#### Issue #3: What about `?` and `&`?
+
+Yep, I forgot about those as well. Fortunately, not too difficult to do.
+
+``` diff
+    paramsToUrlParams :: Map Text Text -> Text
+    paramsToUrlParams params
+      | Map.null params = mempty
+      | otherwise =
+-         Map.foldlWithKey'
+-           (\acc key val -> acc <> key <> "=" <> val)
+            mempty
+            params
+      | Map.null params = mempty
+      | otherwise =
++       Text.cons '?' $
++         Text.drop 1 $
++           Map.foldlWithKey'
++             (\acc key val -> acc <> "&" <> key <> "=" <> val)
+              mempty
+              params
+```
+
+#### Issue #4: `[""]` if there are no subdirectories
+
+There was also an issue with `urlToUrlData`. 
+
+``` haskell
+urlToUrlData :: Text -> Maybe UrlData
+urlToUrlData strippedUrl = do
+  urlDataText <- Text.stripPrefix baseUrl strippedUrl
+
+  let (subdirText:paramsText) = Text.splitOn "/?" urlDataText
+
+      subdirs :: [Text]
+      subdirs = Text.split (== '/') . Text.dropWhileEnd (== '/') $ subdirText
+
+      params :: Map Text Text
+      params = Map.fromList $
+        map parseKeyValue $
+          concatMap (Text.split (== '&')) paramsText
+
+  pure (UrlData { udSubdir = subdirs, udParams = params })
+```
+
 e.g `https://swapi.dev/api/` (I treated this as a base URL), it would end up with
 `UrlData { udSubdir = [""], udParams = Map.empty }`. The `[""]` being useless.
+
+`subdirText` is essentially the subdirectories encoded as `Text`. If there are
+no subdirectories, then, well, it's going to be `""`. If I parse it 
+(look at `subdirs :: [Text]`) then the entire thing is going to end with `[""]`
+which makes sense. So a simpler way would be to just first check if what I'm
+dealing with is an empty text, and if it is I just give back an empty list.
+
+``` diff haskell
+subdirs :: [Text]
+- subdirs = Text.split (== '/') . Text.dropWhileEnd (== '/') $ subdirText
++ subdirs =
++   if Text.null subdirText
++   then []
++   else Text.split (== '/') . Text.dropWhileEnd (== '/') $ subdirText
+```
 
 Lots of issues in general that I caught with pretty simple tests. Convenient.
 This is just the `Url` module though. I wonder what other bugs I'll discover
