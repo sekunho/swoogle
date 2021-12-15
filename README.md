@@ -28,8 +28,8 @@ journey in one video. I don't have an editor so I usually do all the editing
 myself (which takes a lot of time). There's a lot of raw footage I'm gonna have
 to go through unfortunately.
 
-Whenever it's ready, it'll  be up in my 
-[YouTube channel](https://www.youtube.com/channel/UCUa0_AVebTfZzyzXjfB4dJQ/) 
+Whenever it's ready, it'll  be up on 
+[youtube.com/sekunho](https://www.youtube.com/sekunho/) 
 when I'm done. Subscribe to stay tuned! :)
 
 ## Table of Contents
