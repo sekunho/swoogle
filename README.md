@@ -38,6 +38,7 @@ when I'm done. Subscribe to stay tuned! :)
   - [Queryable resources](#queryable-resources)
   - [Parseable resources](#parseable-resources)
 - [Notes](#notes)
+  - [Day 13 - 15/12/2021](#day-13---15122021)
   - [Day 12 - 14/12/2021](#day-12---14122021)
   - [Day 11 - 11/12/2021](#day-11---11122021)
   - [Day 10 - 08/12/2021](#day-10---08122021)
@@ -96,6 +97,28 @@ Right (PersonIndex {pCount = 18, pNextPage = PersonPage 2, pPreviousPage = NoPag
 ## Notes
 
 Dates are formatted in DD-MM-YYYY.
+
+### Day 13 - 15/12/2021
+
+I wrote more tests for the `Url` module, and discovered some bugs in the process.
+I am happy I decided to write tests because without it, I would probably be
+frustrated in the future.
+
+Turns out there was an issue in the parsing of `UrlData` to a url:
+
+- It didn't separate the subdirectories with `/`, and it also did not end with a
+`/`, which it should.
+- I got the logic reversed for parsing URL parameters
+- Didnt' prepend the params with `?`
+- Didn't intersperse the params with `&`
+
+There was also an issue with `urlToUrlData`: if there were no subdirs in a URL,
+e.g `https://swapi.dev/api/` (I treated this as a base URL), it would end up with
+`UrlData { udSubdir = [""], udParams = Map.empty }`. The `[""]` being useless.
+
+Lots of issues in general that I caught with pretty simple tests. Convenient.
+This is just the `Url` module though. I wonder what other bugs I'll discover
+in the instances.
 
 ### Day 12 - 14/12/2021
 
