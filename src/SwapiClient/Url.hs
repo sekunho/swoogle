@@ -3,7 +3,6 @@ module SwapiClient.Url
   , UrlData (UrlData, udSubdir, udParams)
   , resourceUrl
   , getId
-  , parseKeyValue
   , urlToUrlData
   , urlDataToUrl
   , baseUrl
@@ -141,8 +140,6 @@ urlDataToUrl urlData =
               mempty
               params
 
-
--- TODO: Fix?? I am in pain.
 -- Keeps accumulating as `key` until it encounters the first `=`. Once it does,
 -- every succeeding character is accumulated as a `value`.
 parseKeyValue :: Text -> (Text, Text)
