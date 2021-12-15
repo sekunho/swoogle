@@ -62,7 +62,6 @@ test-suite swapi-client-test
       , ImportQualifiedPost
 
     other-modules:
-      MyLibTest
       UrlTest
 
     ghc-options:
