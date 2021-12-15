@@ -9,6 +9,7 @@ module SwapiClient.Url
   , baseUrl
   ) where
 
+import Data.List (foldl')
 import Data.Text (Text)
 import Data.Text qualified as Text
   ( append
@@ -18,6 +19,8 @@ import Data.Text qualified as Text
   , take
   , drop
   , dropWhileEnd
+  , null
+  , cons
   )
 import Data.Text.Read qualified as Text.Read (decimal)
 import Data.Map.Strict (Map)
@@ -45,7 +48,7 @@ data UrlData = UrlData
     -- e.g "hello/?key1=val1" = fromList [("key1", "val1")]
   , udParams :: Map Text Text
   }
-  deriving Show
+  deriving (Eq, Show)
 
 --------------------------------------------------------------------------------
 -- Functions
@@ -102,7 +105,10 @@ urlToUrlData strippedUrl = do
   let (subdirText:paramsText) = Text.splitOn "/?" urlDataText
 
       subdirs :: [Text]
-      subdirs = Text.split (== '/') . Text.dropWhileEnd (== '/') $ subdirText
+      subdirs =
+        if Text.null subdirText
+        then []
+        else Text.split (== '/') . Text.dropWhileEnd (== '/') $ subdirText
 
       params :: Map Text Text
       params = Map.fromList $
@@ -117,18 +123,24 @@ urlDataToUrl :: UrlData -> Text
 urlDataToUrl urlData =
   mconcat
     [ baseUrl
-    , mconcat . udSubdir $ urlData
+    , subdirToUrlSubdir . udSubdir $ urlData
     , paramsToUrlParams . udParams $ urlData
     ]
   where
+    subdirToUrlSubdir :: [Text] -> Text
+    subdirToUrlSubdir = mconcat . reverse . foldl' (\acc el -> "/":el:acc) []
+
     paramsToUrlParams :: Map Text Text -> Text
     paramsToUrlParams params
-      | Map.null params =
-        Map.foldlWithKey'
-          (\acc key val -> acc <> key <> "=" <> val)
-          mempty
-          params
-      | otherwise = mempty
+      | Map.null params = mempty
+      | otherwise =
+        Text.cons '?' $
+          Text.drop 1 $
+            Map.foldlWithKey'
+              (\acc key val -> acc <> "&" <> key <> "=" <> val)
+              mempty
+              params
+
 
 -- TODO: Fix?? I am in pain.
 -- Keeps accumulating as `key` until it encounters the first `=`. Once it does,

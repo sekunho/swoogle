@@ -1,10 +1,15 @@
 module UrlTest
   ( spec_resourceUrl
   , spec_getId
+  , spec_urlToUrlData
+  , spec_urlDataToUrl
   ) where
 
 --------------------------------------------------------------------------------
 
+import Data.Map.Strict (Map)
+import Data.Map.Strict qualified as Map (fromList, empty)
+import Data.Text (Text)
 import Test.Hspec (Spec)
 import Test.Hspec qualified as Hspec (describe, shouldBe, it)
 
@@ -20,8 +25,15 @@ import SwapiClient.Url
       , Species
       , Planet
       )
+  , UrlData (UrlData, udParams, udSubdir)
   )
-import SwapiClient.Url qualified as Url (baseUrl, resourceUrl, getId)
+import SwapiClient.Url qualified as Url
+  ( baseUrl
+  , resourceUrl
+  , getId
+  , urlToUrlData
+  , urlDataToUrl
+  )
 
 --------------------------------------------------------------------------------
 -- Specs
@@ -77,3 +89,76 @@ spec_getId =
 
     Hspec.it "gets Nothing from an invalid resource" $ do
       Url.getId (Url.baseUrl <> "peepeepoopoo/1/") `Hspec.shouldBe` Nothing
+
+    Hspec.it "gets Nothing when there's no ID" $ do
+      Url.getId (Url.baseUrl <> "people/") `Hspec.shouldBe` Nothing
+
+spec_urlToUrlData :: Spec
+spec_urlToUrlData =
+  Hspec.describe "urlToUrlData" $ do
+    Hspec.it "parses URL with params" $ do
+      let
+        url :: Text
+        url = Url.baseUrl <> "people/?search=r2d2&page=1"
+
+        urlParams :: Map Text Text
+        urlParams = Map.fromList [ ("search", "r2d2"), ("page", "1")]
+
+      Url.urlToUrlData url `Hspec.shouldBe`
+        Just (UrlData { udSubdir = ["people"], udParams = urlParams })
+
+    Hspec.it "parses a URL without subdirectories or params" $ do
+      let
+        urlData :: UrlData
+        urlData = UrlData { udSubdir = [], udParams = Map.empty }
+
+      Url.urlToUrlData Url.baseUrl `Hspec.shouldBe` Just urlData
+
+    Hspec.it "parses URL without params but with subdirectories" $ do
+      let
+        url :: Text
+        url = Url.baseUrl <> "some/subdirectory/path/with/id/1/"
+
+        urlData :: UrlData
+        urlData = UrlData
+          { udSubdir = ["some", "subdirectory", "path", "with", "id", "1"]
+          , udParams = Map.empty
+          }
+
+      Url.urlToUrlData url `Hspec.shouldBe` Just urlData
+
+    Hspec.it "parses an unexpected base URL" $ do
+      Url.urlToUrlData "https://example.com/" `Hspec.shouldBe` Nothing
+
+spec_urlDataToUrl :: Spec
+spec_urlDataToUrl =
+  Hspec.describe "urlDataTourl" $ do
+    Hspec.it "parses UrlData with params and subdir" $ do
+      let
+        urlData :: UrlData
+        urlData = UrlData
+          { udSubdir = ["people"]
+          , udParams = Map.fromList [("search", "r2d2"), ("page", "1")]
+          }
+
+        url :: Text
+        url = Url.baseUrl <> "people/?page=1&search=r2d2"
+
+      Url.urlDataToUrl urlData `Hspec.shouldBe` url
+
+    Hspec.it "parses UrlData without params, with subdirs" $ do
+      let
+        urlData :: UrlData
+        urlData = UrlData { udSubdir = ["people", "1"], udParams = Map.empty }
+
+        url :: Text
+        url = Url.baseUrl <> "people/1/"
+
+      Url.urlDataToUrl urlData `Hspec.shouldBe` url
+
+    Hspec.it "parses UrlData without params, and without subdirs" $ do
+      let
+        urlData :: UrlData
+        urlData = UrlData { udSubdir = [], udParams = Map.empty }
+
+      Url.urlDataToUrl urlData `Hspec.shouldBe` Url.baseUrl
