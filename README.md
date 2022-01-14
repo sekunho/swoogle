@@ -38,6 +38,7 @@ when I'm done. Subscribe to stay tuned! :)
   - [Queryable resources](#queryable-resources)
   - [Parseable resources](#parseable-resources)
 - [Notes](#notes)
+  - [Day 14 - 14/01/2022](#day-14---14012022)
   - [Day 13 - 15/12/2021](#day-13---15122021)
   - [Day 12 - 14/12/2021](#day-12---14122021)
   - [Day 11 - 11/12/2021](#day-11---11122021)
@@ -145,6 +146,45 @@ Easiest solution: Delete golden file, copy test file and rename it as golden
 file. It's exactly the same in terms of contents anyway.
 
 Edit: Maybe the term is not EOF but something else that I'm not sure of.
+
+#### Incorrect field-value pairings when decoding root JSON
+
+After working on the golden test, I worked on a spec test for decoding to `Root`.
+Then I got some errors saying that it doesn't match, but I noticed that the
+field-value pairs are incorrect! For instance, `https://swapi.dev/api/people/`
+is supposed to be bounded to `rPeople`, but was instead bounded to some other
+field of `Root`. Turns out I just forgot to rearrange it in the right order, since
+I previously rearranged the object field order when encoding `Root`.
+
+``` haskell
+instance FromJSON (Root :: Type) where
+  parseJSON :: Value -> Parser Root
+  parseJSON =
+    Aeson.withObject "Root" $
+      \rootObj ->
+        Root
+          <$> rootObj .: "films"
+          <*> rootObj .: "people"
+          <*> rootObj .: "planets"
+          <*> rootObj .: "species"
+          <*> rootObj .: "starships"
+          <*> rootObj .: "vehicles"
+
+instance ToJSON (Root :: Type) where
+  toJSON :: Root -> Value
+  toJSON root =
+    Aeson.object
+      [ "films"     .= rFilms root
+      , "people"    .= rPeople root
+      , "planets"   .= rPlanets root
+      , "species"   .= rSpecies root
+      , "starships" .= rStarships root
+      , "vehicles"  .= rVehicles root
+      ]
+```
+
+Now I got these two simple tests for `Root`! I was able to catch a mistake that
+I just introduced a commit ago thanks to one test case. Awesome.
 
 ### Day 13 - 15/12/2021
 

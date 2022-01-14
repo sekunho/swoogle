@@ -1,5 +1,12 @@
 module SwapiClient.Root
-  ( Root (..)
+  ( Root
+    ( rFilms
+    , rPeople
+    , rPlanets
+    , rSpecies
+    , rStarships
+    , rVehicles
+    )
   ) where
 
 --------------------------------------------------------------------------------
@@ -26,7 +33,7 @@ data Root = Root
   , rStarships :: Text
   , rVehicles  :: Text
   }
-  deriving Show
+  deriving (Eq, Show)
 
 --------------------------------------------------------------------------------
 -- Instances
@@ -37,21 +44,21 @@ instance FromJSON (Root :: Type) where
     Aeson.withObject "Root" $
       \rootObj ->
         Root
-          <$> rootObj .: "people"
+          <$> rootObj .: "films"
+          <*> rootObj .: "people"
           <*> rootObj .: "planets"
-          <*> rootObj .: "films"
           <*> rootObj .: "species"
-          <*> rootObj .: "vehicles"
           <*> rootObj .: "starships"
+          <*> rootObj .: "vehicles"
 
 instance ToJSON (Root :: Type) where
   toJSON :: Root -> Value
   toJSON root =
     Aeson.object
-      [ "films" .= rFilms root
-      , "people" .= rPeople root
-      , "planets" .= rPlanets root
-      , "species" .= rSpecies root
+      [ "films"     .= rFilms root
+      , "people"    .= rPeople root
+      , "planets"   .= rPlanets root
+      , "species"   .= rSpecies root
       , "starships" .= rStarships root
-      , "vehicles" .= rVehicles root
+      , "vehicles"  .= rVehicles root
       ]
