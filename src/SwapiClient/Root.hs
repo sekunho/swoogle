@@ -19,12 +19,12 @@ import Data.Text (Text)
 -- Data types
 
 data Root = Root
-  { rPeople    :: Text
+  { rFilms     :: Text
+  , rPeople    :: Text
   , rPlanets   :: Text
-  , rFilms     :: Text
   , rSpecies   :: Text
-  , rVehicles  :: Text
   , rStarships :: Text
+  , rVehicles  :: Text
   }
   deriving Show
 
@@ -48,10 +48,10 @@ instance ToJSON (Root :: Type) where
   toJSON :: Root -> Value
   toJSON root =
     Aeson.object
-      [ "people" .= rPeople root
+      [ "films" .= rFilms root
+      , "people" .= rPeople root
       , "planets" .= rPlanets root
-      , "films" .= rFilms root
       , "species" .= rSpecies root
-      , "vehicles" .= rVehicles root
       , "starships" .= rStarships root
+      , "vehicles" .= rVehicles root
       ]

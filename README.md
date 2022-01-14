@@ -98,6 +98,54 @@ Right (PersonIndex {pCount = 18, pNextPage = PersonPage 2, pPreviousPage = NoPag
 
 Dates are formatted in DD-MM-YYYY.
 
+### Day 14 - 14/01/2022 
+
+Yeah I'm alive, still. Don't know how to feel about this.
+
+Pretty much a full month since I last worked on this. Easiest explanation is 
+category 5 typhoon hit my city and destroyed the electric + internet + water
+infrastructure. So, I still don't have electricity, and I had to plug an 
+extremely long extension cord from my neighbor's house all the way to my house 
+just to have ONE outlet to charge stuff. No internet yet either, using mobile 
+data to do everything. LTE here is *terrible*. Crappy situation to be in. 
+But at least, today, I can use the computer although without the fiber internet :(. 
+Fiber cable got torn to shreds by the wind and fallen poles. Yet another thing 
+I'm not sure when it'll get fixed.
+
+I have spent 29 days SO FAR with no electricity, intermittent running water, and
+no fiber internet, barely any cell reception, and barely any LTE. But I'll have
+to make do with this situation until I get it all repaired. Maybe I'll get it
+all back by late February 2022, or even March 2022. "Perks" of living in a 
+developing country.
+
+Anyway, I'm planning on moving this into a blog but I haven't gotten around on
+setting one up yet. Hopefully I'll be able to make each day more detailed rather
+than just overviews of what happened. So going deeper into the code and all that
+stuff. I'm not sure when that will happen, but I guess if I want to get a job,
+I'll need one.
+
+#### Golden test failing due to EOF
+
+This one was an annoying one. I wasn't sure what I was doing wrong prior to
+figuring it out, but wow, I feel extremely irate that this was simpler than
+expected, and quite obvious too but I ignored my hunch.
+
+So turns out `emacs` autoinserts line endings every time you save a file, which
+is normally harmless and actually convenient. But `tasty-golden`, specifically
+`Tasty.Golden.goldenVsFile` (`*VsString` as well) takes EOF seriously and treats
+them as different things if you compare a file with EOF to a file without EOF.
+Fair I guess, but still annoying.
+
+Problem is, I tried making it more consistent in both files with the use of
+different text editors like vim, but for some reason, they render it the same
+way. I don't know what's up with this; it doesn't show a next line to move the
+cursor to in the golden file, unlike emacs.
+
+Easiest solution: Delete golden file, copy test file and rename it as golden
+file. It's exactly the same in terms of contents anyway.
+
+Edit: Maybe the term is not EOF but something else that I'm not sure of.
+
 ### Day 13 - 15/12/2021
 
 I wrote more tests for the `Url` module, and discovered some bugs in the process.
