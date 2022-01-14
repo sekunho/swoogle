@@ -38,6 +38,7 @@ when I'm done. Subscribe to stay tuned! :)
   - [Queryable resources](#queryable-resources)
   - [Parseable resources](#parseable-resources)
 - [Notes](#notes)
+  - [Day 14 - 14/01/2022](#day-14---14012022)
   - [Day 13 - 15/12/2021](#day-13---15122021)
   - [Day 12 - 14/12/2021](#day-12---14122021)
   - [Day 11 - 11/12/2021](#day-11---11122021)
@@ -100,25 +101,7 @@ Dates are formatted in DD-MM-YYYY.
 
 ### Day 14 - 14/01/2022 
 
-Yeah I'm alive, still. Don't know how to feel about this.
-
-Pretty much a full month since I last worked on this. Easiest explanation is 
-category 5 typhoon hit my city and destroyed the electric + internet + water
-infrastructure. So, I still don't have electricity, and I had to plug an 
-extremely long extension cord from my neighbor's house all the way to my house 
-just to have ONE outlet to charge stuff. No internet yet either, using mobile 
-data to do everything. LTE here is *terrible*. Crappy situation to be in. 
-But at least, today, I can use the computer although without the fiber internet :(. 
-Fiber cable got torn to shreds by the wind and fallen poles. Yet another thing 
-I'm not sure when it'll get fixed.
-
-I have spent 29 days SO FAR with no electricity, intermittent running water, and
-no fiber internet, barely any cell reception, and barely any LTE. But I'll have
-to make do with this situation until I get it all repaired. Maybe I'll get it
-all back by late February 2022, or even March 2022. "Perks" of living in a 
-developing country.
-
-Anyway, I'm planning on moving this into a blog but I haven't gotten around on
+I'm planning on moving this into a blog but I haven't gotten around on
 setting one up yet. Hopefully I'll be able to make each day more detailed rather
 than just overviews of what happened. So going deeper into the code and all that
 stuff. I'm not sure when that will happen, but I guess if I want to get a job,
@@ -145,6 +128,45 @@ Easiest solution: Delete golden file, copy test file and rename it as golden
 file. It's exactly the same in terms of contents anyway.
 
 Edit: Maybe the term is not EOF but something else that I'm not sure of.
+
+#### Incorrect field-value pairings when decoding root JSON
+
+After working on the golden test, I worked on a spec test for decoding to `Root`.
+Then I got some errors saying that it doesn't match, but I noticed that the
+field-value pairs are incorrect! For instance, `https://swapi.dev/api/people/`
+is supposed to be bounded to `rPeople`, but was instead bounded to some other
+field of `Root`. Turns out I just forgot to rearrange it in the right order, since
+I previously rearranged the object field order when encoding `Root`.
+
+``` haskell
+instance FromJSON (Root :: Type) where
+  parseJSON :: Value -> Parser Root
+  parseJSON =
+    Aeson.withObject "Root" $
+      \rootObj ->
+        Root
+          <$> rootObj .: "films"
+          <*> rootObj .: "people"
+          <*> rootObj .: "planets"
+          <*> rootObj .: "species"
+          <*> rootObj .: "starships"
+          <*> rootObj .: "vehicles"
+
+instance ToJSON (Root :: Type) where
+  toJSON :: Root -> Value
+  toJSON root =
+    Aeson.object
+      [ "films"     .= rFilms root
+      , "people"    .= rPeople root
+      , "planets"   .= rPlanets root
+      , "species"   .= rSpecies root
+      , "starships" .= rStarships root
+      , "vehicles"  .= rVehicles root
+      ]
+```
+
+Now I got these two simple tests for `Root`! I was able to catch a mistake that
+I just introduced a commit ago thanks to one test case. Awesome.
 
 ### Day 13 - 15/12/2021
 
