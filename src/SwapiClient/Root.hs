@@ -1,6 +1,7 @@
 module SwapiClient.Root
   ( Root
-    ( rFilms
+    ( Root
+    , rFilms
     , rPeople
     , rPlanets
     , rSpecies
