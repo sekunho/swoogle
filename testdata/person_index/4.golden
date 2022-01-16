@@ -1,0 +1,1 @@
+Left "Error in $: object value > json list value > object value: Failed reading: Cannot decode input: Data.Text.Internal.Encoding.decodeUtf8: Invalid UTF-8 stream"
