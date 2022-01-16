@@ -71,10 +71,10 @@ data HairColor
   | GreyHair
   | NoHairColor
   | WhiteHair
-  deriving Show
+  deriving (Eq, Show)
 
 newtype HairColors = HairColors [HairColor]
-  deriving Show
+  deriving (Eq, Show)
 
 data SkinColor
   = BlueSkin
@@ -97,10 +97,10 @@ data SkinColor
   | UnknownSkinColor
   | WhiteSkin
   | YellowSkin
-  deriving Show
+  deriving (Eq, Show)
 
 newtype SkinColors = SkinColors [SkinColor]
-  deriving Show
+  deriving (Eq, Show)
 
 data EyeColor
   = BlackEye
@@ -115,7 +115,7 @@ data EyeColor
   | RedEye
   | UnknownEyeColor
   | YellowEye
-  deriving Show
+  deriving (Eq, Show)
 
 -------------------------------------------------------------------------------
 -- Instances
