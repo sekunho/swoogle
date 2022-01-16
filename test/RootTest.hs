@@ -27,8 +27,8 @@ import SwapiClient.Root
 
 --------------------------------------------------------------------------------
 
-rootFixture1 :: Root
-rootFixture1 = Root
+rootFixture :: Root
+rootFixture = Root
   { rFilms = "https://swapi.dev/api/films/"
   , rPeople = "https://swapi.dev/api/people/"
   , rPlanets = "https://swapi.dev/api/planets/"
@@ -42,15 +42,15 @@ test_toJSON = do
   pure $
     Tasty.Golden.goldenVsFile
       "RSJ1"
-      "./testdata/root1.golden"
-      "./testdata/root.json"
-      (Aeson.encodeFile "./testdata/root.json" rootFixture1)
+      "./testdata/root/root.golden"
+      "./testdata/root/root.data"
+      (Aeson.encodeFile "./testdata/root/root.data" rootFixture)
 
 spec_fromJSON :: Spec
 spec_fromJSON = do
   Hspec.describe "root schema fromJSON" $ do
     let root :: IO (Maybe Root)
-        root = Aeson.decodeFileStrict' "./testdata/root.json"
+        root = Aeson.decodeFileStrict' "./testdata/fixtures/root/root.json"
 
     Hspec.it "parses root JSON into a Root type" $
-      root >>= (\res -> res `Hspec.shouldBe` Just rootFixture1)
+      root >>= (\res -> res `Hspec.shouldBe` Just rootFixture)
