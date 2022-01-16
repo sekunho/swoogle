@@ -38,6 +38,7 @@ when I'm done. Subscribe to stay tuned! :)
   - [Queryable resources](#queryable-resources)
   - [Parseable resources](#parseable-resources)
 - [Notes](#notes)
+  - [Day 15 - 16/01/2022](#day-15---16012022)
   - [Day 14 - 14/01/2022](#day-14---14012022)
   - [Day 13 - 15/12/2021](#day-13---15122021)
   - [Day 12 - 14/12/2021](#day-12---14122021)
@@ -99,7 +100,176 @@ Right (PersonIndex {pCount = 18, pNextPage = PersonPage 2, pPreviousPage = NoPag
 
 Dates are formatted in DD-MM-YYYY.
 
-### Day 14 - 14/01/2022 
+### Day 15 - 16/01/2022
+
+LTE was terrible yesterday. I couldn't anything done with 1Kbps. Honestly...
+
+#### `cabal` shenanigans with `--enable-tests`
+
+So turns out that `cabal` doesn't run resolve test dependencies, or something,
+by default. Could be understanding it wrong, but that's how it is to me. So,
+I had to use this flag `--enable-tests` so that it would actually run the tests.
+But, HLS also needed that flag! I don't know how to pass flags to HLS, and it
+seemed kinda janky if I were to manually do it all the time. So I had to look into
+`cabal.project`, specifically `cabal.project.local`, and explicitly state the
+package and its flags.
+
+This is how it looks like at the moment:
+
+``` cabal-config
+package swapi-client
+  tests: true
+```
+
+For some reason, this file is `.gitignore`'d by default. I've seen some repos
+with this file though so I'm not sure why this is the case. I removed it, and
+added it to version control for sanity.
+
+#### More golden tests for `PersonIndex`
+
+My internet is terrible since I'm just using LTE while waiting for both
+electricity and the fiber internet to come back. Emphasis on terrible. So I
+downloaded some of the JSON responses for some pages of `/people/`, decoded it
+to `PersonIndex`, vomited it to a file, and compared said file to a golden file.
+I did this because there are a lot of items per page and swapi.dev does not have
+a limit option; I did not want to manually write everything down and maintain it
+in the test files so I figured, why not just use golden tests for this? I don't
+know how good of an idea my approach is, because I just used
+`show :: PersonIndex -> String`. Something something don't use `show` for
+serialization but it's ok for this case... I think?
+
+More about golden tests:
+
+I saved the JSON responses for each page in `./testdata/fixtures/person_index`,
+with `n.json` (`n` being the page number). I could've manually written a test
+case for each file but that's cumbersome. Fortunately, `tasty-golden` has something
+for that:
+
+```haskell
+findByExtension
+  :: [FilePath]     -- List of extensions. e.g [ ".json" ]
+  -> FilePath       -- Directory you want to find matches for
+  -> IO [FilePath]  -- Result!
+```
+
+But I also wanted to be able to name the tests that I generate based on the file
+name, that way they won't be muddied together, and I can figure out which file
+fails.
+
+``` haskell
+test_decodePersonIndices :: IO [TestTree]
+test_decodePersonIndices =
+  map mkGoldenTest <$> personIndices
+  where
+    personIndices :: IO [FilePath]
+    personIndices =
+      Tasty.Golden.findByExtension [".json"] "./testdata/fixtures/person_index"
+
+    mkGoldenTest :: FilePath -> TestTree
+    mkGoldenTest filepath =
+      let baseName :: FilePath
+          baseName = takeBaseName filepath
+      in
+        Tasty.Golden.goldenVsFile
+          ("decode page " <> baseName)
+          ("./testdata/person_index/" <> baseName <> ".golden")
+          ("./testdata/person_index/" <> baseName <> ".data")
+          (readFile filepath >>= (
+            \personIndexJSON ->
+              let personIndex =
+                    Aeson.eitherDecodeStrict @PersonIndex personIndexJSON
+              in
+                writeFile
+                  ("./testdata/person_index/" <> baseName <> ".data")
+                  (show personIndex)) . ByteString.pack)
+
+takeBaseName :: FilePath -> FilePath
+takeBaseName =
+  Text.unpack . head . Text.split (== '.') . last . Text.split (== '/') . Text.pack
+```
+
+I should probably use a strict version of `readFile`, but I haven't read up on
+the problems of lazy IO yet, so I'll leave it for now.
+
+#### Where are my test suites?
+
+I didn't like that `cabal test` didn't show the test suites. I get a lot of
+satisfaction from seeing them enumerated too. There's an alternate command I
+found out only recently that shows all of it, and even detailing which
+passed/failed, and it's: `<cabal project>-name:test:<test-suite>`.
+
+Here is `cabal test`:
+
+``` sh
+[sekun@nixos:~/Projects/swapi]$ cabal test
+Build profile: -w ghc-8.10.7 -O1
+In order, the following will be built (use -v for more details):
+ - swapi-client-0.1.0.0 (test:swapi-client-test) (ephemeral targets)
+Preprocessing test suite 'swapi-client-test' for swapi-client-0.1.0.0..
+Building test suite 'swapi-client-test' for swapi-client-0.1.0.0..
+Running 1 test suites...
+Test suite swapi-client-test: RUNNING...
+Test suite swapi-client-test: PASS
+Test suite logged to:
+/home/sekun/Projects/swapi/dist-newstyle/build/x86_64-linux/ghc-8.10.7/swapi-client-0.1.0.0/t/swapi-client-test/test/swapi-client-0.1.0.0-swapi-client-test.log
+1 of 1 test suites (1 of 1 test cases) passed.
+```
+
+Well, that's ugly.
+
+And here's `cabal swapi-client:test/swapi-client-test`:
+
+``` sh
+[sekun@nixos:~/Projects/swapi]$ cabal run swapi-client:test:swapi-client-test
+Up to date
+test/Driver.hs
+  RSJ1:                                                   OK
+  fromJSON
+    root schema fromJSON
+      parses root JSON into a Root type:                  OK
+  decodePersonIndices
+    decode page 1:                                        OK (0.02s)
+    decode page 3:                                        OK (0.02s)
+    decode page 4:                                        OK
+    decode page 2:                                        OK (0.02s)
+  resourceUrl
+    resourceUrl
+      is the right URL for Root:                          OK
+      is the right URL for People:                        OK
+      is the right URL for People:                        OK
+      is the right URL for People:                        OK
+      is the right URL for People:                        OK
+      is the right URL for People:                        OK
+      is the right URL for People:                        OK
+  getId
+    getId
+      gets ID from people resource URL:                   OK
+      gets ID from film resource URL:                     OK
+      gets ID from starships resource URL:                OK
+      gets ID from vehicles resource URL:                 OK
+      gets ID from species resource URL:                  OK
+      gets ID from planets resource URL:                  OK
+      gets ID from URL without trailing forwardslash:     OK
+      gets Nothing from an invalid resource:              OK
+      gets Nothing when there's no ID:                    OK
+  urlToUrlData
+    urlToUrlData
+      parses URL with params:                             OK
+      parses a URL without subdirectories or params:      OK
+      parses URL without params but with subdirectories:  OK
+      parses an unexpected base URL:                      OK
+  urlDataToUrl
+    urlDataTourl
+      parses UrlData with params and subdir:              OK
+      parses UrlData without params, with subdirs:        OK
+      parses UrlData without params, and without subdirs: OK
+
+All 29 tests passed (0.02s)
+```
+
+Magnificent.
+
+### Day 14 - 14/01/2022
 
 I'm planning on moving this into a blog but I haven't gotten around on
 setting one up yet. Hopefully I'll be able to make each day more detailed rather
