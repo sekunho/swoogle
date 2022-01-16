@@ -38,6 +38,7 @@ when I'm done. Subscribe to stay tuned! :)
   - [Queryable resources](#queryable-resources)
   - [Parseable resources](#parseable-resources)
 - [Notes](#notes)
+  - [Day 15 - 16/01/2022](#day-15---16012022)
   - [Day 14 - 14/01/2022](#day-14---14012022)
   - [Day 13 - 15/12/2021](#day-13---15122021)
   - [Day 12 - 14/12/2021](#day-12---14122021)
@@ -99,7 +100,98 @@ Right (PersonIndex {pCount = 18, pNextPage = PersonPage 2, pPreviousPage = NoPag
 
 Dates are formatted in DD-MM-YYYY.
 
-### Day 14 - 14/01/2022 
+### Day 15 - 16/01/2022
+
+LTE was terrible yesterday. I couldn't anything done with 1Kbps. Honestly...
+
+#### `cabal` shenanigans with `--enable-tests`
+
+So turns out that `cabal` doesn't run resolve test dependencies, or something,
+by default. Could be understanding it wrong, but that's how it is to me. So,
+I had to use this flag `--enable-tests` so that it would actually run the tests.
+But, HLS also needed that flag! I don't know how to pass flags to HLS, and it
+seemed kinda janky if I were to manually do it all the time. So I had to look into
+`cabal.project`, specifically `cabal.project.local`, and explicitly state the
+package and its flags.
+
+This is how it looks like at the moment:
+
+``` cabal-config
+package swapi-client
+  tests: true
+```
+
+For some reason, this file is `.gitignore`'d by default. I've seen some repos
+with this file though so I'm not sure why this is the case. I removed it, and
+added it to version control for sanity.
+
+#### More golden tests for `PersonIndex`
+
+My internet is terrible since I'm just using LTE while waiting for both
+electricity and the fiber internet to come back. Emphasis on terrible. So I
+downloaded some of the JSON responses for some pages of `/people/`, decoded it
+to `PersonIndex`, vomited it to a file, and compared said file to a golden file.
+I did this because there are a lot of items per page and swapi.dev does not have
+a limit option; I did not want to manually write everything down and maintain it
+in the test files so I figured, why not just use golden tests for this? I don't
+know how good of an idea my approach is, because I just used
+`show :: PersonIndex -> String`. Something something don't use `show` for
+serialization but it's ok for this case... I think?
+
+More about golden tests:
+
+I saved the JSON responses for each page in `./testdata/fixtures/person_index`,
+with `n.json` (`n` being the page number). I could've manually written a test
+case for each file but that's cumbersome. Fortunately, `tasty-golden` has something
+for that:
+
+```haskell
+findByExtension
+  :: [FilePath]     -- List of extensions. e.g [ ".json" ]
+  -> FilePath       -- Directory you want to find matches for
+  -> IO [FilePath]  -- Result!
+```
+
+But I also wanted to be able to name the tests that I generate based on the file
+name, that way they won't be muddied together, and I can figure out which file
+fails.
+
+``` haskell
+test_decodePersonIndices :: IO [TestTree]
+test_decodePersonIndices =
+  map mkGoldenTest <$> personIndices
+  where
+    personIndices :: IO [FilePath]
+    personIndices =
+      Tasty.Golden.findByExtension [".json"] "./testdata/fixtures/person_index"
+
+    mkGoldenTest :: FilePath -> TestTree
+    mkGoldenTest filepath =
+      let baseName :: FilePath
+          baseName = takeBaseName filepath
+      in
+        Tasty.Golden.goldenVsFile
+          ("decode page " <> baseName)
+          ("./testdata/person_index/" <> baseName <> ".golden")
+          ("./testdata/person_index/" <> baseName <> ".data")
+          (readFile filepath >>= (
+            \personIndexJSON ->
+              let personIndex =
+                    Aeson.eitherDecodeStrict @PersonIndex personIndexJSON
+              in
+                writeFile
+                  ("./testdata/person_index/" <> baseName <> ".data")
+                  (show personIndex)) . ByteString.pack)
+
+takeBaseName :: FilePath -> FilePath
+takeBaseName =
+  Text.unpack . head . Text.split (== '.') . last . Text.split (== '/') . Text.pack
+```
+
+I should probably use a strict version of `readFile`, but I haven't read up on
+the problems of lazy IO yet, so I'll leave it for now.
+
+### Day 14 - 14/01/2022
 
 I'm planning on moving this into a blog but I haven't gotten around on
 setting one up yet. Hopefully I'll be able to make each day more detailed rather
