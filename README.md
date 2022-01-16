@@ -191,6 +191,84 @@ takeBaseName =
 I should probably use a strict version of `readFile`, but I haven't read up on
 the problems of lazy IO yet, so I'll leave it for now.
 
+#### Where are my test suites?
+
+I didn't like that `cabal test` didn't show the test suites. I get a lot of
+satisfaction from seeing them enumerated too. There's an alternate command I
+found out only recently that shows all of it, and even detailing which
+passed/failed, and it's: `<cabal project>-name:test:<test-suite>`.
+
+Here is `cabal test`:
+
+``` sh
+[sekun@nixos:~/Projects/swapi]$ cabal test
+Build profile: -w ghc-8.10.7 -O1
+In order, the following will be built (use -v for more details):
+ - swapi-client-0.1.0.0 (test:swapi-client-test) (ephemeral targets)
+Preprocessing test suite 'swapi-client-test' for swapi-client-0.1.0.0..
+Building test suite 'swapi-client-test' for swapi-client-0.1.0.0..
+Running 1 test suites...
+Test suite swapi-client-test: RUNNING...
+Test suite swapi-client-test: PASS
+Test suite logged to:
+/home/sekun/Projects/swapi/dist-newstyle/build/x86_64-linux/ghc-8.10.7/swapi-client-0.1.0.0/t/swapi-client-test/test/swapi-client-0.1.0.0-swapi-client-test.log
+1 of 1 test suites (1 of 1 test cases) passed.
+```
+
+Well, that's ugly.
+
+And here's `cabal swapi-client:test/swapi-client-test`:
+
+``` sh
+[sekun@nixos:~/Projects/swapi]$ cabal run swapi-client:test:swapi-client-test
+Up to date
+test/Driver.hs
+  RSJ1:                                                   OK
+  fromJSON
+    root schema fromJSON
+      parses root JSON into a Root type:                  OK
+  decodePersonIndices
+    decode page 1:                                        OK (0.02s)
+    decode page 3:                                        OK (0.02s)
+    decode page 4:                                        OK
+    decode page 2:                                        OK (0.02s)
+  resourceUrl
+    resourceUrl
+      is the right URL for Root:                          OK
+      is the right URL for People:                        OK
+      is the right URL for People:                        OK
+      is the right URL for People:                        OK
+      is the right URL for People:                        OK
+      is the right URL for People:                        OK
+      is the right URL for People:                        OK
+  getId
+    getId
+      gets ID from people resource URL:                   OK
+      gets ID from film resource URL:                     OK
+      gets ID from starships resource URL:                OK
+      gets ID from vehicles resource URL:                 OK
+      gets ID from species resource URL:                  OK
+      gets ID from planets resource URL:                  OK
+      gets ID from URL without trailing forwardslash:     OK
+      gets Nothing from an invalid resource:              OK
+      gets Nothing when there's no ID:                    OK
+  urlToUrlData
+    urlToUrlData
+      parses URL with params:                             OK
+      parses a URL without subdirectories or params:      OK
+      parses URL without params but with subdirectories:  OK
+      parses an unexpected base URL:                      OK
+  urlDataToUrl
+    urlDataTourl
+      parses UrlData with params and subdir:              OK
+      parses UrlData without params, with subdirs:        OK
+      parses UrlData without params, and without subdirs: OK
+
+All 29 tests passed (0.02s)
+```
+
+Magnificent.
+
 ### Day 14 - 14/01/2022
 
 I'm planning on moving this into a blog but I haven't gotten around on
