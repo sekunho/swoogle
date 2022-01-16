@@ -5,6 +5,7 @@ module PersonTest
 --------------------------------------------------------------------------------
 
 import Data.Aeson qualified as Aeson (eitherDecodeStrict)
+import Data.ByteString (ByteString)
 import Data.ByteString.Char8 qualified as ByteString (pack)
 import Data.Text qualified as Text (split, pack, unpack)
 import Test.Tasty.Golden qualified as Tasty.Golden (goldenVsFile, findByExtension)
@@ -32,19 +33,18 @@ test_decodePersonIndices =
     mkGoldenTest filepath =
       let baseName :: FilePath
           baseName = takeBaseName filepath
+
+          writeDecoded :: ByteString -> IO ()
+          writeDecoded personIndexJSON =
+            writeFile
+              ("./testdata/person_index/" <> baseName <> ".data")
+              (show $ Aeson.eitherDecodeStrict @PersonIndex personIndexJSON)
       in
         Tasty.Golden.goldenVsFile
           ("decode page " <> baseName)
           ("./testdata/person_index/" <> baseName <> ".golden")
           ("./testdata/person_index/" <> baseName <> ".data")
-          (readFile filepath >>= (
-            \personIndexJSON ->
-              let personIndex =
-                    Aeson.eitherDecodeStrict @PersonIndex personIndexJSON
-              in
-                writeFile
-                  ("./testdata/person_index/" <> baseName <> ".data")
-                  (show personIndex)) . ByteString.pack)
+          (readFile filepath >>= writeDecoded . ByteString.pack)
 
 takeBaseName :: FilePath -> FilePath
 takeBaseName =
