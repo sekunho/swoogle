@@ -22,7 +22,6 @@ module SwapiClient
 
   , Gender (Male, Female, Hermaphrodite, NoGender)
   , Resource (People, Film, Planet)
-  , HairColors (HairColors)
   , HairColor
     ( AuburnHair
     , BlackHair
@@ -87,8 +86,7 @@ import SwapiClient.Id
   )
 import SwapiClient.Url (Resource (People, Film, Planet))
 import SwapiClient.Color
-  ( HairColors (HairColors)
-  , HairColor
+  ( HairColor
     ( AuburnHair
     , BlackHair
     , BlondHair
