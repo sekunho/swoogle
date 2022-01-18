@@ -38,6 +38,7 @@ when I'm done. Subscribe to stay tuned! :)
   - [Queryable resources](#queryable-resources)
   - [Parseable resources](#parseable-resources)
 - [Notes](#notes)
+  - [Day 17 - 19/01/2022](#day-17---19012022)
   - [Day 16 - 18/01/2022](#day-16---18012022)
   - [Day 15 - 16/01/2022](#day-15---16012022)
   - [Day 14 - 14/01/2022](#day-14---14012022)
@@ -77,7 +78,7 @@ Resources/schemas that can be encoded/decoded to and from JSON respectively.
   - [x] View
 - [ ] Film
   - [ ] Index
-  - [ ] View
+  - [x] View
 - [ ] Starship
   - [ ] Index
   - [ ] View
@@ -108,6 +109,12 @@ Right (PersonIndex {pCount = 18, pNextPage = PersonPage 2, pPreviousPage = NoPag
 ## Notes
 
 Dates are formatted in DD-MM-YYYY.
+
+### Day 17 - 19/01/2022
+
+Worked on implementing the encoding `Film` and its test. Nothing really
+noteworthy since it's just a repetition of previous days with a different coat
+of paint.
 
 ### Day 16 - 18/01/2022
 
