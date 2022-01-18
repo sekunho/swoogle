@@ -1,6 +1,7 @@
+{-# language FlexibleInstances #-}
+
 module SwapiClient.Color
-  ( HairColors (HairColors)
-  , HairColor
+  ( HairColor
     ( AuburnHair
     , BlackHair
     , BlondHair
@@ -73,9 +74,6 @@ data HairColor
   | WhiteHair
   deriving (Eq, Show)
 
-newtype HairColors = HairColors [HairColor]
-  deriving (Eq, Show)
-
 data SkinColor
   = BlueSkin
   | BrownSkin
@@ -97,9 +95,6 @@ data SkinColor
   | UnknownSkinColor
   | WhiteSkin
   | YellowSkin
-  deriving (Eq, Show)
-
-newtype SkinColors = SkinColors [SkinColor]
   deriving (Eq, Show)
 
 data EyeColor
@@ -175,8 +170,8 @@ instance TextShow (EyeColor :: Type) where
 
 -- Aeson instances
 
-instance FromJSON (HairColors :: Type) where
-  parseJSON :: Value -> Parser HairColors
+instance {-# OVERLAPS #-} FromJSON ([HairColor] :: Type) where
+  parseJSON :: Value -> Parser [HairColor]
   parseJSON =
    Aeson.withText "HairColor"
       $ \hairText ->
@@ -184,15 +179,15 @@ instance FromJSON (HairColors :: Type) where
               hairColors = mapM textToHairColor . Text.splitOn ", " $ hairText
           in
             case hairColors of
-              Right hc -> pure . HairColors $ hc
+              Right hc -> pure hc
               Left e -> fail e
 
-instance ToJSON (HairColors :: Type) where
-  toJSON :: HairColors -> Value
-  toJSON = String . commaConcat . unHairColors
+instance {-# OVERLAPS #-} ToJSON ([HairColor] :: Type) where
+  toJSON :: [HairColor] -> Value
+  toJSON = String . commaConcat
 
-instance FromJSON (SkinColors :: Type) where
-  parseJSON :: Value -> Parser SkinColors
+instance {-# OVERLAPS #-} FromJSON ([SkinColor] :: Type) where
+  parseJSON :: Value -> Parser [SkinColor]
   parseJSON =
     Aeson.withText "SkinColors" $
       \skinColorText ->
@@ -200,12 +195,12 @@ instance FromJSON (SkinColors :: Type) where
             textToColors = mapM textToSkinColor . Text.splitOn ", "
         in
           case textToColors skinColorText of
-            Right skinColors -> pure . SkinColors $ skinColors
+            Right skinColors -> pure skinColors
             Left e -> fail e
 
-instance ToJSON (SkinColors :: Type) where
-  toJSON :: SkinColors -> Value
-  toJSON = String . commaConcat . unSkinColors
+instance {-# OVERLAPS #-} ToJSON ([SkinColor] :: Type) where
+  toJSON :: [SkinColor] -> Value
+  toJSON = String . commaConcat
 
 instance FromJSON (EyeColor :: Type) where
   parseJSON :: Value -> Parser EyeColor
@@ -271,16 +266,12 @@ textToSkinColor sct = case sct of
   _ -> Left "ERROR: Invalid skin color/format"
 
 --------------------------------------------------------------------------------
--- Newtype functions
-
-unHairColors :: HairColors -> [HairColor]
-unHairColors (HairColors hcs) = hcs
-
-unSkinColors :: SkinColors -> [SkinColor]
-unSkinColors (SkinColors scs) = scs
-
---------------------------------------------------------------------------------
 -- Utils
 
+-- | Concatenates a list of `TextShow`ables into a comma delimited string.
+--
+-- λ> commaConcat [BrownHair, BrownHair, BrownHair]
+--
+-- "brown, brown, brown"
 commaConcat :: TextShow a => [a] -> Text
 commaConcat = Text.intercalate ", " .  map showt
