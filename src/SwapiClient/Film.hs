@@ -1,4 +1,4 @@
-{-# LANGUAGE FlexibleInstances #-}
+{-# language FlexibleInstances #-}
 
 module SwapiClient.Film
   ( Film
@@ -64,6 +64,10 @@ data Film = Film
   , fCreatedAt        :: UTCTime
   , fEditedAt         :: UTCTime
   , fId               :: FilmId
+  } deriving (Eq, Show)
+
+data FilmIndex = FilmIndex
+  {
   } deriving (Eq, Show)
 
 newtype Producer = Producer Text
