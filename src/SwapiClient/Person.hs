@@ -112,17 +112,14 @@ data Person = Person
   , pCreatedAt        :: UTCTime
   , pEditedAt         :: UTCTime
   , pId               :: PersonId
-  }
-  deriving Show
+  } deriving Show
 
 data PersonIndex = PersonIndex
   { pCount :: Int
---  , plCurrentPage :: Int
   , pNextPage :: Page
   , pPreviousPage :: Page
   , pResults :: [Person]
-  }
-  deriving Show
+  } deriving Show
 
 --------------------------------------------------------------------------------
 -- Instances
