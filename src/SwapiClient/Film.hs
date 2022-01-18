@@ -77,16 +77,12 @@ newtype Director = Director Text
 instance FromJSON (Director :: Type) where
   parseJSON :: Value -> Parser Director
   parseJSON =
-    Aeson.withText "Director" $
-      \dirText ->
-        pure (Director dirText)
+    Aeson.withText "Director" (pure . Director)
 
 instance FromJSON (Producer :: Type) where
   parseJSON :: Value -> Parser Producer
   parseJSON =
-    Aeson.withText "Producer" $
-      \prodText ->
-        pure (Producer prodText)
+    Aeson.withText "Producer" (pure . Producer)
 
 instance {-# OVERLAPS #-} FromJSON ([Producer] :: Type) where
   parseJSON :: Value -> Parser [Producer]
