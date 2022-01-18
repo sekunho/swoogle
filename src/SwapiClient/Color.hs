@@ -10,7 +10,6 @@ module SwapiClient.Color
     , NoHairColor
     , WhiteHair
     )
-  , SkinColors (SkinColors)
   , SkinColor
     ( BlueSkin
     , BrownSkin
