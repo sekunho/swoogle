@@ -50,8 +50,8 @@ import Data.Time (UTCTime)
 --------------------------------------------------------------------------------
 
 import SwapiClient.Color
-  ( HairColors
-  , SkinColors
+  ( SkinColor
+  , HairColor
   , EyeColor
   )
 
@@ -99,8 +99,8 @@ data Person = Person
   { pName             :: PersonName     -- Name of person
   , pHeight           :: Height         -- Height of person can be Nothing
   , pMass             :: Mass           -- Mass of person can be Nothing
-  , pHairColor        :: HairColors
-  , pSkinColor        :: SkinColors
+  , pHairColor        :: [HairColor]
+  , pSkinColor        :: [SkinColor]
   , pEyeColor         :: EyeColor       -- Uh, eye color.
   , pBirthYear        :: BirthYear      -- Relative to before/after Battle of Yavin
   , pGender           :: Gender         -- Gender according to SWAPI
@@ -112,17 +112,14 @@ data Person = Person
   , pCreatedAt        :: UTCTime
   , pEditedAt         :: UTCTime
   , pId               :: PersonId
-  }
-  deriving Show
+  } deriving Show
 
 data PersonIndex = PersonIndex
   { pCount :: Int
---  , plCurrentPage :: Int
   , pNextPage :: Page
   , pPreviousPage :: Page
   , pResults :: [Person]
-  }
-  deriving Show
+  } deriving Show
 
 --------------------------------------------------------------------------------
 -- Instances

@@ -45,22 +45,22 @@ import SwapiClient.Url qualified as Url (resourceUrl, getId)
 -- Data types
 
 newtype FilmId = FilmId Int
-  deriving Show
+  deriving (Eq, Show)
 
 newtype HomeworldId = HomeworldId Int
-  deriving Show
+  deriving (Eq, Show)
 
 newtype SpeciesId = SpeciesId Int
-  deriving Show
+  deriving (Eq, Show)
 
 newtype VehicleId = VehicleId Int
-  deriving Show
+  deriving (Eq, Show)
 
 newtype StarshipId = StarshipId Int
-  deriving Show
+  deriving (Eq, Show)
 
 newtype PersonId = PersonId Int
-  deriving Show
+  deriving (Eq, Show)
 
 --------------------------------------------------------------------------------
 -- Instances

@@ -38,6 +38,7 @@ when I'm done. Subscribe to stay tuned! :)
   - [Queryable resources](#queryable-resources)
   - [Parseable resources](#parseable-resources)
 - [Notes](#notes)
+  - [Day 16 - 18/01/2022](#day-16---18012022)
   - [Day 15 - 16/01/2022](#day-15---16012022)
   - [Day 14 - 14/01/2022](#day-14---14012022)
   - [Day 13 - 15/12/2021](#day-13---15122021)
@@ -99,6 +100,278 @@ Right (PersonIndex {pCount = 18, pNextPage = PersonPage 2, pPreviousPage = NoPag
 ## Notes
 
 Dates are formatted in DD-MM-YYYY.
+
+### Day 16 - 18/01/2022
+
+Woke up a bit earlier (04:00) than the usual (05:00-07:00) when the LTE is less
+congested.
+
+#### Overlapping instances
+
+I ran into this issue before where SWAPI has this weird way of encoding a
+collection of something as a string delimited by commas and a space. So if it's
+a collection of film producers, it gets encoded as: `"Gary Kurtz, Rick McCallum"`
+. But that's not exactly fun.
+
+Here is a teeny tiny example:
+
+``` haskell
+{-# language InstanceSigs #-}
+
+import Data.Aeson.Types (Value, Parser, (.:))
+import Data.Aeson qualified as Aeson (withObject, withText)
+
+newtype Producer = Producer Text
+  deriving (Eq, Show)
+
+newtype Film = Film
+  { title :: Text
+  , producers :: [Producer]
+  } deriving (Eq, Show)
+
+instance FromJSON Producer where
+  parseJSON :: Value -> Parser Producer
+  parseJSON = Aeson.withText (pure . Producer)
+
+instance FromJSON Film where
+  parseJSON :: Value -> Parser Film
+  parserJSON =
+    Aeson.withObject "Film" $
+      \filmObj ->
+        Film
+          <$> filmObj .: "title"
+          <*> producers .: "producers"
+```
+
+This is definitely OK if we're expecting a JSON list for the `producers` field
+(`["Gary Kurtz", "Rick McCallum"]`), but `aeson` will complain if it runs into
+an actual string, as expected.
+
+So... do I just write a `FromJSON` instance for `[Producer]` as well? Ok, sure.
+
+``` diff
+{-# language InstanceSigs #-}
+
+import Data.Aeson.Types (Value, Parser, (.:))
+import Data.Aeson qualified as Aeson (withObject, withText)
+
+newtype Producer = Producer Text
+  deriving (Eq, Show)
+
+newtype Film = Film
+  { title :: Text
+  , producers :: [Producer]
+  } deriving (Eq, Show)
+
+instance FromJSON Producer where
+  parseJSON :: Value -> Parser Producer
+  parseJSON = Aeson.withText (pure . Producer)
+
++ instance FromJSON [Producer] where
++   parseJSON :: Value -> Parser [Producer]
++   parseJSON =
++     Aeson.withText "[Producer]" (pure . map Producer . Text.splitOn ", ")
+
+instance FromJSON Film where
+  parseJSON :: Value -> Parser Film
+  parserJSON =
+    Aeson.withObject "Film" $
+      \filmObj ->
+        Film
+          <$> filmObj .: "title"
+          <*> producers .: "producers"
+```
+
+Looks good so far. So I parsed a comma delimited text into a list of texts, then
+to a list of `Producer`. Time to compile...
+
+...and I got this:
+
+``` sh
+src/SwapiClient/Film.hs:90:10: error:
+    • Illegal instance declaration for ‘FromJSON [Producer]’
+        (All instance types must be of the form (T a1 ... an)
+         where a1 ... an are *distinct type variables*,
+         and each type variable appears at most once in the instance head.
+         Use FlexibleInstances if you want to disable this.)
+    • In the instance declaration for ‘FromJSON ([Producer] :: Type)’
+   |
+90 | instance FromJSON ([Producer] :: Type) where
+   |          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+cabal: Failed to build swapi-client-0.1.0.0 (which is required by
+test:swapi-client-test from swapi-client-0.1.0.0).
+```
+
+By the looks of it, GHC is telling me it doesn't like how I wrote the instance
+declaration, and that if I really wanted to, I could enable `FlexibleInstances`.
+
+``` diff
+{-# language InstanceSigs #-}
++ {-# language FlexibleInstances #-}
+
+import Data.Aeson.Types (Value, Parser, (.:))
+import Data.Aeson qualified as Aeson (withObject, withText)
+
+newtype Producer = Producer Text
+  deriving (Eq, Show)
+
+newtype Film = Film
+  { title :: Text
+  , producers :: [Producer]
+  } deriving (Eq, Show)
+
+instance FromJSON Producer where
+  parseJSON :: Value -> Parser Producer
+  parseJSON = Aeson.withText (pure . Producer)
+
+instance FromJSON [Producer] where
+  parseJSON :: Value -> Parser [Producer]
+  parseJSON =
+    Aeson.withText "[Producer]" (pure . map Producer . Text.splitOn ", ")
+
+instance FromJSON Film where
+  parseJSON :: Value -> Parser Film
+  parserJSON =
+    Aeson.withObject "Film" $
+      \filmObj ->
+        Film
+          <$> filmObj .: "title"
+          <*> producers .: "producers"
+```
+
+Surely this is fine, right? No.
+
+``` sh
+src/SwapiClient/Film.hs:91:10: error:
+    • Overlapping instances for FromJSON [Producer]
+        arising from a use of ‘aeson-2.0.3.0:Data.Aeson.Types.FromJSON.$dmparseJSONList’
+      Matching instances:
+        instance FromJSON a => FromJSON [a]
+          -- Defined in ‘aeson-2.0.3.0:Data.Aeson.Types.FromJSON’
+        instance FromJSON [Producer]
+          -- Defined at src/SwapiClient/Film.hs:91:10
+    • In the expression:
+        aeson-2.0.3.0:Data.Aeson.Types.FromJSON.$dmparseJSONList
+          @([Producer])
+      In an equation for ‘aeson-2.0.3.0:Data.Aeson.Types.FromJSON.parseJSONList’:
+          aeson-2.0.3.0:Data.Aeson.Types.FromJSON.parseJSONList
+            = aeson-2.0.3.0:Data.Aeson.Types.FromJSON.$dmparseJSONList
+                @([Producer])
+      In the instance declaration for ‘FromJSON [Producer]’
+   |
+91 | instance FromJSON ([Producer] :: Type) where
+   |          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+src/SwapiClient/Film.hs:106:15: error:
+    • Overlapping instances for FromJSON [Producer]
+        arising from a use of ‘.:’
+      Matching instances:
+        instance FromJSON a => FromJSON [a]
+          -- Defined in ‘aeson-2.0.3.0:Data.Aeson.Types.FromJSON’
+        instance FromJSON [Producer]
+          -- Defined at src/SwapiClient/Film.hs:91:10
+    • In the second argument of ‘(<*>)’, namely ‘filmObj .: "producer"’
+      In the first argument of ‘(<*>)’, namely
+        ‘Film <$> filmObj .: "title" <*> filmObj .: "episode_id"
+           <*> filmObj .: "opening_crawl"
+           <*> filmObj .: "director"
+           <*> filmObj .: "producer"’
+      In the first argument of ‘(<*>)’, namely
+        ‘Film <$> filmObj .: "title" <*> filmObj .: "episode_id"
+           <*> filmObj .: "opening_crawl"
+           <*> filmObj .: "director"
+           <*> filmObj .: "producer"
+           <*> filmObj .: "release_date"’
+    |
+106 |           <*> filmObj .: "producer"
+    |               ^^^^^^^^^^^^^^^^^^^^^
+cabal: Failed to build swapi-client-0.1.0.0 (which is required by
+test:swapi-client-test from swapi-client-0.1.0.0).
+```
+
+The first one seems to be telling me that my instance declaration already has
+an existing instance, which `aeson` implemented. Any list of `a :: Type` already
+has its own instance declaration! Normally that's convenient since it's rather
+tedious to repeat this. But this case is special since we do want to override how
+`[Producer]` is parsed. Second one is just telling me that the usage of said
+instance is invalid because it overlaps with an existing one.
+
+I'm not entirely sure of what the differences are among the pragmas `OVERLAPS`,
+`OVERLAPPING`, and `OVERLAPPABLE`. I tried `OVERLAPPABLE`, but it didn't fix it.
+Not too familiar with this pragma yet unfortunately (user guide still confuses
+me). But trying out `OVERLAPS` made it work!
+
+``` diff
+{-# language InstanceSigs #-}
+{-# language FlexibleInstances #-}
+
+import Data.Aeson.Types (Value, Parser, (.:))
+import Data.Aeson qualified as Aeson (withObject, withText)
+
+newtype Producer = Producer Text
+  deriving (Eq, Show)
+
+newtype Film = Film
+  { title :: Text
+  , producers :: [Producer]
+  } deriving (Eq, Show)
+
+instance FromJSON Producer where
+  parseJSON :: Value -> Parser Producer
+  parseJSON = Aeson.withText (pure . Producer)
+
+- instance FromJSON [Producer] where
++ instance {-# OVERLAPS -#} FromJSON [Producer] where
+  parseJSON :: Value -> Parser [Producer]
+  parseJSON =
+    Aeson.withText "[Producer]" (pure . map Producer . Text.splitOn ", ")
+
+instance FromJSON Film where
+  parseJSON :: Value -> Parser Film
+  parserJSON =
+    Aeson.withObject "Film" $
+      \filmObj ->
+        Film
+          <$> filmObj .: "title"
+          <*> producers .: "producers"
+```
+
+And now it works. Very cool. This tells GHC to loosen up a bit and allows me to
+specify exactly which instance I want to use. The syntax is a bit strange though
+cause I have to put it right after `instance`.
+
+#### Using `OVERLAPS` instead of manually wrapping with `newtype`s
+
+My previous (ugly) solution to this problem, since I wanted to dance around
+`OVERLAPS` and not use it, was to use `newtype`s. Well, it worked! But it's
+annoying because I have unnecessary `newtype` definitions as well as annoying
+wrap/unwrap helper functions. So... I just got rid of it.
+
+``` haskell
+-- Oh no...
+data HairColor
+  = BrownHair
+  | BlueHair
+  -- ...
+
+newtype HairColors = HairColors [HairColor]
+
+instance ToJSON (HairColors :: Type) where
+  toJSON :: HairColors -> Value
+  toJSON = String . commaConcat . unHairColors
+```
+
+``` haskell
+-- Cool!
+data HairColor
+  = BrownHair
+  | BlueHair
+  -- ...
+
+instance {-# OVERLAPS #-} ToJSON ([HairColor] :: Type) where
+  toJSON :: [HairColor] -> Value
+  toJSON = String . commaConcat
+```
 
 ### Day 15 - 16/01/2022
 
