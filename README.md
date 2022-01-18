@@ -76,9 +76,17 @@ Resources/schemas that can be encoded/decoded to and from JSON respectively.
   - [x] Index
   - [x] View
 - [ ] Film
+  - [ ] Index
+  - [ ] View
 - [ ] Starship
-- [ ] Vehicle (Try to use the autoderive)
+  - [ ] Index
+  - [ ] View
+- [ ] Vehicle
+  - [ ] Index
+  - [ ] View
 - [ ] Species
+  - [ ] Index
+  - [ ] View
 - [ ] Planet
 
 You play around with it in GHCI if you want to, like so:
