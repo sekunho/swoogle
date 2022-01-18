@@ -124,17 +124,17 @@ import Data.Aeson qualified as Aeson (withObject, withText)
 newtype Producer = Producer Text
   deriving (Eq, Show)
 
-newtype Film = Film 
+newtype Film = Film
   { title :: Text
   , producers :: [Producer]
   } deriving (Eq, Show)
-  
+
 instance FromJSON Producer where
   parseJSON :: Value -> Parser Producer
   parseJSON = Aeson.withText (pure . Producer)
 
 instance FromJSON Film where
-  parseJSON :: Value -> Parser Film 
+  parseJSON :: Value -> Parser Film
   parserJSON =
     Aeson.withObject "Film" $
       \filmObj ->
@@ -158,22 +158,22 @@ import Data.Aeson qualified as Aeson (withObject, withText)
 newtype Producer = Producer Text
   deriving (Eq, Show)
 
-newtype Film = Film 
+newtype Film = Film
   { title :: Text
   , producers :: [Producer]
   } deriving (Eq, Show)
-  
+
 instance FromJSON Producer where
   parseJSON :: Value -> Parser Producer
   parseJSON = Aeson.withText (pure . Producer)
-  
+
 + instance FromJSON [Producer] where
 +   parseJSON :: Value -> Parser [Producer]
-+   parseJSON = 
++   parseJSON =
 +     Aeson.withText "[Producer]" (pure . map Producer . Text.splitOn ", ")
 
 instance FromJSON Film where
-  parseJSON :: Value -> Parser Film 
+  parseJSON :: Value -> Parser Film
   parserJSON =
     Aeson.withObject "Film" $
       \filmObj ->
@@ -215,22 +215,22 @@ import Data.Aeson qualified as Aeson (withObject, withText)
 newtype Producer = Producer Text
   deriving (Eq, Show)
 
-newtype Film = Film 
+newtype Film = Film
   { title :: Text
   , producers :: [Producer]
   } deriving (Eq, Show)
-  
+
 instance FromJSON Producer where
   parseJSON :: Value -> Parser Producer
   parseJSON = Aeson.withText (pure . Producer)
-  
+
 instance FromJSON [Producer] where
   parseJSON :: Value -> Parser [Producer]
-  parseJSON = 
+  parseJSON =
     Aeson.withText "[Producer]" (pure . map Producer . Text.splitOn ", ")
 
 instance FromJSON Film where
-  parseJSON :: Value -> Parser Film 
+  parseJSON :: Value -> Parser Film
   parserJSON =
     Aeson.withObject "Film" $
       \filmObj ->
@@ -311,23 +311,23 @@ import Data.Aeson qualified as Aeson (withObject, withText)
 newtype Producer = Producer Text
   deriving (Eq, Show)
 
-newtype Film = Film 
+newtype Film = Film
   { title :: Text
   , producers :: [Producer]
   } deriving (Eq, Show)
-  
+
 instance FromJSON Producer where
   parseJSON :: Value -> Parser Producer
   parseJSON = Aeson.withText (pure . Producer)
-  
+
 - instance FromJSON [Producer] where
 + instance {-# OVERLAPS -#} FromJSON [Producer] where
   parseJSON :: Value -> Parser [Producer]
-  parseJSON = 
+  parseJSON =
     Aeson.withText "[Producer]" (pure . map Producer . Text.splitOn ", ")
 
 instance FromJSON Film where
-  parseJSON :: Value -> Parser Film 
+  parseJSON :: Value -> Parser Film
   parserJSON =
     Aeson.withObject "Film" $
       \filmObj ->
@@ -337,8 +337,41 @@ instance FromJSON Film where
 ```
 
 And now it works. Very cool. This tells GHC to loosen up a bit and allows me to
-specify exactly which instance I want to use. The syntax is a bit strange though 
+specify exactly which instance I want to use. The syntax is a bit strange though
 cause I have to put it right after `instance`.
+
+#### Using `OVERLAPS` instead of manually wrapping with `newtype`s
+
+My previous (ugly) solution to this problem, since I wanted to dance around
+`OVERLAPS` and not use it, was to use `newtype`s. Well, it worked! But it's
+annoying because I have unnecessary `newtype` definitions as well as annoying
+wrap/unwrap helper functions. So... I just got rid of it.
+
+``` haskell
+-- Oh no...
+data HairColor
+  = BrownHair
+  | BlueHair
+  -- ...
+
+newtype HairColors = HairColors [HairColor]
+
+instance ToJSON (HairColors :: Type) where
+  toJSON :: HairColors -> Value
+  toJSON = String . commaConcat . unHairColors
+```
+
+``` haskell
+-- Cool!
+data HairColor
+  = BrownHair
+  | BlueHair
+  -- ...
+
+instance {-# OVERLAPS #-} ToJSON ([HairColor] :: Type) where
+  toJSON :: [HairColor] -> Value
+  toJSON = String . commaConcat
+```
 
 ### Day 15 - 16/01/2022
 
