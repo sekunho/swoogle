@@ -24,16 +24,18 @@ module SwapiClient.Film
 --------------------------------------------------------------------------------
 
 import Data.Aeson
-  (FromJSON
+  ( FromJSON
+  , ToJSON
   , parseJSON
-  , Value
+  , toJSON
   , (.:)
+  , (.=)
   )
-import Data.Aeson qualified as Aeson (withObject, withText)
-import Data.Aeson.Types (Parser)
+import Data.Aeson qualified as Aeson (withObject, withText, object)
+import Data.Aeson.Types (Parser, Value (String))
 import Data.Kind (Type)
 import Data.Text (Text)
-import Data.Text qualified as Text (splitOn)
+import Data.Text qualified as Text (splitOn, intercalate)
 import Data.Time (Day, UTCTime)
 
 --------------------------------------------------------------------------------
@@ -66,10 +68,8 @@ data Film = Film
   , fId               :: FilmId
   } deriving (Eq, Show)
 
-data FilmIndex = FilmIndex
-  {
-  } deriving (Eq, Show)
 
+-- TODO: Maybe consider producer and director as sum types?
 newtype Producer = Producer Text
   deriving (Eq, Show)
 
@@ -83,15 +83,29 @@ instance FromJSON (Director :: Type) where
   parseJSON =
     Aeson.withText "Director" (pure . Director)
 
+instance ToJSON (Director :: Type) where
+  toJSON :: Director -> Value
+  toJSON (Director director) =
+    String director
+
 instance FromJSON (Producer :: Type) where
   parseJSON :: Value -> Parser Producer
   parseJSON =
     Aeson.withText "Producer" (pure . Producer)
 
+instance ToJSON (Producer :: Type) where
+  toJSON :: Producer -> Value
+  toJSON (Producer producer) = String producer
+
 instance {-# OVERLAPS #-} FromJSON ([Producer] :: Type) where
   parseJSON :: Value -> Parser [Producer]
   parseJSON =
     Aeson.withText "List of producers" (pure . map Producer . Text.splitOn ", ")
+
+instance {-# OVERLAPS #-} ToJSON ([Producer] :: Type) where
+  toJSON :: [Producer] -> Value
+  toJSON =
+    String . Text.intercalate ", " . map (\(Producer producer) -> producer)
 
 instance FromJSON (Film :: Type) where
   parseJSON :: Value -> Parser Film
@@ -113,3 +127,23 @@ instance FromJSON (Film :: Type) where
           <*> filmObj .: "created"
           <*> filmObj .: "edited"
           <*> filmObj .: "url"
+
+instance ToJSON (Film :: Type) where
+  toJSON :: Film -> Value
+  toJSON film =
+    Aeson.object
+      [ "title"           .= fTitle film
+      , "episode_id"      .= fEpisodeId film
+      , "opening_crawl"   .= fOpeningCrawl film
+      , "director"        .= fDirector film
+      , "producer"        .= fProducers film
+      , "release_date"    .= fReleaseDate film
+      , "characters"      .= fCharacters film
+      , "planets"         .= fPlanets film
+      , "starships"       .= fStarships film
+      , "vehicles"        .= fVehicles film
+      , "species"         .= fSpecies film
+      , "created"         .= fCreatedAt film
+      , "edited"          .= fEditedAt film
+      , "url"             .= fId film
+      ]
