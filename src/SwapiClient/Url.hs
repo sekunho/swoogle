@@ -57,6 +57,7 @@ data UrlData = UrlData
 --------------------------------------------------------------------------------
 -- Functions
 
+-- TODO: Reuse `swapiDomain` in `baseUrl`
 baseUrl :: Text
 baseUrl = "https://swapi.dev/api/"
 
@@ -78,10 +79,10 @@ resourceUrl resource =
       Species -> "species/"
       Planet -> "planets/"
 
--- Gets the ID of the resource URL
+-- TODO: Maybe make a sum type for all the ID newtypes?
+-- | Gets the ID of the resource URL
 -- > getId ("https://swapi.dev/api/people/1/" :: Text)
 -- Right 1
--- TODO: Maybe make a sum type for all the ID newtypes?
 getId :: Text -> Maybe Int
 getId url = do
   urlData <- urlToUrlData url
