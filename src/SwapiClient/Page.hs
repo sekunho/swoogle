@@ -84,7 +84,9 @@ pageToUrlData =
       Just $
         UrlData
           { udSubdir = ["people"]
-          , udParams = Map.fromList [("page", Text.Show.showt pageNum)]
+          , udParams = Map.fromList
+            [ ("page", Text.Show.showt pageNum)
+            , ("format", "json")]
           }
 
     NoPage -> Nothing
