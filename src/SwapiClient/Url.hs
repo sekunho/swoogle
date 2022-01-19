@@ -1,3 +1,5 @@
+{-# language DataKinds #-}
+
 module SwapiClient.Url
   ( Resource (Root, People, Film, Starship, Vehicle, Species, Planet)
   , UrlData (UrlData, udSubdir, udParams)
@@ -6,6 +8,7 @@ module SwapiClient.Url
   , urlToUrlData
   , urlDataToUrl
   , baseUrl
+  , swapiBin
   ) where
 
 import Data.List (foldl')
@@ -24,6 +27,8 @@ import Data.Text qualified as Text
 import Data.Text.Read qualified as Text.Read (decimal)
 import Data.Map.Strict (Map)
 import Data.Map.Strict qualified as Map (fromList, foldlWithKey', null)
+import Network.HTTP.Req (Url, Scheme (Https), (/:))
+import Network.HTTP.Req qualified as Req (https)
 
 --------------------------------------------------------------------------------
 -- Data types
@@ -54,6 +59,12 @@ data UrlData = UrlData
 
 baseUrl :: Text
 baseUrl = "https://swapi.dev/api/"
+
+swapiDomain :: Text
+swapiDomain = "swapi.dev"
+
+swapiBin :: Url 'Https
+swapiBin = Req.https swapiDomain /: "api"
 
 resourceUrl :: Resource -> Text
 resourceUrl resource =

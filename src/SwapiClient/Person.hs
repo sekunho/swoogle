@@ -65,7 +65,15 @@ import SwapiClient.Id
   , PersonId
   )
 
-import SwapiClient.Page (Index (Index, iCount, iNextPage, iPreviousPage, iResults))
+import SwapiClient.Page
+  ( Index
+    ( Index
+    , iCount
+    , iNextPage
+    , iPreviousPage
+    , iResults
+    )
+  )
 
 --------------------------------------------------------------------------------
 -- Data types
@@ -279,3 +287,4 @@ instance ToJSON (Index Person :: Type) where
       , "previous"  .= iPreviousPage indexObject
       , "results"   .= iResults indexObject
       ]
+
