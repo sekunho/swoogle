@@ -62,6 +62,8 @@ when I'm done. Subscribe to stay tuned! :)
 
 - [ ] Root
 - [ ] People
+  - [x] Index
+  - [x] View
 - [ ] Film
 - [ ] Starship
 - [ ] Vehicle
@@ -163,6 +165,148 @@ But there's one teeny tiny issue: it's annoying to repeat throughout the differe
 resources that has an `Index`, despite there being nothing specific to `Person`!
 I still haven't found a way to generalize this further so I can have an easier
 time, but so far I got nothing. `DerivingVia`? I don't know.
+
+#### Communicating with swapi.dev
+
+I figured I'd use `req` over `wreq` since I had enough on my new-thing-to-learn
+plate. Although it seemed a bit abstract, with the help of `req`'s documentation
+and test files, I was able to make a simple HTTP get request.
+
+Building the URL was straightforward enough, fortunately.  I just slapped this
+into `SwapiClient.Url`, and voila.
+
+``` haskell
+import Network.HTTP.Req ((/:), Url, Scheme (Https))
+import Network.HTTP.Req qualified as Req (https)
+
+swapiDomain :: Text
+swapiDomain = "swapi.dev"
+
+swapiBin :: Url 'Https
+swapiBin = Req.https swapiDomain /: "api"
+```
+
+I should probably cleanup this module, especially with the domain stuff, in the
+future. Writing that good ol' reliable TODO comment.
+
+Some somewhat related comments on how I import stuff. Yeah, I usually use
+qualified imports for functions, and regular imports for operators + types/data
+constructors. I also prefer explicit imports/exports so that I can easily tell
+what comes from where. It helps while I don't know the other libraries that well,
+and I can read without reaching for Hoogle.
+
+I used this style, from [Koz Ross](https://twitter.com/KozRoss), during my internship
+in MLabs (great people), and it stuck with me ever since. There's a
+detailed styleguide that they wrote over
+[here](https://github.com/mlabs-haskell/styleguide), just in case anyone is
+interested.
+
+The hard part was cobbling `runReq` along with the request computation I was
+trying to build. I was confused on how I was supposed to parse the response, you
+know, from `BsResponse` to something usable like `ByteString`. But it turned out
+all I lacked was `responseBody`. Cool.
+
+From there it was just a matter of using `aeson`, and my manually derived
+instances, that I worked hard on :), to decode it to the domain type I was
+expecting, `Index Person`! And since it isn't a guarantee for the parsing to
+succeed, the type signature looks like this `listPeople :: IO (Maybe (Index Person))`.
+
+Here's the function looks like:
+
+``` haskell
+listPeople :: IO (Maybe (Index Person))
+listPeople =
+   Req.runReq Req.defaultHttpConfig $
+    Req.req GET (Url.swapiBin /: "people") NoReqBody Req.bsResponse mempty
+      <&> Req.responseBody
+      <&> Aeson.decodeStrict
+```
+
+I initially wanted to use `>>=` but HLS kept informing me, and was very insistent,
+to use `<&>` instead. Well, while it does look like it composes better, I'm not
+sure what the caveats on how the computations are evaluated/executed, and all that
+stuff. It looks nice, so I guess I'll leave it like this for now.
+
+One step closer to having an actual proper, and working library! Gonna call it
+a day for now.
+
+#### `GeneralizedNewtypeDeriving`
+
+More language pragmas, hooray.
+
+So I was working on `getPerson`, which, well, provided with a person ID, it'll
+give you back the character information of that associated ID. I used a `newtype`
+to wrap the ID so it'll be harder to mix it with other IDs like `FilmId` and
+whatnot, but there is the burden of having to manually unwrap it every time I
+actually need the value wrapped in it.
+
+In this case, I had to get the ID and convert it to `Text`. There's `TextShow`
+that takes care of `Int -> Text`, but what if I had a `newtype` wrapping it?
+I _could_ unwrap it manually, but that's tedious (and annoying). There is this
+something called `GeneralizedNewtypeDeriving` which lets you ignore the `newtype`
+, and discard it, so it gets treated as an unwrapped...thing. Ok, I'm bad at
+explaining, so here's an example:
+
+`TextShow` already has an instance for `Int`. So I could just convert an `Int`
+to `Text` right away without manually writing an instance for it. But if I try
+to wrap a `newtype` around it, I can't do it!
+
+``` haskell
+import TextShow (TextShow)
+
+-- This won't do
+newtype SomeId = SomeId Int
+  deriving (Eq, Show, TextShow)
+```
+
+Compiling this'll cause GHC to point out that the `TextShow` typeclass isn't a
+stock derivable thing. A stock derivable typeclass include `Eq`, `Num`, `Bounded`,
+and some that I probably missed. The basic ones, basically. Although it does
+point out that I could add `GeneralizedNewtypeDeriving`:
+
+```sh
+src/SwapiClient/Id.hs:67:23-30: error:
+    • Can't make a derived instance of ‘TextShow PersonId’:
+        ‘TextShow’ is not a stock derivable class (Eq, Show, etc.)
+        Try GeneralizedNewtypeDeriving for GHC's newtype-deriving extension
+    • In the newtype declaration for ‘PersonId’
+   |
+67 |   deriving (Eq, Show, TextShow)
+   |                       ^^^^^^^^
+cabal: Failed to build swapi-client-0.1.0.0 (which is required by
+test:swapi-client-test from swapi-client-0.1.0.0).
+```
+
+``` haskell
++ {-# language GeneralizedNewtypeDeriving #-}
++
+import TextShow (TextShow)
+
+newtype SomeId = SomeId Int
+  deriving (Eq, Show, TextShow)
+```
+
+And it compiles!
+
+I'm not really a fan of mixing the different kinds of derivations though. It
+makes it confusing if it's just all in one `deriving`. Why are `Eq`, and `Show`,
+which are stock derived classes, mixed with a `newtype` one? I guess it's not
+that big of a deal though. But I just turn on `DerivingStrategies` to help me out
+easily differentiate what's stock and not.
+
+``` haskell
+{-# language GeneralizedNewtypeDeriving #-}
+
+import TextShow (TextShow)
+
+newtype SomeId = SomeId Int
+-  deriving (Eq, Show, TextShow)
++  deriving stock (Eq, Show)
++  deriving newtype TextShow
+```
+
+Aaand with that I could just do this whenever I want to convert a `PersonId` to
+`Text`: `Text.Show.showt (PersonId 1)` will evaluate to `"1" :: Text`. Mind blown.
 
 ### Day 16 - 18/01/2022
 

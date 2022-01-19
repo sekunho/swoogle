@@ -19,7 +19,6 @@ module SwapiClient
   , unVehicleId
   , unStarshipId
   , unPersonId
-
   , Gender (Male, Female, Hermaphrodite, NoGender)
   , Resource (People, Film, Planet)
   , HairColor
