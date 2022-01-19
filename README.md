@@ -277,7 +277,7 @@ cabal: Failed to build swapi-client-0.1.0.0 (which is required by
 test:swapi-client-test from swapi-client-0.1.0.0).
 ```
 
-``` haskell
+``` diff
 + {-# language GeneralizedNewtypeDeriving #-}
 +
 import TextShow (TextShow)
@@ -294,7 +294,7 @@ which are stock derived classes, mixed with a `newtype` one? I guess it's not
 that big of a deal though. But I just turn on `DerivingStrategies` to help me out
 easily differentiate what's stock and not.
 
-``` haskell
+``` diff
 {-# language GeneralizedNewtypeDeriving #-}
 
 import TextShow (TextShow)
