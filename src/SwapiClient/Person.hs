@@ -1,3 +1,5 @@
+{-# language FlexibleInstances #-}
+
 module SwapiClient.Person
   ( BirthYear (BBY, ABY, UnknownBirthYear)
   , Height (Height, UnknownHeight)
@@ -22,7 +24,6 @@ module SwapiClient.Person
       , pEditedAt
       , pId
       )
-  , PersonIndex ( pCount, pResults, pNextPage, pPreviousPage )
   ) where
 
 --------------------------------------------------------------------------------
@@ -64,7 +65,7 @@ import SwapiClient.Id
   , PersonId
   )
 
-import SwapiClient.Page (Page)
+import SwapiClient.Page (Index (Index, iCount, iNextPage, iPreviousPage, iResults))
 
 --------------------------------------------------------------------------------
 -- Data types
@@ -114,12 +115,6 @@ data Person = Person
   , pId               :: PersonId
   } deriving Show
 
-data PersonIndex = PersonIndex
-  { pCount :: Int
-  , pNextPage :: Page
-  , pPreviousPage :: Page
-  , pResults :: [Person]
-  } deriving Show
 
 --------------------------------------------------------------------------------
 -- Instances
@@ -264,23 +259,23 @@ instance ToJSON (Person :: Type) where
       , "url"        .= pId person
       ]
 
-instance FromJSON (PersonIndex :: Type) where
-  parseJSON :: Value -> Parser PersonIndex
+instance FromJSON (Index Person :: Type) where
+  parseJSON :: Value -> Parser (Index Person)
   parseJSON =
-    Aeson.withObject "PersonIndex" $
+    Aeson.withObject "Index" $
       \indexObject ->
-        PersonIndex
+        Index
           <$> indexObject .: "count"
           <*> indexObject .: "next"
           <*> indexObject .: "previous"
           <*> indexObject .: "results"
 
-instance ToJSON (PersonIndex :: Type) where
-  toJSON :: PersonIndex -> Value
+instance ToJSON (Index Person :: Type) where
+  toJSON :: Index Person -> Value
   toJSON indexObject =
     Aeson.object
-      [ "count"     .= pCount indexObject
-      , "next"      .= pNextPage indexObject
-      , "previous"  .= pPreviousPage indexObject
-      , "results"   .= pResults indexObject
+      [ "count"     .= iCount indexObject
+      , "next"      .= iNextPage indexObject
+      , "previous"  .= iPreviousPage indexObject
+      , "results"   .= iResults indexObject
       ]
