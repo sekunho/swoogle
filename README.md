@@ -116,6 +116,52 @@ Worked on implementing the encoding `Film` and its test. Nothing really
 noteworthy since it's just a repetition of previous days with a different coat
 of paint.
 
+#### Extracting the index out of resources
+
+The index of each resource aren't unique from each other; its structure is
+essentially the same! So I created a more generic type:
+
+``` haskell
+data Index a = Index
+  { iCount :: Int
+  , iNextPage :: Page
+  , iPreviousPage :: Page
+  , iResults :: [a]
+  }
+```
+
+Now the `Index Person`, for example, will have these instances for `aeson`:
+
+``` haskell
+{-# language FlexibleInstances #-}
+
+instance FromJSON (Index Person :: Type) where
+  parseJSON :: Value -> Parser (Index Person)
+  parseJSON =
+    Aeson.withObject "Index" $
+      \indexObject ->
+        Index
+          <$> indexObject .: "count"
+          <*> indexObject .: "next"
+          <*> indexObject .: "previous"
+          <*> indexObject .: "results"
+
+instance ToJSON (Index Person :: Type) where
+  toJSON :: Index Person -> Value
+  toJSON indexObject =
+    Aeson.object
+      [ "count"     .= iCount indexObject
+      , "next"      .= iNextPage indexObject
+      , "previous"  .= iPreviousPage indexObject
+      , "results"   .= iResults indexObject
+      ]
+```
+
+But there's one teeny tiny issue: it's annoying to repeat throughout the different
+resources that has an `Index`, despite there being nothing specific to `Person`!
+I still haven't found a way to generalize this further so I can have an easier
+time, but so far I got nothing. `DerivingVia`? I don't know.
+
 ### Day 16 - 18/01/2022
 
 Woke up a bit earlier (04:00) than the usual (05:00-07:00) when the LTE is less
