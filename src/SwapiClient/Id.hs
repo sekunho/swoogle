@@ -1,3 +1,6 @@
+{-# language DerivingStrategies #-}
+{-# language GeneralizedNewtypeDeriving #-}
+
 module SwapiClient.Id
   ( FilmId (FilmId)
   , HomeworldId (HomeworldId)
@@ -25,6 +28,7 @@ import Data.Aeson qualified as Aeson (withText)
 import Data.Aeson.Types (Parser)
 import Data.Kind (Type)
 import Data.Text (Text)
+import TextShow (TextShow)
 import TextShow qualified as Text.Show (showt)
 
 --------------------------------------------------------------------------------
@@ -61,6 +65,7 @@ newtype StarshipId = StarshipId Int
 
 newtype PersonId = PersonId Int
   deriving (Eq, Show)
+  deriving newtype (TextShow)
 
 --------------------------------------------------------------------------------
 -- Instances
