@@ -63,7 +63,7 @@ when I'm done. Subscribe to stay tuned! :)
 - [ ] Root
 - [ ] People
   - [x] Index
-  - [ ] View
+  - [x] View
 - [ ] Film
 - [ ] Starship
 - [ ] Vehicle
@@ -229,6 +229,84 @@ stuff. It looks nice, so I guess I'll leave it like this for now.
 
 One step closer to having an actual proper, and working library! Gonna call it
 a day for now.
+
+#### `GeneralizedNewtypeDeriving`
+
+More language pragmas, hooray.
+
+So I was working on `getPerson`, which, well, provided with a person ID, it'll
+give you back the character information of that associated ID. I used a `newtype`
+to wrap the ID so it'll be harder to mix it with other IDs like `FilmId` and
+whatnot, but there is the burden of having to manually unwrap it every time I
+actually need the value wrapped in it.
+
+In this case, I had to get the ID and convert it to `Text`. There's `TextShow`
+that takes care of `Int -> Text`, but what if I had a `newtype` wrapping it?
+I _could_ unwrap it manually, but that's tedious (and annoying). There is this
+something called `GeneralizedNewtypeDeriving` which lets you ignore the `newtype`
+, and discard it, so it gets treated as an unwrapped...thing. Ok, I'm bad at
+explaining, so here's an example:
+
+`TextShow` already has an instance for `Int`. So I could just convert an `Int`
+to `Text` right away without manually writing an instance for it. But if I try
+to wrap a `newtype` around it, I can't do it!
+
+``` haskell
+import TextShow (TextShow)
+
+-- This won't do
+newtype SomeId = SomeId Int
+  deriving (Eq, Show, TextShow)
+```
+
+Compiling this'll cause GHC to point out that the `TextShow` typeclass isn't a
+stock derivable thing. A stock derivable typeclass include `Eq`, `Num`, `Bounded`,
+and some that I probably missed. The basic ones, basically. Although it does
+point out that I could add `GeneralizedNewtypeDeriving`:
+
+```sh
+src/SwapiClient/Id.hs:67:23-30: error:
+    • Can't make a derived instance of ‘TextShow PersonId’:
+        ‘TextShow’ is not a stock derivable class (Eq, Show, etc.)
+        Try GeneralizedNewtypeDeriving for GHC's newtype-deriving extension
+    • In the newtype declaration for ‘PersonId’
+   |
+67 |   deriving (Eq, Show, TextShow)
+   |                       ^^^^^^^^
+cabal: Failed to build swapi-client-0.1.0.0 (which is required by
+test:swapi-client-test from swapi-client-0.1.0.0).
+```
+
+``` haskell
++ {-# language GeneralizedNewtypeDeriving #-}
++
+import TextShow (TextShow)
+
+newtype SomeId = SomeId Int
+  deriving (Eq, Show, TextShow)
+```
+
+And it compiles!
+
+I'm not really a fan of mixing the different kinds of derivations though. It
+makes it confusing if it's just all in one `deriving`. Why are `Eq`, and `Show`,
+which are stock derived classes, mixed with a `newtype` one? I guess it's not
+that big of a deal though. But I just turn on `DerivingStrategies` to help me out
+easily differentiate what's stock and not.
+
+``` haskell
+{-# language GeneralizedNewtypeDeriving #-}
+
+import TextShow (TextShow)
+
+newtype SomeId = SomeId Int
+-  deriving (Eq, Show, TextShow)
++  deriving stock (Eq, Show)
++  deriving newtype TextShow
+```
+
+Aaand with that I could just do this whenever I want to convert a `PersonId` to
+`Text`: `Text.Show.showt (PersonId 1)` will evaluate to `"1" :: Text`. Mind blown.
 
 ### Day 16 - 18/01/2022
 
