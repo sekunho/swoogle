@@ -49,7 +49,8 @@ import SwapiClient.Url qualified as Url (resourceUrl, getId)
 -- Data types
 
 newtype FilmId = FilmId Int
-  deriving (Eq, Show)
+  deriving stock (Eq, Show)
+  deriving newtype TextShow
 
 newtype HomeworldId = HomeworldId Int
   deriving (Eq, Show)
