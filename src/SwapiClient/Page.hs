@@ -1,5 +1,12 @@
 module SwapiClient.Page
   ( Page (PersonPage, NoPage)
+  , Index
+    ( Index
+    , iCount
+    , iNextPage
+    , iPreviousPage
+    , iResults
+    )
   ) where
 
 --------------------------------------------------------------------------------
@@ -10,7 +17,6 @@ import Data.Aeson.Types
   , Value (String, Null)
   , Parser
   )
-
 import Data.Map.Strict qualified as Map (lookup, fromList)
 import Data.Kind (Type)
 import Data.Text.Read qualified as Text.Read (decimal)
@@ -24,11 +30,19 @@ import SwapiClient.Url qualified as Url (urlToUrlData, urlDataToUrl)
 --------------------------------------------------------------------------------
 -- Data types
 
-{- FIXME: `PersonIndex` can have a page of a different resource. e.g `PersonIndex`
+{- FIXME: `Index` can have a page of a different resource. e.g `Index`
 has `StarshipPage`, which doesn't make sense. -}
 data Page
   = PersonPage Int
   | NoPage
+  deriving Show
+
+data Index a = Index
+  { iCount :: Int
+  , iNextPage :: Page
+  , iPreviousPage :: Page
+  , iResults :: [a]
+  }
   deriving Show
 
 --------------------------------------------------------------------------------

@@ -2,7 +2,8 @@
 
 module SwapiClient.Film
   ( Film
-      ( fTitle
+      ( Film
+      , fTitle
       , fEpisodeId
       , fOpeningCrawl
       , fDirector
@@ -48,6 +49,7 @@ import SwapiClient.Id
   , StarshipId
   , FilmId
   )
+import SwapiClient.Page (Index (Index, iCount, iNextPage, iPreviousPage, iResults))
 
 --------------------------------------------------------------------------------
 
@@ -146,4 +148,25 @@ instance ToJSON (Film :: Type) where
       , "created"         .= fCreatedAt film
       , "edited"          .= fEditedAt film
       , "url"             .= fId film
+      ]
+
+instance FromJSON (Index Film :: Type) where
+  parseJSON :: Value -> Parser (Index Film)
+  parseJSON =
+    Aeson.withObject "Index" $
+      \indexObject ->
+        Index
+          <$> indexObject .: "count"
+          <*> indexObject .: "next"
+          <*> indexObject .: "previous"
+          <*> indexObject .: "results"
+
+instance ToJSON (Index Film :: Type) where
+  toJSON :: Index Film -> Value
+  toJSON indexObject =
+    Aeson.object
+      [ "count"     .= iCount indexObject
+      , "next"      .= iNextPage indexObject
+      , "previous"  .= iPreviousPage indexObject
+      , "results"   .= iResults indexObject
       ]
