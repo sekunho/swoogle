@@ -1,13 +1,13 @@
+<p align="center">
+  <img src="swapi-haskell.svg" />
+</p>
+
 # SWAPI Client
 
-`swapi` is a client library (without much bells and whistles) for SWAPI
-([Star Wars API](https://swapi.dev)). Making this involves some of the commonly
-used Haskell libraries like `aeson`, `containers`, an HTTP client library I have
-not yet decided on, etc. and other basic Haskell concepts to be aware of – which
-makes it a good candidate for a starter project! Of course it doesn't require a
-deep dive in the aforementioned libraries; it's just enough to make things work.
+[![License: MIT](https://img.shields.io/badge/license-BSD--3--Clause-yellow)](https://opensource.org/licenses/BSD-3-Clause)
 
-## Usage
+`swapi-client` is a client library (without much bells and whistles) to interact
+with SWAPI ([Star Wars API](https://swapi.dev)).
 
 ``` haskell
 import qualified SwapiClient.Api as Api (getFilm)
@@ -32,6 +32,12 @@ README; something I realized I should be doing more often thanks to Fly.io.
 I don't recommend using this as THE tutorial for this sort of thing because I'm
 just trying to piece things together like a caveman moments before fire was
 discovered.
+
+Making this involves some of the commonly used Haskell libraries like `aeson`,
+`containers`, an HTTP client library I have not yet decided on, etc. and other
+basic Haskell concepts to be aware of – which makes it a good candidate for a
+starter project! Of course it doesn't require a deep dive in the aforementioned
+libraries; it's just enough to make things work.
 
 ## Will this be a video
 
@@ -109,16 +115,26 @@ Resources/schemas that can be encoded/decoded to and from JSON respectively.
 
 ## Annoyances of swapi
 
-Here is a list of things I wish to improve when I get around rewriting SWAPI in
-Haskell:
+swapi.dev is awesome, especially since it's free, but there are some things I wish
+to improve when I get the time to do so:
 
 - A collection of things is sometimes encoded as a comma delimited string instead
 of using an array
+
 - Numbers are encoded as strings just because the field could be an actual string
 like `"n/a"`, or `"none"`
+
 - Inconsistent usage of units. e.g In `Starship`, it has a field called 
 `max_atmosphering_speed` with the kilometer unit, and without. Both of which are
 numbers, just encoded as strings. What's the unitless number supposed to be?
+
+- `api/<resource>/schema/` does not work
+
+- `Starship`: `crew` has a range value for one, and just a number for the others
+
+- `Starship`: `length`'s number formatting is inconsistent
+
+- `Starship`: `starship_class` character case is inconsistent
 
 ## Notes
 
