@@ -123,7 +123,6 @@ data Person = Person
   , pId               :: PersonId
   } deriving Show
 
-
 --------------------------------------------------------------------------------
 -- Instances
 
