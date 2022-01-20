@@ -1,5 +1,5 @@
 module SwapiClient.Page
-  ( Page (PersonPage, NoPage)
+  ( Page (Page, NoPage)
   , Index
     ( Index
     , iCount
@@ -33,7 +33,7 @@ import SwapiClient.Url qualified as Url (urlToUrlData, urlDataToUrl)
 {- FIXME: `Index` can have a page of a different resource. e.g `Index`
 has `StarshipPage`, which doesn't make sense. -}
 data Page
-  = PersonPage Int
+  = Page Int
   | NoPage
   deriving Show
 
@@ -48,6 +48,7 @@ data Index a = Index
 --------------------------------------------------------------------------------
 -- Instances
 
+-- TODO: Refactor cause this is ugly
 instance FromJSON (Page :: Type) where
   parseJSON :: Value -> Parser Page
   parseJSON val =
@@ -60,7 +61,7 @@ instance FromJSON (Page :: Type) where
                 case Text.Read.decimal pageNum of
                   Right (pageNum', "") ->
                     case udSubdir urlData of
-                      ["people"] -> pure . PersonPage $ pageNum'
+                      ["people"] -> pure . Page $ pageNum'
                       _ -> fail "ERROR: Unexpected resource from URL"
                   Right _ -> fail "ERROR: Invalid page number format."
                   Left e -> fail e
@@ -80,7 +81,7 @@ instance ToJSON (Page :: Type) where
 pageToUrlData :: Page -> Maybe UrlData
 pageToUrlData =
   \case
-    PersonPage pageNum ->
+    Page pageNum ->
       Just $
         UrlData
           { udSubdir = ["people"]

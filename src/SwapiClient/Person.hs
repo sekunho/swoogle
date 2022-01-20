@@ -110,7 +110,7 @@ data Person = Person
   , pMass             :: Mass           -- Mass of person can be Nothing
   , pHairColor        :: [HairColor]
   , pSkinColor        :: [SkinColor]
-  , pEyeColor         :: EyeColor       -- Uh, eye color.
+  , pEyeColor         :: [EyeColor]     -- Uh, eye color.
   , pBirthYear        :: BirthYear      -- Relative to before/after Battle of Yavin
   , pGender           :: Gender         -- Gender according to SWAPI
   , pHomeworldId      :: HomeworldId    -- Homeworld IDs of character
