@@ -61,9 +61,9 @@ test_encodeFilmJSON =
 
 test_decodeFilmIndex :: IO TestTree
 test_decodeFilmIndex =
-  mkGoldenTest <$> Aeson.eitherDecodeFileStrict film1JSON
+  mkGoldenTest <$> Aeson.eitherDecodeFileStrict filmIndex1Fixture
   where
-    mkGoldenTest :: Either String Film -> TestTree
+    mkGoldenTest :: Either String (Index Film) -> TestTree
     mkGoldenTest film =
       Golden.goldenVsFile
         "decode film index page 1"
