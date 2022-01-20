@@ -3,5 +3,8 @@ cradle:
     - path: "src"
       component: "lib:swapi-client"
 
+    - path: "app/Main.hs"
+      component: "swapi-client:exe:swapi-client"
+
     - path: "test"
       component: "swapi-client:test:swapi-client-test"

@@ -47,6 +47,24 @@ library
       , time >= 1.12.1 && <1.13
       , containers >= 0.6.5 && <0.6.6
 
+executable swapi-client
+    build-depends:
+        base ^>=4.14.3.0
+      , swapi-client >= 0.1 && <0.2
+
+    main-is: Main.hs
+    hs-source-dirs: app
+    ghc-options:        -Wall -Werror
+
+    default-extensions: OverloadedStrings
+                      , InstanceSigs
+                      , TypeApplications
+                      , StrictData
+                      , LambdaCase
+                      , KindSignatures
+                      , NoStarIsType
+                      , ImportQualifiedPost
+
 test-suite swapi-client-test
     type:               exitcode-stdio-1.0
     main-is:            Driver.hs
