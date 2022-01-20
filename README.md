@@ -38,6 +38,7 @@ when I'm done. Subscribe to stay tuned! :)
   - [Queryable resources](#queryable-resources)
   - [Parseable resources](#parseable-resources)
 - [Notes](#notes)
+  - [Day 18 - 20/01/2022](#day-18---20012022)
   - [Day 17 - 19/01/2022](#day-17---19012022)
   - [Day 16 - 18/01/2022](#day-16---18012022)
   - [Day 15 - 16/01/2022](#day-15---16012022)
@@ -61,10 +62,8 @@ when I'm done. Subscribe to stay tuned! :)
 ### Queryable resources
 
 - [ ] Root
-- [ ] People
-  - [x] Index
-  - [x] View
-- [ ] Film
+- [x] People
+- [x] Film
 - [ ] Starship
 - [ ] Vehicle
 - [ ] Species
@@ -113,6 +112,15 @@ Right (PersonIndex {pCount = 18, pNextPage = PersonPage 2, pPreviousPage = NoPag
 ## Notes
 
 Dates are formatted in DD-MM-YYYY.
+
+### Day 18 - 20/01/2022
+
+I pretty much repeated what I did yesterday. I'm thinking of refactoring some
+things but I don't know how to improve it yet. I find some of the code I wrote
+was a bit too verbose, and I think there's a better way around it.
+
+I also haven't considered the wookie option. I'm not sure how to go about that
+either.
 
 ### Day 17 - 19/01/2022
 
