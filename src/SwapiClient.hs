@@ -130,3 +130,5 @@ import SwapiClient.Color
     )
   )
 import SwapiClient.Root (Root (..))
+
+-- TODO: Reorganize re-exports. I honestly don't know how (yet).
