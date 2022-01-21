@@ -1,10 +1,13 @@
 module SwapiClient.Api
   ( listPeople
   , listFilms
+  , listStarships
   , eitherListPeople
   , eitherListFilms
+  , eitherListStarships
   , getPerson
   , getFilm
+  , getStarship
   ) where
 
 --------------------------------------------------------------------------------
@@ -33,10 +36,11 @@ import TextShow qualified as Text.Show (showt)
 
 --------------------------------------------------------------------------------
 
-import SwapiClient.Id (PersonId, FilmId)
+import SwapiClient.Id (PersonId, FilmId, StarshipId)
 import SwapiClient.Page (Page (Page, NoPage), Index)
 import SwapiClient.Person (Person)
 import SwapiClient.Film (Film)
+import SwapiClient.Starship (Starship)
 import SwapiClient.Url qualified as Url (swapiBin)
 
 --------------------------------------------------------------------------------
@@ -134,6 +138,55 @@ eitherListFilms page =
 getFilm :: FilmId -> IO (Maybe Film)
 getFilm filmId =
   runReq (get (Url.swapiBin /: "films" /: Text.Show.showt filmId))
+
+--------------------------------------------------------------------------------
+-- Starship
+
+-- | Fetches a list of starships given a `Page`.
+--
+-- `ghci> listStarships (Page 1)`
+--
+-- ```haskell
+-- Just $ Index
+--   { iCount = 1
+--   , iNextPage = NoPage
+--   , iPreviousPage = NoPage
+--   , iResults = [ Starship {...} ]
+--   }
+-- ```
+--
+-- If the page provided is `NoPage`, it gives back `Nothing`.
+listStarships :: Page -> IO (Maybe (Index Starship))
+listStarships page =
+  runReq (getPage (Url.swapiBin /: "starships") page)
+
+-- | Fetches a list of starships given a `Page`.
+--
+-- `ghci> eitherListStarships (Page 1)`
+--
+-- ```haskell
+-- Right $ Index
+--   { iCount = 1
+--   , iNextPage = NoPage
+--   , iPreviousPage = NoPage
+--   , iResults = [ Starship {...} ]
+--   }
+-- ```
+--
+-- If the page provided is `NoPage`, it gives back `Left "This is an empty page"`.
+eitherListStarships :: Page -> IO (Either String (Index Starship))
+eitherListStarships page =
+  runReq (eitherGetPage (Url.swapiBin /: "starships") page)
+
+-- | Fetches a single starship associated with the provided `StarshipId`.
+--
+-- `ghci> getStarship (StarshipId 1)`
+--
+-- `Just $ Starship { ... }`
+getStarship :: StarshipId -> IO (Maybe Starship)
+getStarship starshipId =
+  runReq (get (Url.swapiBin /: "starships" /: Text.Show.showt starshipId))
+
 
 --------------------------------------------------------------------------------
 -- Utils

@@ -82,27 +82,27 @@ data BirthYear
   = BBY Double
   | ABY Double
   | UnknownBirthYear
-  deriving Show
+  deriving stock (Eq, Show)
 
 data Height
   = Height Int
   | UnknownHeight
-  deriving Show
+  deriving stock (Eq, Show)
 
 data Mass
   = Mass Double
   | UnknownMass
-  deriving Show
+  deriving stock (Eq, Show)
 
 data Gender
   = Male
   | Female
   | Hermaphrodite
   | NoGender
-  deriving Show
+  deriving stock (Eq, Show)
 
 newtype PersonName = PersonName Text
-  deriving Show
+  deriving stock (Eq, Show)
 
 data Person = Person
   { pName             :: PersonName     -- Name of person
@@ -121,8 +121,8 @@ data Person = Person
   , pCreatedAt        :: UTCTime
   , pEditedAt         :: UTCTime
   , pId               :: PersonId
-  } deriving Show
-
+  }
+  deriving stock (Eq, Show)
 
 --------------------------------------------------------------------------------
 -- Instances

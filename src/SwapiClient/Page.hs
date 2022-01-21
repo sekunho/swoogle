@@ -60,9 +60,7 @@ instance FromJSON (Page :: Type) where
               Just pageNum  ->
                 case Text.Read.decimal pageNum of
                   Right (pageNum', "") ->
-                    case udSubdir urlData of
-                      ["people"] -> pure . Page $ pageNum'
-                      _ -> fail "ERROR: Unexpected resource from URL"
+                    pure . Page $ pageNum'
                   Right _ -> fail "ERROR: Invalid page number format."
                   Left e -> fail e
               Nothing -> pure NoPage

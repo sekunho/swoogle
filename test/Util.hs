@@ -2,10 +2,9 @@ module Util (takeBaseName, batchGoldenVsFile) where
 
 --------------------------------------------------------------------------------
 
-import Data.ByteString (ByteString)
 import Data.Text qualified as Text ( unpack, split, pack )
 import Test.Tasty ( TestTree )
-import Test.Tasty.Golden qualified as Golden ( findByExtension, goldenVsFile )
+import Test.Tasty.Golden qualified as Golden ( goldenVsFile )
 import Test.Tasty.Providers (TestName)
 
 --------------------------------------------------------------------------------
