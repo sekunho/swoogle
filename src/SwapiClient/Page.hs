@@ -35,7 +35,7 @@ has `StarshipPage`, which doesn't make sense. -}
 data Page
   = Page Int
   | NoPage
-  deriving Show
+  deriving stock (Eq, Show)
 
 data Index a = Index
   { iCount :: Int
