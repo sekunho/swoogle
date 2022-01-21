@@ -1,10 +1,9 @@
 module Main where
 
-import SwapiClient.Api qualified as Api (getFilm)
-import SwapiClient.Id (FilmId (FilmId))
+import SwapiClient (getFilm, FilmId (FilmId))
 
 main :: IO ()
 main = do
-  film <- Api.getFilm (FilmId 1)
+  film <- getFilm (FilmId 1)
 
   print film

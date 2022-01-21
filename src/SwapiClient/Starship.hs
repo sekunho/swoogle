@@ -59,7 +59,6 @@ import Data.Text.Read qualified as Text.Read (decimal, double)
 import TextShow (TextShow)
 import TextShow qualified as Text.Show (showt)
 import Data.Time (UTCTime)
-import GHC.Stack (HasCallStack)
 
 --------------------------------------------------------------------------------
 
