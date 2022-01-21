@@ -49,11 +49,13 @@ module SwapiClient.Starship
 
 import Data.Aeson (FromJSON, parseJSON, ToJSON, toJSON, (.=), (.:))
 import Data.Aeson qualified as Aeson
-import Data.Aeson.Types (Parser, Value)
+import Data.Aeson.Types (Parser, Value (String, Number))
 import Data.Kind (Type)
 import Data.Text (Text)
 import Data.Text qualified as Text (split, toLower)
 import Data.Text.Read qualified as Text.Read (decimal, double)
+import TextShow (TextShow)
+import TextShow qualified as Text.Show (showt)
 import Data.Time (UTCTime)
 import GHC.Stack (HasCallStack)
 
@@ -78,13 +80,16 @@ data Consumable
   deriving (Eq, Show)
 
 newtype StarshipName = StarshipName Text
-  deriving (Eq, Show)
+  deriving stock (Eq, Show)
+  deriving newtype TextShow
 
 newtype StarshipModel = StarshipModel Text
-  deriving (Eq, Show)
+  deriving stock (Eq, Show)
+  deriving newtype TextShow
 
 newtype Manufacturer = Manufacturer Text
-  deriving (Eq, Show)
+  deriving stock (Eq, Show)
+  deriving newtype TextShow
 
 data CostInCredits
   = Amount Word
@@ -102,16 +107,20 @@ data PassengerLimit
   deriving (Eq, Show)
 
 newtype StarshipLength = StarshipLength Double
-  deriving (Eq, Show)
+  deriving stock (Eq, Show)
+  deriving newtype TextShow
 
 newtype CargoCapacity = CargoCapacity Word
-  deriving (Eq, Show)
+  deriving stock (Eq, Show)
+  deriving newtype TextShow
 
 newtype HyperdriveRating = HyperdriveRating Double
-  deriving (Eq, Show)
+  deriving stock (Eq, Show)
+  deriving newtype TextShow
 
 newtype MaxMegalight = MaxMegalight Word
-  deriving (Eq, Show)
+  deriving stock (Eq, Show)
+  deriving newtype TextShow
 
 data StarshipClass
   = Corvette
@@ -153,13 +162,25 @@ instance FromJSON (StarshipName :: Type) where
   parseJSON :: Value -> Parser StarshipName
   parseJSON = Aeson.withText "StarshipName" (pure . StarshipName)
 
+instance ToJSON (StarshipName :: Type) where
+  toJSON :: StarshipName -> Value
+  toJSON = String . Text.Show.showt
+
 instance FromJSON (StarshipModel :: Type) where
   parseJSON :: Value -> Parser StarshipModel
   parseJSON = Aeson.withText "StarshipModel" (pure . StarshipModel)
 
+instance ToJSON (StarshipModel :: Type) where
+  toJSON :: StarshipModel -> Value
+  toJSON = String . Text.Show.showt
+
 instance FromJSON (Manufacturer :: Type) where
   parseJSON :: Value -> Parser Manufacturer
   parseJSON = Aeson.withText "Manufacturer" (pure . Manufacturer)
+
+instance ToJSON (Manufacturer :: Type) where
+  toJSON :: Manufacturer -> Value
+  toJSON = String . Text.Show.showt
 
 instance FromJSON (CostInCredits :: Type) where
   parseJSON :: Value -> Parser CostInCredits
@@ -180,6 +201,16 @@ instance FromJSON (CostInCredits :: Type) where
           Left e ->
             fail e
 
+instance ToJSON (CostInCredits :: Type) where
+  toJSON :: CostInCredits -> Value
+  toJSON = String .
+    \case
+      Amount amount ->
+        Text.Show.showt amount
+
+      UnknownCost ->
+        "unknown"
+
 instance FromJSON (StarshipLength :: Type) where
   parseJSON :: Value -> Parser StarshipLength
   parseJSON =
@@ -196,6 +227,10 @@ instance FromJSON (StarshipLength :: Type) where
           Left e ->
             fail e
 
+instance ToJSON (StarshipLength :: Type) where
+  toJSON :: StarshipLength -> Value
+  toJSON =  String . Text.Show.showt
+
 instance FromJSON (MaxAtmospheringSpeed :: Type) where
   parseJSON :: Value -> Parser MaxAtmospheringSpeed
   parseJSON =
@@ -211,6 +246,16 @@ instance FromJSON (MaxAtmospheringSpeed :: Type) where
 
             Left e ->
               fail e
+
+instance ToJSON (MaxAtmospheringSpeed :: Type) where
+  toJSON :: MaxAtmospheringSpeed -> Value
+  toJSON = String .
+    \case
+      MaxSpeed maxSpeed ->
+        Text.Show.showt maxSpeed <> "km"
+
+      MASNotApplicable ->
+        "n/a"
 
 instance FromJSON (RequiredCrew :: Type) where
   parseJSON :: Value -> Parser RequiredCrew
@@ -239,6 +284,16 @@ instance FromJSON (RequiredCrew :: Type) where
       parseAmount :: Text -> [Word]
       parseAmount = map (pluckWord . Text.Read.decimal) . Text.split (== '-')
 
+instance ToJSON (RequiredCrew :: Type) where
+  toJSON :: RequiredCrew -> Value
+  toJSON = String .
+    \case
+      CrewRange minCrew maxCrew ->
+        Text.Show.showt minCrew <> "-" <> Text.Show.showt maxCrew
+
+      CrewAmount amount ->
+        Text.Show.showt amount
+
 instance FromJSON (PassengerLimit :: Type) where
   parseJSON :: Value -> Parser PassengerLimit
   parseJSON =
@@ -258,6 +313,16 @@ instance FromJSON (PassengerLimit :: Type) where
             Left e ->
               fail e
 
+instance ToJSON (PassengerLimit :: Type) where
+  toJSON :: PassengerLimit -> Value
+  toJSON = String .
+    \case
+      PassengerLimit pLimit ->
+        Text.Show.showt pLimit
+
+      PLNotApplicable ->
+        "n/a"
+
 instance FromJSON (CargoCapacity :: Type) where
   parseJSON :: Value -> Parser CargoCapacity
   parseJSON =
@@ -272,6 +337,10 @@ instance FromJSON (CargoCapacity :: Type) where
 
           Left e ->
             fail e
+
+instance ToJSON (CargoCapacity :: Type) where
+  toJSON :: CargoCapacity -> Value
+  toJSON = String . Text.Show.showt
 
 instance FromJSON (Consumable :: Type) where
   parseJSON :: Value -> Parser Consumable
@@ -303,6 +372,25 @@ instance FromJSON (Consumable :: Type) where
           Left e ->
             fail e
 
+instance ToJSON (Consumable :: Type) where
+  toJSON :: Consumable -> Value
+  toJSON = String .
+    \case
+      Week timeLength ->
+        Text.Show.showt timeLength <> appendS timeLength " week"
+
+      Month timeLength ->
+        Text.Show.showt timeLength <> appendS timeLength " month"
+
+      Year timeLength ->
+        Text.Show.showt timeLength <> appendS timeLength " year"
+
+    where
+      appendS :: Word -> Text -> Text
+      appendS timeLength txt
+        | timeLength > 1 = txt <> "s"
+        | otherwise = txt
+
 instance FromJSON (HyperdriveRating :: Type) where
   parseJSON :: Value -> Parser HyperdriveRating
   parseJSON =
@@ -318,6 +406,10 @@ instance FromJSON (HyperdriveRating :: Type) where
           Left e ->
             fail e
 
+instance ToJSON (HyperdriveRating :: Type) where
+  toJSON :: HyperdriveRating -> Value
+  toJSON = String . Text.Show.showt
+
 instance FromJSON (MaxMegalight :: Type) where
   parseJSON :: Value -> Parser MaxMegalight
   parseJSON =
@@ -332,6 +424,10 @@ instance FromJSON (MaxMegalight :: Type) where
 
           Left e ->
             fail e
+
+instance ToJSON (MaxMegalight :: Type) where
+  toJSON :: MaxMegalight -> Value
+  toJSON = String . Text.Show.showt
 
 instance FromJSON (StarshipClass :: Type) where
   parseJSON :: Value -> Parser StarshipClass
@@ -369,6 +465,37 @@ instance FromJSON (StarshipClass :: Type) where
           _ ->
             fail "Unexpected value for `starship_class`."
 
+instance ToJSON (StarshipClass :: Type) where
+  toJSON :: StarshipClass -> Value
+  toJSON = String .
+    \case
+      Corvette ->
+        "Corvette"
+
+      StarDestroyer ->
+        "Star Destroyer"
+
+      LandingCraft ->
+        "Landing Craft"
+
+      DeepSpaceMobileBattlestation ->
+        "Deep Space Mobile Battlestation"
+
+      LightFreighter ->
+        "Light Freighter"
+
+      AssaultStarfighter ->
+        "Assault Starfighter"
+
+      Starfighter ->
+        "Starfighter"
+
+      StarDreadnought ->
+        "Star Dreadnought"
+
+      MediumTransport ->
+        "Medium Transport"
+
 instance FromJSON (Starship :: Type) where
   parseJSON :: Value -> Parser Starship
   parseJSON =
@@ -393,3 +520,27 @@ instance FromJSON (Starship :: Type) where
           <*> starshipObj .: "created"
           <*> starshipObj .: "edited"
           <*> starshipObj .: "url"
+
+instance ToJSON (Starship :: Type) where
+  toJSON :: Starship -> Value
+  toJSON starship =
+    Aeson.object
+      [ "name"                   .= sName starship
+      , "model"                  .= sModel starship
+      , "manufacturer"           .= sManufacturer starship
+      , "cost_in_credits"        .= sCost starship
+      , "length"                 .= sLength starship
+      , "max_atmosphering_speed" .= sMaxAtmospheringSpeed starship
+      , "crew"                   .= sRequiredCrew starship
+      , "passengers"             .= sPassengerLimit starship
+      , "cargo_capacity"         .= sCargoCapacity starship
+      , "consumables"            .= sConsumables starship
+      , "hyperdrive_rating"      .= sHyperdriveRating starship
+      , "MGLT"                   .= sMaxMegalight starship
+      , "starship_class"         .= sStarshipClass starship
+      , "pilots"                 .= sPilots starship
+      , "films"                  .= sFilms starship
+      , "created"                .= sCreatedAt starship
+      , "edited"                 .= sEditedAt starship
+      , "url"                    .= sId starship
+      ]

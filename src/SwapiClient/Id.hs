@@ -1,6 +1,3 @@
-{-# language DerivingStrategies #-}
-{-# language GeneralizedNewtypeDeriving #-}
-
 module SwapiClient.Id
   ( FilmId (FilmId)
   , HomeworldId (HomeworldId)
