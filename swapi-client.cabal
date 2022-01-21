@@ -3,7 +3,7 @@ name:               swapi-client
 version:            0.1.0.0
 maintainer:         SEKUN <sekun@hey.com>
 author:             SEKUN <sekun@hey.com>
-homepage:           https://swapi.sekun.dev
+homepage:           https://swapi-client.sekun.dev
 bug-reports:        https://github.com/sekunho/swapi
 synopsis:           A Haskell client for SWAPI
 category:           Web
