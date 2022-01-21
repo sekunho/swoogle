@@ -151,16 +151,15 @@ instance ToJSON (Height :: Type) where
 instance FromJSON (Mass :: Type) where
   parseJSON :: Value -> Parser Mass
   parseJSON =
-   Aeson.withText "Mass"
-      $ \mass ->
-          case mass of
-            "unknown" -> pure UnknownMass
+   Aeson.withText "Mass" $
+     \case
+       "unknown" -> pure UnknownMass
 
-            mass' ->
-              case Text.Read.double $ Text.filter (/= ',') mass' of
-                Right (numMass, "") -> pure . Mass $ numMass
-                Right (_, _) -> fail "ERROR: Unexpected format"
-                Left e -> fail e
+       mass' ->
+         case Text.Read.double $ Text.filter (/= ',') mass' of
+           Right (numMass, "") -> pure . Mass $ numMass
+           Right (_, _) -> fail "ERROR: Unexpected format"
+           Left e -> fail e
 
 instance ToJSON (Mass :: Type) where
   toJSON :: Mass -> Value
