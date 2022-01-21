@@ -34,7 +34,8 @@ import Network.HTTP.Req qualified as Req
   ( req
   , runReq
   , defaultHttpConfig
-  , bsResponse , responseBody
+  , bsResponse
+  , responseBody
   )
 import TextShow qualified as Text.Show (showt)
 
