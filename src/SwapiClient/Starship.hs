@@ -298,28 +298,16 @@ instance FromJSON (RequiredCrew :: Type) where
 
         val ->
           case parseAmount val of
-            [minCrew, maxCrew] ->
-              pure (CrewRange minCrew maxCrew)
-
-            [crewAmount] ->
-              pure (CrewAmount crewAmount)
-
-            _ ->
-              fail "Unexpected format for crew amount"
+            Right [minCrew, maxCrew] -> pure (CrewRange minCrew maxCrew)
+            Right [crewAmount] -> pure (CrewAmount crewAmount)
+            Right _ -> fail "Unexpected format for `crew`"
+            Left e -> fail e
     where
-      pluckWord :: HasCallStack => Either String (Word, Text) -> Word
-      pluckWord =
-        \case
-          Right (speed, _) ->
-            speed
-
-          Left e ->
-            error e
-
-      parseAmount :: Text -> [Word]
+      parseAmount :: Text -> Either String [Word]
       parseAmount =
-        map (pluckWord . Text.Read.decimal . normalizeNumText)
+          mapM ((<$>) fst . Text.Read.decimal)
           . Text.split (== '-')
+          . normalizeNumText
 
 instance ToJSON (RequiredCrew :: Type) where
   toJSON :: RequiredCrew -> Value
