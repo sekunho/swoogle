@@ -1,3 +1,5 @@
+{-# language FlexibleInstances #-}
+
 module SwapiClient.Starship
   ( Starship
     ( Starship
@@ -41,7 +43,7 @@ module SwapiClient.Starship
   , Manufacturer (Manufacturer)
   , StarshipModel (StarshipModel)
   , StarshipName (StarshipName)
-  , Consumable (Week, Month, Year)
+  , Consumable (CDay, CWeek, CMonth, CYear)
   , RequiredCrew (CrewRange, CrewAmount)
   ) where
 
@@ -52,7 +54,7 @@ import Data.Aeson qualified as Aeson
 import Data.Aeson.Types (Parser, Value (String))
 import Data.Kind (Type)
 import Data.Text (Text)
-import Data.Text qualified as Text (split, toLower)
+import Data.Text qualified as Text (split, toLower, filter)
 import Data.Text.Read qualified as Text.Read (decimal, double)
 import TextShow (TextShow)
 import TextShow qualified as Text.Show (showt)
@@ -61,9 +63,16 @@ import GHC.Stack (HasCallStack)
 
 --------------------------------------------------------------------------------
 
-import SwapiClient.Person (Person)
-import SwapiClient.Film (Film)
-import SwapiClient.Id (StarshipId)
+import SwapiClient.Page
+  ( Index
+    (Index
+    , iCount
+    , iNextPage
+    , iPreviousPage
+    , iResults
+    )
+  )
+import SwapiClient.Id (StarshipId, PersonId, FilmId)
 
 --------------------------------------------------------------------------------
 -- Data types
@@ -74,9 +83,10 @@ data RequiredCrew
   deriving (Eq, Show)
 
 data Consumable
-  = Week Word
-  | Month Word
-  | Year Word
+  = CDay Word
+  | CWeek Word
+  | CMonth Word
+  | CYear Word
   deriving (Eq, Show)
 
 newtype StarshipName = StarshipName Text
@@ -132,7 +142,7 @@ data StarshipClass
   | Starfighter
   | StarDreadnought
   | MediumTransport
-  deriving (Eq, Show)
+  deriving stock (Eq, Show)
 
 data Starship = Starship
   { sName                 :: StarshipName
@@ -148,12 +158,13 @@ data Starship = Starship
   , sHyperdriveRating     :: HyperdriveRating
   , sMaxMegalight         :: MaxMegalight
   , sStarshipClass        :: StarshipClass
-  , sPilots               :: [Person]
-  , sFilms                :: [Film]
+  , sPilots               :: [PersonId]
+  , sFilms                :: [FilmId]
   , sCreatedAt            :: UTCTime
   , sEditedAt             :: UTCTime
   , sId                   :: StarshipId
   }
+  deriving stock (Eq, Show)
 
 --------------------------------------------------------------------------------
 -- Instances
@@ -217,7 +228,7 @@ instance FromJSON (StarshipLength :: Type) where
     Aeson.withText "StarshipLength" $
       \lengthText ->
         -- TODO: I unfortunately do not know a better way to parse `Text`.
-        case Text.Read.double lengthText of
+        case Text.Read.double (normalizeNumText lengthText) of
           Right (starshipLength, "") ->
             pure $ StarshipLength starshipLength
 
@@ -240,7 +251,7 @@ instance FromJSON (MaxAtmospheringSpeed :: Type) where
           pure MASNotApplicable
 
         iAmSpeed ->
-          case Text.Read.decimal iAmSpeed of
+          case Text.Read.decimal (normalizeNumText iAmSpeed) of
             Right (speed, _) ->
               pure (MaxSpeed speed)
 
@@ -282,7 +293,9 @@ instance FromJSON (RequiredCrew :: Type) where
             error e
 
       parseAmount :: Text -> [Word]
-      parseAmount = map (pluckWord . Text.Read.decimal) . Text.split (== '-')
+      parseAmount =
+        map (pluckWord . Text.Read.decimal . normalizeNumText)
+          . Text.split (== '-')
 
 instance ToJSON (RequiredCrew :: Type) where
   toJSON :: RequiredCrew -> Value
@@ -303,7 +316,7 @@ instance FromJSON (PassengerLimit :: Type) where
           pure PLNotApplicable
 
         limitText ->
-          case Text.Read.decimal limitText of
+          case Text.Read.decimal (normalizeNumText limitText) of
             Right (passengerLimit, "") ->
               pure (PassengerLimit passengerLimit)
 
@@ -348,23 +361,29 @@ instance FromJSON (Consumable :: Type) where
     Aeson.withText "Consumable" $
       \val ->
         case Text.Read.decimal val of
-          Right (timeLength, "week") ->
-            pure (Week timeLength)
+          Right (timeLength, " day") ->
+            pure (CDay timeLength)
 
-          Right (timeLength, "weeks") ->
-            pure (Week timeLength)
+          Right (timeLength, " days") ->
+            pure (CDay timeLength)
 
-          Right (timeLength, "month") ->
-            pure (Month timeLength)
+          Right (timeLength, " week") ->
+            pure (CWeek timeLength)
 
-          Right (timeLength, "months") ->
-            pure (Month timeLength)
+          Right (timeLength, " weeks") ->
+            pure (CWeek timeLength)
 
-          Right (timeLength, "year") ->
-            pure (Year timeLength)
+          Right (timeLength, " month") ->
+            pure (CMonth timeLength)
 
-          Right (timeLength, "years") ->
-            pure (Year timeLength)
+          Right (timeLength, " months") ->
+            pure (CMonth timeLength)
+
+          Right (timeLength, " year") ->
+            pure (CYear timeLength)
+
+          Right (timeLength, " years") ->
+            pure (CYear timeLength)
 
           Right _ ->
             fail "Unexpected format for `consumables`"
@@ -376,13 +395,16 @@ instance ToJSON (Consumable :: Type) where
   toJSON :: Consumable -> Value
   toJSON = String .
     \case
-      Week timeLength ->
+      CDay timeLength ->
+        Text.Show.showt timeLength <> appendS timeLength " day"
+
+      CWeek timeLength ->
         Text.Show.showt timeLength <> appendS timeLength " week"
 
-      Month timeLength ->
+      CMonth timeLength ->
         Text.Show.showt timeLength <> appendS timeLength " month"
 
-      Year timeLength ->
+      CYear timeLength ->
         Text.Show.showt timeLength <> appendS timeLength " year"
 
     where
@@ -544,3 +566,30 @@ instance ToJSON (Starship :: Type) where
       , "edited"                 .= sEditedAt starship
       , "url"                    .= sId starship
       ]
+
+instance FromJSON (Index Starship :: Type) where
+  parseJSON :: Value -> Parser (Index Starship)
+  parseJSON =
+    Aeson.withObject "Index Starship" $
+      \val ->
+        Index
+          <$> val .: "count"
+          <*> val .: "next"
+          <*> val .: "previous"
+          <*> val .: "results"
+
+instance ToJSON (Index Starship :: Type) where
+  toJSON :: Index Starship -> Value
+  toJSON starshipIndex =
+    Aeson.object
+      [ "count"    .= iCount starshipIndex
+      , "next"     .= iNextPage starshipIndex
+      , "previous" .= iPreviousPage starshipIndex
+      , "results"  .= iResults starshipIndex
+      ]
+
+--------------------------------------------------------------------------------
+-- Utils
+
+normalizeNumText :: Text -> Text
+normalizeNumText = Text.filter (/= ',')
