@@ -33,18 +33,18 @@ module SwapiClient.Starship
     , StarDreadnought
     , MediumTransport
     )
-  , MaxMegalight (MaxMegalight)
-  , HyperdriveRating (HyperdriveRating)
-  , CargoCapacity (CargoCapacity)
+  , MaxMegalight (MaxMegalight, UnknownMegalight)
+  , HyperdriveRating (Rating, UnknownRating)
+  , CargoCapacity (Capacity, UnknownCapacity)
   , StarshipLength (StarshipLength)
-  , PassengerLimit (PassengerLimit, PLNotApplicable)
+  , PassengerLimit (PassengerLimit, PLNotApplicable, UnknownPassengerLimit)
   , MaxAtmospheringSpeed (MaxSpeed, MASNotApplicable)
   , CostInCredits (Amount, UnknownCost)
   , Manufacturer (Manufacturer)
   , StarshipModel (StarshipModel)
   , StarshipName (StarshipName)
-  , Consumable (CDay, CWeek, CMonth, CYear)
-  , RequiredCrew (CrewRange, CrewAmount)
+  , Consumable (CHour, CDay, CWeek, CMonth, CYear, UnknownConsumable)
+  , RequiredCrew (CrewRange, CrewAmount, UnknownAmount)
   ) where
 
 --------------------------------------------------------------------------------
@@ -80,13 +80,16 @@ import SwapiClient.Id (StarshipId, PersonId, FilmId)
 data RequiredCrew
   = CrewRange Word Word
   | CrewAmount Word
+  | UnknownAmount
   deriving (Eq, Show)
 
 data Consumable
-  = CDay Word
+  = CHour Word
+  | CDay Word
   | CWeek Word
   | CMonth Word
   | CYear Word
+  | UnknownConsumable
   deriving (Eq, Show)
 
 newtype StarshipName = StarshipName Text
@@ -109,28 +112,33 @@ data CostInCredits
 data MaxAtmospheringSpeed
   = MaxSpeed Word
   | MASNotApplicable
+  | UnknownSpeed
   deriving (Eq, Show)
 
 data PassengerLimit
   = PassengerLimit Word
   | PLNotApplicable
+  | UnknownPassengerLimit
   deriving (Eq, Show)
 
 newtype StarshipLength = StarshipLength Double
   deriving stock (Eq, Show)
   deriving newtype TextShow
 
-newtype CargoCapacity = CargoCapacity Word
+data CargoCapacity
+  = Capacity Word
+  | UnknownCapacity
   deriving stock (Eq, Show)
-  deriving newtype TextShow
 
-newtype HyperdriveRating = HyperdriveRating Double
+data HyperdriveRating
+  = Rating Double
+  | UnknownRating
   deriving stock (Eq, Show)
-  deriving newtype TextShow
 
-newtype MaxMegalight = MaxMegalight Word
+data MaxMegalight
+  = MaxMegalight Word
+  | UnknownMegalight
   deriving stock (Eq, Show)
-  deriving newtype TextShow
 
 data StarshipClass
   = Corvette
@@ -138,10 +146,24 @@ data StarshipClass
   | LandingCraft
   | DeepSpaceMobileBattlestation
   | LightFreighter
+  | Freighter
   | AssaultStarfighter
   | Starfighter
   | StarDreadnought
+  | PatrolCraft
+  | ArmedGovernmentTransport
+  | Transport
   | MediumTransport
+  | SpaceTransport
+  | EscortShip
+  | StarCruiser
+  | SpaceCruiser
+  | DroidControlShip
+  | Yacht
+  | DiplomaticBarge
+  | AssaultShip
+  | CapitalShip
+  | Cruiser
   deriving stock (Eq, Show)
 
 data Starship = Starship
@@ -247,8 +269,9 @@ instance FromJSON (MaxAtmospheringSpeed :: Type) where
   parseJSON =
     Aeson.withText "MaxAtmospheringSpeed" $
       \case
-        "n/a" ->
-          pure MASNotApplicable
+        "n/a" -> pure MASNotApplicable
+
+        "unknown" -> pure UnknownSpeed
 
         iAmSpeed ->
           case Text.Read.decimal (normalizeNumText iAmSpeed) of
@@ -262,26 +285,27 @@ instance ToJSON (MaxAtmospheringSpeed :: Type) where
   toJSON :: MaxAtmospheringSpeed -> Value
   toJSON = String .
     \case
-      MaxSpeed maxSpeed ->
-        Text.Show.showt maxSpeed <> "km"
-
-      MASNotApplicable ->
-        "n/a"
+      MaxSpeed maxSpeed -> Text.Show.showt maxSpeed <> "km"
+      MASNotApplicable -> "n/a"
+      UnknownSpeed -> "unknown"
 
 instance FromJSON (RequiredCrew :: Type) where
   parseJSON :: Value -> Parser RequiredCrew
   parseJSON =
     Aeson.withText "RequiredCrew" $
-      \res ->
-        case parseAmount res of
-          [minCrew, maxCrew] ->
-            pure (CrewRange minCrew maxCrew)
+      \case
+        "unknown" -> pure UnknownAmount
 
-          [crewAmount] ->
-            pure (CrewAmount crewAmount)
+        val ->
+          case parseAmount val of
+            [minCrew, maxCrew] ->
+              pure (CrewRange minCrew maxCrew)
 
-          _ ->
-            fail "Unexpected format for crew amount"
+            [crewAmount] ->
+              pure (CrewAmount crewAmount)
+
+            _ ->
+              fail "Unexpected format for crew amount"
     where
       pluckWord :: HasCallStack => Either String (Word, Text) -> Word
       pluckWord =
@@ -304,16 +328,17 @@ instance ToJSON (RequiredCrew :: Type) where
       CrewRange minCrew maxCrew ->
         Text.Show.showt minCrew <> "-" <> Text.Show.showt maxCrew
 
-      CrewAmount amount ->
-        Text.Show.showt amount
+      CrewAmount amount -> Text.Show.showt amount
+      UnknownAmount -> "unknown"
 
 instance FromJSON (PassengerLimit :: Type) where
   parseJSON :: Value -> Parser PassengerLimit
   parseJSON =
     Aeson.withText "PassengerLimit" $
       \case
-        "n/a" ->
-          pure PLNotApplicable
+        "n/a" -> pure PLNotApplicable
+
+        "unknown" -> pure UnknownPassengerLimit
 
         limitText ->
           case Text.Read.decimal (normalizeNumText limitText) of
@@ -336,65 +361,84 @@ instance ToJSON (PassengerLimit :: Type) where
       PLNotApplicable ->
         "n/a"
 
+      UnknownPassengerLimit ->
+        "unknown"
+
 instance FromJSON (CargoCapacity :: Type) where
   parseJSON :: Value -> Parser CargoCapacity
   parseJSON =
     Aeson.withText "CargoCapacity" $
-      \val ->
-        case Text.Read.decimal val of
-          Right (cargoCapacity, "") ->
-            pure (CargoCapacity cargoCapacity)
+      \case
+        "unknown" -> pure UnknownCapacity
+        val ->
+          case Text.Read.decimal val of
+            Right (cargoCapacity, "") ->
+              pure (Capacity cargoCapacity)
 
-          Right _ ->
-            fail "Unexpected format for `cargo_capacity`."
+            Right _ ->
+              fail "Unexpected format for `cargo_capacity`."
 
-          Left e ->
-            fail e
+            Left e ->
+              fail e
 
 instance ToJSON (CargoCapacity :: Type) where
   toJSON :: CargoCapacity -> Value
-  toJSON = String . Text.Show.showt
+  toJSON = String .
+    \case
+      UnknownCapacity -> "unknown"
+      Capacity capacity -> Text.Show.showt capacity
 
 instance FromJSON (Consumable :: Type) where
   parseJSON :: Value -> Parser Consumable
   parseJSON =
     Aeson.withText "Consumable" $
-      \val ->
-        case Text.Read.decimal val of
-          Right (timeLength, " day") ->
-            pure (CDay timeLength)
+      \case
+        "unknown" -> pure UnknownConsumable
+        val ->
+          case Text.Read.decimal val of
+            Right (timeLength, " hour") ->
+              pure (CHour timeLength)
 
-          Right (timeLength, " days") ->
-            pure (CDay timeLength)
+            Right (timeLength, " hours") ->
+              pure (CHour timeLength)
 
-          Right (timeLength, " week") ->
-            pure (CWeek timeLength)
+            Right (timeLength, " day") ->
+              pure (CDay timeLength)
 
-          Right (timeLength, " weeks") ->
-            pure (CWeek timeLength)
+            Right (timeLength, " days") ->
+              pure (CDay timeLength)
 
-          Right (timeLength, " month") ->
-            pure (CMonth timeLength)
+            Right (timeLength, " week") ->
+              pure (CWeek timeLength)
 
-          Right (timeLength, " months") ->
-            pure (CMonth timeLength)
+            Right (timeLength, " weeks") ->
+              pure (CWeek timeLength)
 
-          Right (timeLength, " year") ->
-            pure (CYear timeLength)
+            Right (timeLength, " month") ->
+              pure (CMonth timeLength)
 
-          Right (timeLength, " years") ->
-            pure (CYear timeLength)
+            Right (timeLength, " months") ->
+              pure (CMonth timeLength)
 
-          Right _ ->
-            fail "Unexpected format for `consumables`"
+            Right (timeLength, " year") ->
+              pure (CYear timeLength)
 
-          Left e ->
-            fail e
+            Right (timeLength, " years") ->
+              pure (CYear timeLength)
+
+            Right _ ->
+              fail "Unexpected format for `consumables`"
+
+            Left e ->
+              fail e
 
 instance ToJSON (Consumable :: Type) where
   toJSON :: Consumable -> Value
   toJSON = String .
     \case
+      CHour timeLength ->
+        Text.Show.showt timeLength <> appendS timeLength " hour"
+
       CDay timeLength ->
         Text.Show.showt timeLength <> appendS timeLength " day"
 
@@ -407,6 +451,9 @@ instance ToJSON (Consumable :: Type) where
       CYear timeLength ->
         Text.Show.showt timeLength <> appendS timeLength " year"
 
+      UnknownConsumable ->
+        "unknown"
+
     where
       appendS :: Word -> Text -> Text
       appendS timeLength txt
@@ -417,39 +464,49 @@ instance FromJSON (HyperdriveRating :: Type) where
   parseJSON :: Value -> Parser HyperdriveRating
   parseJSON =
     Aeson.withText "HyperdriveRating" $
-      \val ->
-        case Text.Read.double val of
-          Right (rating, "") ->
-            pure (HyperdriveRating rating)
+      \case
+        "unknown" -> pure UnknownRating
+        val ->
+          case Text.Read.double val of
+            Right (rating, "") ->
+              pure (Rating rating)
 
-          Right _ ->
-            fail "Unexpected format for `hyperdrive_rating`"
+            Right _ ->
+              fail "Unexpected format for `hyperdrive_rating`"
 
-          Left e ->
-            fail e
+            Left e ->
+              fail e
 
 instance ToJSON (HyperdriveRating :: Type) where
   toJSON :: HyperdriveRating -> Value
-  toJSON = String . Text.Show.showt
+  toJSON = String .
+    \case
+      UnknownRating -> "unknown"
+      Rating rating -> Text.Show.showt rating
 
 instance FromJSON (MaxMegalight :: Type) where
   parseJSON :: Value -> Parser MaxMegalight
   parseJSON =
     Aeson.withText "MaxMegalight" $
-      \val ->
-        case Text.Read.decimal val of
-          Right (maxMegalight, "") ->
-            pure (MaxMegalight maxMegalight)
+      \case
+        "unknown" -> pure UnknownMegalight
+        val ->
+          case Text.Read.decimal val of
+            Right (maxMegalight, "") ->
+              pure (MaxMegalight maxMegalight)
 
-          Right _ ->
-            fail "Unexpected format for `MGLT`"
+            Right _ ->
+              fail "Unexpected format for `MGLT`"
 
-          Left e ->
-            fail e
+            Left e ->
+              fail e
 
 instance ToJSON (MaxMegalight :: Type) where
   toJSON :: MaxMegalight -> Value
-  toJSON = String . Text.Show.showt
+  toJSON = String .
+    \case
+      UnknownMegalight -> "unknown"
+      MaxMegalight megalight -> Text.Show.showt megalight
 
 instance FromJSON (StarshipClass :: Type) where
   parseJSON :: Value -> Parser StarshipClass
@@ -457,66 +514,58 @@ instance FromJSON (StarshipClass :: Type) where
     Aeson.withText "StarshipClass" $
       \val ->
         case Text.toLower val of
-          "corvette" ->
-            pure Corvette
-
-          "star destroyer" ->
-            pure StarDestroyer
-
-          "landing craft" ->
-            pure LandingCraft
-
-          "deep space mobile battlestation" ->
-            pure DeepSpaceMobileBattlestation
-
-          "light freighter" ->
-            pure LightFreighter
-
-          "assault starfighter" ->
-            pure AssaultStarfighter
-
-          "starfighter" ->
-            pure Starfighter
-
-          "star dreadnought" ->
-            pure StarDreadnought
-
-          "medium transport" ->
-            pure MediumTransport
-
-          _ ->
-            fail "Unexpected value for `starship_class`."
+          "corvette" -> pure Corvette
+          "star destroyer" -> pure StarDestroyer
+          "landing craft" -> pure LandingCraft
+          "deep space mobile battlestation" -> pure DeepSpaceMobileBattlestation
+          "light freighter" -> pure LightFreighter
+          "assault starfighter" -> pure AssaultStarfighter
+          "starfighter" -> pure Starfighter
+          "star dreadnought" -> pure StarDreadnought
+          "medium transport" -> pure MediumTransport
+          "patrol craft" -> pure PatrolCraft
+          "armed government transport" -> pure ArmedGovernmentTransport
+          "escort ship" -> pure EscortShip
+          "star cruiser" -> pure StarCruiser
+          "space cruiser" -> pure SpaceCruiser
+          "droid control ship" -> pure DroidControlShip
+          "yacht" -> pure Yacht
+          "space transport" -> pure SpaceTransport
+          "diplomatic barge" -> pure DiplomaticBarge
+          "freighter" -> pure Freighter
+          "assault ship" -> pure AssaultShip
+          "capital ship" -> pure CapitalShip
+          "transport" -> pure Transport
+          "cruiser" -> pure Cruiser
+          _ -> fail "Unexpected value for `starship_class`."
 
 instance ToJSON (StarshipClass :: Type) where
   toJSON :: StarshipClass -> Value
   toJSON = String .
     \case
-      Corvette ->
-        "Corvette"
-
-      StarDestroyer ->
-        "Star Destroyer"
-
-      LandingCraft ->
-        "Landing Craft"
-
-      DeepSpaceMobileBattlestation ->
-        "Deep Space Mobile Battlestation"
-
-      LightFreighter ->
-        "Light Freighter"
-
-      AssaultStarfighter ->
-        "Assault Starfighter"
-
-      Starfighter ->
-        "Starfighter"
-
-      StarDreadnought ->
-        "Star Dreadnought"
-
-      MediumTransport ->
-        "Medium Transport"
+      Corvette -> "Corvette"
+      StarDestroyer -> "Star Destroyer"
+      LandingCraft -> "Landing Craft"
+      DeepSpaceMobileBattlestation -> "Deep Space Mobile Battlestation"
+      LightFreighter -> "Light Freighter"
+      AssaultStarfighter -> "Assault Starfighter"
+      Starfighter -> "Starfighter"
+      StarDreadnought -> "Star Dreadnought"
+      MediumTransport -> "Medium Transport"
+      Transport -> "Transport"
+      SpaceTransport -> "Space Transport"
+      EscortShip -> "Escort Ship"
+      StarCruiser -> "Star Cruiser"
+      SpaceCruiser -> "Space Cruiser"
+      DroidControlShip -> "Droid Control Ship"
+      Yacht -> "Yacht"
+      DiplomaticBarge -> "Diplomatic Barge"
+      AssaultShip -> "Assault Ship"
+      CapitalShip -> "Capital Ship"
+      Cruiser -> "Cruiser"
+      Freighter -> "Freighter"
+      ArmedGovernmentTransport -> "Armed Government Transport"
+      PatrolCraft -> "Patrol Craft"
 
 instance FromJSON (Starship :: Type) where
   parseJSON :: Value -> Parser Starship

@@ -35,15 +35,14 @@ personIndexPaths =
 -- 2. Haven't implemented the HTTP client yet
 -- 3. LTE SUCKS
 test_decodePersonIndices :: IO [TestTree]
-test_decodePersonIndices =
-  mkGoldenTests <$> personIndexPaths
+test_decodePersonIndices = mkGoldenTests <$> personIndexPaths
   where
     decodeAndWriteDestFile :: FilePath -> ByteString -> IO ()
     decodeAndWriteDestFile destFile =
         writeFile destFile . show . Aeson.eitherDecodeStrict @(Index Person)
 
     mkGoldenTests
-      :: [FilePath]    -- List of basenames taken from the fixture file names
+      :: [FilePath]    -- List of fixture paths
       -> [TestTree]
     mkGoldenTests sourceFiles =
       Util.batchGoldenVsFile
