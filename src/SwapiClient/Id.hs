@@ -59,7 +59,8 @@ newtype VehicleId = VehicleId Int
   deriving (Eq, Show)
 
 newtype StarshipId = StarshipId Int
-  deriving (Eq, Show)
+  deriving stock (Eq, Show)
+  deriving newtype TextShow
 
 newtype PersonId = PersonId Int
   deriving stock (Eq, Show)
