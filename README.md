@@ -58,6 +58,7 @@ when I'm done. Subscribe to stay tuned! :)
   - [Parseable resources](#parseable-resources)
 - [Annoyances of swapi](#annoyances-of-swapi)
 - [Notes](#notes)
+  - [Day 19 - 21/01/2022](#day-19---21012022)
   - [Day 18 - 20/01/2022](#day-18---20012022)
   - [Day 17 - 19/01/2022](#day-17---19012022)
   - [Day 16 - 18/01/2022](#day-16---18012022)
@@ -84,7 +85,7 @@ when I'm done. Subscribe to stay tuned! :)
 - [ ] Root
 - [x] People
 - [x] Film
-- [ ] Starship
+- [x] Starship
 - [ ] Vehicle
 - [ ] Species
 - [ ] Planet
@@ -100,9 +101,9 @@ Resources/schemas that can be encoded/decoded to and from JSON respectively.
 - [x] Film
   - [x] Index
   - [x] View
-- [ ] Starship
-  - [ ] Index
-  - [ ] View
+- [x] Starship
+  - [x] Index
+  - [x] View
 - [ ] Vehicle
   - [ ] Index
   - [ ] View
@@ -139,6 +140,10 @@ numbers, just encoded as strings. What's the unitless number supposed to be?
 ## Notes
 
 Dates are formatted in DD-MM-YYYY.
+
+### Day 19 - 21/01/2022
+
+I did the same thing as with the film module, pretty much. Not much that's new.
 
 ### Day 18 - 20/01/2022
 
