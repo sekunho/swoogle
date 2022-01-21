@@ -49,7 +49,7 @@ module SwapiClient.Starship
 
 import Data.Aeson (FromJSON, parseJSON, ToJSON, toJSON, (.=), (.:))
 import Data.Aeson qualified as Aeson
-import Data.Aeson.Types (Parser, Value (String, Number))
+import Data.Aeson.Types (Parser, Value (String))
 import Data.Kind (Type)
 import Data.Text (Text)
 import Data.Text qualified as Text (split, toLower)
