@@ -142,18 +142,16 @@ getFilm filmId =
 --------------------------------------------------------------------------------
 -- Starship
 
--- TODO: Update starship API call documentation
-
--- | Fetches a list of people given a `Page`.
+-- | Fetches a list of starships given a `Page`.
 --
--- `ghci> listPeople (Page 1)`
+-- `ghci> listStarships (Page 1)`
 --
 -- ```haskell
 -- Just $ Index
 --   { iCount = 1
 --   , iNextPage = NoPage
 --   , iPreviousPage = NoPage
---   , iResults = [ Person {...} ]
+--   , iResults = [ Starship {...} ]
 --   }
 -- ```
 --
@@ -162,16 +160,16 @@ listStarships :: Page -> IO (Maybe (Index Starship))
 listStarships page =
   runReq (getPage (Url.swapiBin /: "starships") page)
 
--- | Fetches a list of people given a `Page`.
+-- | Fetches a list of starships given a `Page`.
 --
--- `ghci> eitherListPeople (Page 1)`
+-- `ghci> eitherListStarships (Page 1)`
 --
 -- ```haskell
 -- Right $ Index
 --   { iCount = 1
 --   , iNextPage = NoPage
 --   , iPreviousPage = NoPage
---   , iResults = [ Person {...} ]
+--   , iResults = [ Starship {...} ]
 --   }
 -- ```
 --
@@ -180,11 +178,11 @@ eitherListStarships :: Page -> IO (Either String (Index Starship))
 eitherListStarships page =
   runReq (eitherGetPage (Url.swapiBin /: "starships") page)
 
--- | Fetches a single person associated with the provided `PersonId`.
+-- | Fetches a single starship associated with the provided `StarshipId`.
 --
--- `ghci> getPerson (PersonId 1)`
+-- `ghci> getStarship (StarshipId 1)`
 --
--- `Just $ Person { ... }`
+-- `Just $ Starship { ... }`
 getStarship :: StarshipId -> IO (Maybe Starship)
 getStarship starshipId =
   runReq (get (Url.swapiBin /: "starships" /: Text.Show.showt starshipId))
