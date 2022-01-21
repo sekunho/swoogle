@@ -81,6 +81,20 @@ listPeople = fetchPage People
 getPerson :: PersonId -> IO (Maybe Person)
 getPerson (PersonId personId) = fetchOne People personId
 
+-- | Searches for a person's name; results are paginated.
+--
+-- `ghci> searchPeople "r2d2" (Page 1)`
+--
+-- ```haskell
+-- Right $ Index
+--   { iCount = 1
+--   , iNextPage = NoPage
+--   , iPreviousPage = NoPage
+--   , iResults = [ Person {...} ]
+--   }
+-- ```
+--
+-- If the page provided is `NoPage`, it gives back `Nothing`.
 searchPeople :: Text -> Page -> IO (Maybe (Index Person))
 searchPeople = search People
 
@@ -101,9 +115,28 @@ searchPeople = search People
 eitherListPeople :: Page -> IO (Either String (Index Person))
 eitherListPeople = eitherFetchPage People
 
+-- | Fetches a single person associated with the provided `PersonId`.
+--
+-- `ghci> eitherGetPerson (PersonId 1)`
+--
+-- `Right $ Person { ... }`
 eitherGetPerson :: PersonId -> IO (Either String Person)
 eitherGetPerson (PersonId personId) = eitherFetchOne People personId
 
+-- | Searches for a person's name; results are paginated.
+--
+-- `ghci> searchPeople "r2d2" (Page 1)`
+--
+-- ```haskell
+-- Right $ Index
+--   { iCount = 1
+--   , iNextPage = NoPage
+--   , iPreviousPage = NoPage
+--   , iResults = [ Person {...} ]
+--   }
+-- ```
+--
+-- If the page provided is `NoPage`, it gives back `Left "This is an empty page"`.
 eitherSearchPeople :: Text -> Page -> IO (Either String (Index Person))
 eitherSearchPeople = eitherSearch People
 
