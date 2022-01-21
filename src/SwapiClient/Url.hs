@@ -4,6 +4,7 @@ module SwapiClient.Url
   ( Resource (Root, People, Film, Starship, Vehicle, Species, Planet)
   , UrlData (UrlData, udSubdir, udParams)
   , resourceUrl
+  , fromResource
   , getId
   , urlToUrlData
   , urlDataToUrl
@@ -66,6 +67,17 @@ swapiDomain = "swapi.dev"
 
 swapiBin :: Url 'Https
 swapiBin = Req.https swapiDomain /: "api"
+
+fromResource :: Resource -> Url 'Https
+fromResource = (/:) swapiBin .
+  \case
+    Root -> ""
+    People -> "people"
+    Film -> "films"
+    Starship -> "starships"
+    Vehicle -> "vehicles"
+    Species -> "species"
+    Planet -> "planets"
 
 resourceUrl :: Resource -> Text
 resourceUrl resource =
