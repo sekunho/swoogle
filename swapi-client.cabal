@@ -97,6 +97,7 @@ test-suite swapi-client-test
       , UrlTest
       , PersonTest
       , FilmTest
+      , StarshipTest
       , Util
 
     ghc-options:
