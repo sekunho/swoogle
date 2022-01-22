@@ -4,22 +4,22 @@
 module SwapiClient.Api
   ( listPeople
   , listFilms
---  , listStarships
+  , listStarships
   , getPerson
   , getFilm
---  , getStarship
+  , getStarship
   , searchPeople
   , searchFilms
---  , searchStarships
+  , searchStarships
   , eitherListPeople
   , eitherListFilms
---  , eitherListStarships
+  , eitherListStarships
   , eitherGetPerson
   , eitherGetFilm
---  , eitherGetStarship
+  , eitherGetStarship
   , eitherSearchPeople
   , eitherSearchFilms
---  , eitherSearchStarships
+  , eitherSearchStarships
   ) where
 
 --------------------------------------------------------------------------------
@@ -53,6 +53,7 @@ import SwapiClient.Film
 import SwapiClient.Id
 import SwapiClient.Page (Page (Page, NoPage), Index)
 import SwapiClient.Person (Person)
+import SwapiClient.Starship
 import SwapiClient.Url
 import SwapiClient.Url qualified as Url (fromResource)
 
@@ -247,9 +248,33 @@ eitherSearchFilms = eitherSearch FilmResource
 -- ```
 --
 -- If the page provided is `NoPage`, it gives back `Nothing`.
--- listStarships :: Page -> IO (Maybe (Index Starship))
--- listStarships page =
---   runReq (getPage (Url.swapiBin /: "starships") page)
+listStarships :: Page -> IO (Maybe (Index Starship))
+listStarships = fetchPage StarshipResource
+
+-- | Fetches a single starship associated with the provided `StarshipId`.
+--
+-- `ghci> getStarship (StarshipId 1)`
+--
+-- `Just $ Starship { ... }`
+getStarship :: StarshipId -> IO (Maybe Starship)
+getStarship (StarshipId starshipId) = fetchOne StarshipResource starshipId
+
+-- | Searches for a starship's name; results are paginated.
+--
+-- `ghci> searchStarships "millennium falcon" (Page 1)`
+--
+-- ```haskell
+-- Right $ Index
+--   { iCount = 1
+--   , iNextPage = NoPage
+--   , iPreviousPage = NoPage
+--   , iResults = [ Starship {...} ]
+--   }
+-- ```
+--
+-- If the page provided is `NoPage`, it gives back `Nothing`.
+searchStarships :: Text -> Page -> IO (Maybe (Index Starship))
+searchStarships = search StarshipResource
 
 -- | Fetches a list of starships given a `Page`.
 --
@@ -265,19 +290,34 @@ eitherSearchFilms = eitherSearch FilmResource
 -- ```
 --
 -- If the page provided is `NoPage`, it gives back `Left "This is an empty page"`.
--- eitherListStarships :: Page -> IO (Either String (Index Starship))
--- eitherListStarships page =
---   runReq (eitherGetPage (Url.swapiBin /: "starships") page)
+eitherListStarships :: Page -> IO (Either String (Index Starship))
+eitherListStarships = eitherFetchPage StarshipResource
 
 -- | Fetches a single starship associated with the provided `StarshipId`.
 --
--- `ghci> getStarship (StarshipId 1)`
+-- `ghci> eitherGetStarship (StarshipId 1)`
 --
--- `Just $ Starship { ... }`
--- getStarship :: StarshipId -> IO (Maybe Starship)
--- getStarship starshipId =
---   runReq (get (Url.swapiBin /: "starships" /: Text.Show.showt starshipId))
+-- `Right $ Starship { ... }`
+eitherGetStarship :: StarshipId -> IO (Either String Starship)
+eitherGetStarship (StarshipId starshipId) =
+  eitherFetchOne StarshipResource starshipId
 
+-- | Searches for a starship's name; results are paginated.
+--
+-- `ghci> eitherSearchStarship "millennium falcon" (Page 1)`
+--
+-- ```haskell
+-- Right $ Index
+--   { iCount = 1
+--   , iNextPage = NoPage
+--   , iPreviousPage = NoPage
+--   , iResults = [ Starship {...} ]
+--   }
+-- ```
+--
+-- If the page provided is `NoPage`, it gives back `Left "This is an empty page"`.
+eitherSearchStarships :: Text -> Page -> IO (Either String (Index Starship))
+eitherSearchStarships = eitherSearch StarshipResource
 
 --------------------------------------------------------------------------------
 -- Utils
