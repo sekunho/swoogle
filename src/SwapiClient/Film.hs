@@ -37,6 +37,8 @@ import Data.Aeson.Types (Parser, Value (String))
 import Data.Kind (Type)
 import Data.Text (Text)
 import Data.Text qualified as Text (splitOn, intercalate)
+import TextShow (TextShow)
+import TextShow qualified as Text.Show (showt)
 import Data.Time (Day, UTCTime)
 
 --------------------------------------------------------------------------------
@@ -56,7 +58,7 @@ import SwapiClient.Page (Index (Index, iCount, iNextPage, iPreviousPage, iResult
 data Film = Film
   { fTitle            :: Text
   , fEpisodeId        :: Int
-  , fOpeningCrawl     :: Text
+  , fOpeningCrawl     :: OpeningCrawl
   , fDirector         :: Director
   , fProducers        :: [Producer]
   , fReleaseDate      :: Day
@@ -73,31 +75,42 @@ data Film = Film
 
 -- TODO: Maybe consider producer and director as sum types?
 newtype Producer = Producer Text
-  deriving (Eq, Show)
+  deriving stock (Eq, Show)
+  deriving newtype TextShow
 
 newtype Director = Director Text
-  deriving (Eq, Show)
+  deriving stock (Eq, Show)
+  deriving newtype TextShow
+
+newtype OpeningCrawl = OpeningCrawl Text
+  deriving stock (Eq, Show)
+  deriving newtype TextShow
 
 --------------------------------------------------------------------------------
 
+instance FromJSON (OpeningCrawl :: Type) where
+  parseJSON :: Value -> Parser OpeningCrawl
+  parseJSON = Aeson.withText "OpeningCrawl" (pure . OpeningCrawl)
+
+instance ToJSON (OpeningCrawl :: Type) where
+  toJSON :: OpeningCrawl -> Value
+  toJSON = String . Text.Show.showt
+
 instance FromJSON (Director :: Type) where
   parseJSON :: Value -> Parser Director
-  parseJSON =
-    Aeson.withText "Director" (pure . Director)
+  parseJSON = Aeson.withText "Director" (pure . Director)
 
 instance ToJSON (Director :: Type) where
   toJSON :: Director -> Value
-  toJSON (Director director) =
-    String director
+  toJSON = String . Text.Show.showt
 
 instance FromJSON (Producer :: Type) where
   parseJSON :: Value -> Parser Producer
-  parseJSON =
-    Aeson.withText "Producer" (pure . Producer)
+  parseJSON = Aeson.withText "Producer" (pure . Producer)
 
 instance ToJSON (Producer :: Type) where
   toJSON :: Producer -> Value
-  toJSON (Producer producer) = String producer
+  toJSON = String . Text.Show.showt
 
 instance {-# OVERLAPS #-} FromJSON ([Producer] :: Type) where
   parseJSON :: Value -> Parser [Producer]
