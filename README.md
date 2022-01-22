@@ -103,10 +103,10 @@ Resources/schemas that can be encoded/decoded to and from JSON respectively.
   - [ ] Index
   - [ ] View
 
-## Annoyances of swapi
+## List of improvements for swapi.dev
 
-swapi.dev is awesome, especially since it's free, but there are some things I wish
-to improve when I get the time to do so:
+Although this is somewhat unrelated to the library itself, there are some changes
+I would like to make, should I get the free time to build a JSON api.
 
 - A collection of things is sometimes encoded as a comma delimited string instead
 of using an array
@@ -125,3 +125,6 @@ numbers, just encoded as strings. What's the unitless number supposed to be?
 - `Starship`: `length`'s number formatting is inconsistent
 
 - `Starship`: `starship_class` character case is inconsistent
+
+These changes won't be implemented here, unless the swapi.dev maintainer decides
+to do the same as well. `swapi` is just meant to be compatible with swapi.dev.
