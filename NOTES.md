@@ -1,6 +1,5 @@
 # Notes
 
-<!-- markdown-toc start - Don't edit this section. Run M-x markdown-toc-refresh-toc -->
 **Table of Contents**
 
 - [Notes](#notes)
@@ -44,9 +43,13 @@
   - [Day 2 - 26/11/2021](#day-2---26112021)
   - [Day 1 - 25/11/2021](#day-1---25112021)
 
-<!-- markdown-toc end -->
-
 Dates are formatted in DD-MM-YYYY.
+
+## Day 20 - 22/01/2022
+
+3 resources done, only 3 more to go. This sure gets tiring _really_ fast. I'm
+starting to understand why people use `DerivingGenerics` now... but I will
+persevere and continue manually writing instances like a monkey.
 
 ## Day 19 - 21/01/2022
 
