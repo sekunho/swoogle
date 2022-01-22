@@ -51,16 +51,7 @@ Whenever it's ready, it'll  be up on
 [youtube.com/sekunho](https://www.youtube.com/sekunho/)
 when I'm done. Subscribe to stay tuned! :)
 
-## Table of Contents
-
-- [Features](#features)
-  - [Queryable resources](#queryable-resources)
-  - [Parseable resources](#parseable-resources)
-- [My annoyances with swapi](#annoyances-of-swapi)
-
-## Features
-
-### Queryable resources
+## Queryable resources
 
 - [ ] Root
 - [x] People
@@ -78,30 +69,6 @@ when I'm done. Subscribe to stay tuned! :)
 - [ ] Vehicle
 - [ ] Species
 - [ ] Planet
-
-### Parseable resources
-
-Resources/schemas that can be encoded/decoded to and from JSON respectively.
-
-- [x] Root
-- [x] People
-  - [x] Index
-  - [x] View
-- [x] Film
-  - [x] Index
-  - [x] View
-- [x] Starship
-  - [x] Index
-  - [x] View
-- [ ] Vehicle
-  - [ ] Index
-  - [ ] View
-- [ ] Species
-  - [ ] Index
-  - [ ] View
-- [ ] Planet
-  - [ ] Index
-  - [ ] View
 
 ## List of improvements for swapi.dev
 
