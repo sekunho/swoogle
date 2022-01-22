@@ -1,7 +1,15 @@
 {-# language DataKinds #-}
 
 module SwapiClient.Url
-  ( Resource (Root, People, Film, Starship, Vehicle, Species, Planet)
+  ( Resource
+    ( RootResource
+    , PeopleResource
+    , FilmResource
+    , StarshipResource
+    , VehicleResource
+    , SpeciesResource
+    , PlanetResource
+    )
   , UrlData (UrlData, udSubdir, udParams)
   , resourceUrl
   , fromResource
@@ -35,13 +43,13 @@ import Network.HTTP.Req qualified as Req (https)
 -- Data types
 
 data Resource
-  = Root
-  | People
-  | Film
-  | Starship
-  | Vehicle
-  | Species
-  | Planet
+  = RootResource
+  | PeopleResource
+  | FilmResource
+  | StarshipResource
+  | VehicleResource
+  | SpeciesResource
+  | PlanetResource
   deriving Show
 
 data UrlData = UrlData
@@ -71,25 +79,25 @@ swapiBin = Req.https swapiDomain /: "api"
 fromResource :: Resource -> Url 'Https
 fromResource = (/:) swapiBin .
   \case
-    Root -> ""
-    People -> "people"
-    Film -> "films"
-    Starship -> "starships"
-    Vehicle -> "vehicles"
-    Species -> "species"
-    Planet -> "planets"
+    RootResource -> ""
+    PeopleResource -> "people"
+    FilmResource -> "films"
+    StarshipResource -> "starships"
+    VehicleResource -> "vehicles"
+    SpeciesResource -> "species"
+    PlanetResource -> "planets"
 
 resourceUrl :: Resource -> Text
 resourceUrl resource =
   Text.append baseUrl $
     case resource of
-      Root -> ""
-      People -> "people/"
-      Film -> "films/"
-      Starship -> "starships/"
-      Vehicle -> "vehicles/"
-      Species -> "species/"
-      Planet -> "planets/"
+      RootResource -> ""
+      PeopleResource -> "people/"
+      FilmResource -> "films/"
+      StarshipResource -> "starships/"
+      VehicleResource -> "vehicles/"
+      SpeciesResource -> "species/"
+      PlanetResource -> "planets/"
 
 -- TODO: Maybe make a sum type for all the ID newtypes?
 -- | Gets the ID of the resource URL
