@@ -17,13 +17,13 @@ import Test.Hspec qualified as Hspec (describe, shouldBe, it)
 
 import SwapiClient.Url
   ( Resource
-      ( Root
-      , People
-      , Film
-      , Starship
-      , Vehicle
-      , Species
-      , Planet
+      ( RootResource
+      , PeopleResource
+      , FilmResource
+      , StarshipResource
+      , VehicleResource
+      , SpeciesResource
+      , PlanetResource
       )
   , UrlData (UrlData, udParams, udSubdir)
   )
@@ -42,25 +42,25 @@ spec_resourceUrl :: Spec
 spec_resourceUrl =
   Hspec.describe "resourceUrl" $ do
     Hspec.it "is the right URL for Root" $ do
-      Url.resourceUrl Root `Hspec.shouldBe` Url.baseUrl
+      Url.resourceUrl RootResource `Hspec.shouldBe` Url.baseUrl
 
     Hspec.it "is the right URL for People" $ do
-      Url.resourceUrl People `Hspec.shouldBe` (Url.baseUrl <> "people/")
+      Url.resourceUrl PeopleResource `Hspec.shouldBe` (Url.baseUrl <> "people/")
 
     Hspec.it "is the right URL for People" $ do
-      Url.resourceUrl Film `Hspec.shouldBe` (Url.baseUrl <> "films/")
+      Url.resourceUrl FilmResource `Hspec.shouldBe` (Url.baseUrl <> "films/")
 
     Hspec.it "is the right URL for People" $ do
-      Url.resourceUrl Starship `Hspec.shouldBe` (Url.baseUrl <> "starships/")
+      Url.resourceUrl StarshipResource `Hspec.shouldBe` (Url.baseUrl <> "starships/")
 
     Hspec.it "is the right URL for People" $ do
-      Url.resourceUrl Vehicle `Hspec.shouldBe` (Url.baseUrl <> "vehicles/")
+      Url.resourceUrl VehicleResource `Hspec.shouldBe` (Url.baseUrl <> "vehicles/")
 
     Hspec.it "is the right URL for People" $ do
-      Url.resourceUrl Species `Hspec.shouldBe` (Url.baseUrl <> "species/")
+      Url.resourceUrl SpeciesResource `Hspec.shouldBe` (Url.baseUrl <> "species/")
 
     Hspec.it "is the right URL for People" $ do
-      Url.resourceUrl Planet `Hspec.shouldBe` (Url.baseUrl <> "planets/")
+      Url.resourceUrl PlanetResource `Hspec.shouldBe` (Url.baseUrl <> "planets/")
 
 -- TODO: Refactor to a prop test
 spec_getId :: Spec

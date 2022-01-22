@@ -33,11 +33,12 @@ import TextShow qualified as Text.Show (showt)
 
 import SwapiClient.Url
   ( Resource
-      ( Film
-      , Planet
-      , Species
-      , Vehicle
-      , Starship, People
+      ( FilmResource
+      , PlanetResource
+      , SpeciesResource
+      , VehicleResource
+      , StarshipResource
+      , PeopleResource
       )
   )
 import SwapiClient.Url qualified as Url (resourceUrl, getId)
@@ -175,12 +176,12 @@ unPersonId (PersonId pId) = pId
 
 buildFilmUrl :: FilmId -> Text
 buildFilmUrl filmId =
-  mconcat [Url.resourceUrl Film, Text.Show.showt . unFilmId $ filmId, "/"]
+  mconcat [Url.resourceUrl FilmResource, Text.Show.showt . unFilmId $ filmId, "/"]
 
 buildPlanetUrl :: HomeworldId -> Text
 buildPlanetUrl homeworldId =
   mconcat
-    [ Url.resourceUrl Planet
+    [ Url.resourceUrl PlanetResource
     , Text.Show.showt . unHomeworldId $ homeworldId
     , "/"
     ]
@@ -188,7 +189,7 @@ buildPlanetUrl homeworldId =
 buildSpeciesUrl :: SpeciesId -> Text
 buildSpeciesUrl speciesId =
   mconcat
-    [ Url.resourceUrl Species
+    [ Url.resourceUrl SpeciesResource
     , Text.Show.showt . unSpeciesId $ speciesId
     , "/"
     ]
@@ -196,7 +197,7 @@ buildSpeciesUrl speciesId =
 buildVehicleUrl :: VehicleId -> Text
 buildVehicleUrl vehicleId =
   mconcat
-    [ Url.resourceUrl Vehicle
+    [ Url.resourceUrl VehicleResource
     , Text.Show.showt . unVehicleId $ vehicleId
     , "/"
     ]
@@ -204,7 +205,7 @@ buildVehicleUrl vehicleId =
 buildStarshipUrl :: StarshipId -> Text
 buildStarshipUrl starshipId =
   mconcat
-    [ Url.resourceUrl Starship
+    [ Url.resourceUrl StarshipResource
     , Text.Show.showt . unStarshipId $ starshipId
     , "/"
     ]
@@ -212,7 +213,7 @@ buildStarshipUrl starshipId =
 buildPersonUrl :: PersonId -> Text
 buildPersonUrl personId =
   mconcat
-    [ Url.resourceUrl People
+    [ Url.resourceUrl PeopleResource
     , Text.Show.showt . unPersonId $ personId
     , "/"
     ]
