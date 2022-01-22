@@ -84,8 +84,17 @@ when I'm done. Subscribe to stay tuned! :)
 
 - [ ] Root
 - [x] People
+  - [x] Index
+  - [x] Search
+  - [x] View
 - [x] Film
+  - [x] Index
+  - [x] Search
+  - [x] View
 - [x] Starship
+  - [x] Index
+  - [x] Search
+  - [x] View
 - [ ] Vehicle
 - [ ] Species
 - [ ] Planet
@@ -144,6 +153,171 @@ Dates are formatted in DD-MM-YYYY.
 ### Day 19 - 21/01/2022
 
 I did the same thing as with the film module, pretty much. Not much that's new.
+
+#### Bubbling up exceptions
+
+[Relevant commit](https://github.com/sekunho/swapi/commit/f45fc2f9fe00641e07ae6a90068feb688762fd9f)
+
+I have this code snippet:
+
+``` haskell
+import GHC.Stack (HasCallStack)
+import Data.Text (Text)
+
+pluckWord :: HasCallStack => Either String (Word, Text) -> Word
+pluckWord =
+  \case
+    Right (speed, _) ->
+      speed
+
+    Left e ->
+      error e
+
+parseAmount :: Text -> [Word]
+parseAmount :: Text -> Either String [Word]
+parseAmount =
+  map (pluckWord . Text.Read.decimal . normalizeNumText)
+    . Text.split (== '-')
+```
+
+Here's how I'm using these:
+
+``` haskell
+ghci> pluckWord (parseAmount "30-16,000")
+[30, 16000] :: [Word]
+
+ghci> pluckWord (parseAmount "16,000")
+[16000] :: Word
+```
+
+`parseAmount` handles both a range of 2 numbers, or a standalone number; both
+cases are encoded as `Text`s. Except this function is a partial function, or, it
+fails in certain cases and is not considered pure as a result. The culprit is
+how I handled `Left e`, since I just threw an exception if ever something goes
+wrong when decoding `Text` into an `Integral`! It sure would be nice to make this
+a total function, so I can worry about one less thing.
+
+Ok, there are cases where it's forgivable to just throw an exception, just not
+in this scenario. I can still push the exceptions further up in `FromJSON` where
+I can use `MonadFail`'s `fail` instead.
+
+Refactor time.
+
+Since I know I don't have to handle `Right` and `Left` anymore, I can just get
+rid of `pluckWord`. Then, there's no need for me to include `normalizeNumText` in
+the mapping, so I'll just move that out and compose it with `Text.split`.
+
+
+``` diff
+-
+import Data.Text (Text)
+
+- pluckWord :: HasCallStack => Either String (Word, Text) -> Word
+- pluckWord :: Either String (Word, Text) -> Word
+- pluckWord =
+-   \case
+-     Right (speed, _) ->
+-       speed
+-
+-    Left e ->
+-      error e
+
+parseAmount :: Text -> [Word]
+parseAmount :: Text -> Either String [Word]
+parseAmount =
+- map (pluckWord . TextRead.decimal . normalizeText)
++ map Text.Read.decimal
+    . Text.split (== '-')
+    . normalizeNumText
+```
+
+But this won't work just yet.
+
+So the idea is:
+
+- (2) `Text.split` splits a `Text` into `[Text]` based on the delimiter
+I provide, which is `-`. If said delimiter doesn't exist, then you'll just have a
+one element list, even if it's an empty `Text`.
+
+- (1) I'll map over the list of `Text`s because I want to eventually convert
+them to a list of `Word`s. I used `Text.Read.decimal` for that, although it gives
+me an `Either String (Word, Text)`.
+
+The final outcome of `parseAmount` so far is `[Either String (Word, Text)]`, which
+does not match its supposed signature!
+
+``` diff
+- parseAmount :: Text -> [Word]
++ parseAmount :: Text -> Either String [Word]
+parseAmount =
+  map Text.Read.decimal   -- (I)
+    . Text.split (== '-')  -- (II)
+    . normalizeText   -- Text -> Text; this just removes `,` nothing else.
+```
+
+Seems like there are three more things I have to do:
+
+1. Deal with the `(Word, Text) -> Word`;
+2. Work with the `Either` context; and
+3. Somehow turn `[Either String Word]` into `Either String [Word]`.
+
+##### Deal with the `(Word, Text) -> Word`
+
+I know that `fst` grabs the first element of the tuple. But because of #2,
+I can't use that directly because `fst :: (a, b) -> a`. And here is where
+`Functor`s come to the rescue!
+
+``` diff
+parseAmount :: Text -> Either String [Word]
+parseAmount =
+-  map (Text.Read.decimal)
++  map (fst . Text.Read.decimal)
+    . Text.split (== '-')
+    . normalizeText
+```
+
+`map` uses `fst . Text.Read.decimal` on each element in the list first deals
+with the element (`Text`) first. It gets parsed from an `Integral`, which is
+specifically `Word` here, into `Either String (Word, Text)`. But this won't work
+just yet, because `fst` will fail since it expects only a tuple, not a tuple in
+some context.
+
+##### Work with the `Either` context
+
+``` diff
+parseAmount :: Text -> Either String [Word]
+parseAmount =
+-  map (fst . Text.Read.decimal)
++  map ((<$>) fst . Text.Read.decimal)
+    . Text.split (== '-')
+    . normalizeText
+```
+
+Fortunately, `Either a` is a functor, which means I can take advantage of `<$>`
+thanks to that abstraction. `(<$>) fst` then receives the output from #1.
+`(<$>)` lifts `fst` to work with the `Either` context! Which is exactly what I
+needed here. From
+`fst :: (a, b) -> a` to `(<$>) fst :: Either String (a, b) -> Either String a`.
+
+Thank you, functors, very cool.
+
+##### `[Either String Word] -> Either String [Word]`
+
+I want to turn a list of computations into something that can be either an error
+string, or the result we're expecting. It's important that if ever something fails
+along the way, as we're processing the list, then the result should be an error,
+and the error message will be chucked into `Left`.
+
+Fortunately (again),
+`mapM :: (Traversable t, Monad m) => (a -> m b) -> t a -> m (t b)` exists.
+
+Ok, wait, what the hell is that? If you squint hard enough, you can monomorphize
+the constraints:
+`mapM :: ((Word, Text) -> Either String Word) -> [Either String (Word, Text)] -> Either String [Word]`.
+
+Seems like it goes through the list of tuples in `Either`, then applies
+`(<$>) fst` on each element. After going through said list, it collects everything
+into an `Either String [Word]`; convenient!
 
 ### Day 18 - 20/01/2022
 
