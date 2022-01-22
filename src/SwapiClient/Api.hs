@@ -3,20 +3,22 @@
 
 module SwapiClient.Api
   ( listPeople
---  , listFilms
+  , listFilms
 --  , listStarships
   , getPerson
---  , getFilm
+  , getFilm
 --  , getStarship
   , searchPeople
+  , searchFilms
+--  , searchStarships
   , eitherListPeople
---  , eitherListFilms
+  , eitherListFilms
 --  , eitherListStarships
   , eitherGetPerson
---  , eitherGetFilm
+  , eitherGetFilm
 --  , eitherGetStarship
   , eitherSearchPeople
---  , eitherSearchFilms
+  , eitherSearchFilms
 --  , eitherSearchStarships
   ) where
 
@@ -47,6 +49,7 @@ import TextShow qualified as Text.Show (showt)
 
 --------------------------------------------------------------------------------
 
+import SwapiClient.Film
 import SwapiClient.Id
 import SwapiClient.Page (Page (Page, NoPage), Index)
 import SwapiClient.Person (Person)
@@ -71,7 +74,7 @@ import SwapiClient.Url qualified as Url (fromResource)
 --
 -- If the page provided is `NoPage`, it gives back `Nothing`.
 listPeople :: Page -> IO (Maybe (Index Person))
-listPeople = fetchPage People
+listPeople = fetchPage PeopleResource
 
 -- | Fetches a single person associated with the provided `PersonId`.
 --
@@ -79,7 +82,7 @@ listPeople = fetchPage People
 --
 -- `Just $ Person { ... }`
 getPerson :: PersonId -> IO (Maybe Person)
-getPerson (PersonId personId) = fetchOne People personId
+getPerson (PersonId personId) = fetchOne PeopleResource personId
 
 -- | Searches for a person's name; results are paginated.
 --
@@ -96,7 +99,7 @@ getPerson (PersonId personId) = fetchOne People personId
 --
 -- If the page provided is `NoPage`, it gives back `Nothing`.
 searchPeople :: Text -> Page -> IO (Maybe (Index Person))
-searchPeople = search People
+searchPeople = search PeopleResource
 
 -- | Fetches a list of people given a `Page`.
 --
@@ -113,7 +116,7 @@ searchPeople = search People
 --
 -- If the page provided is `NoPage`, it gives back `Left "This is an empty page"`.
 eitherListPeople :: Page -> IO (Either String (Index Person))
-eitherListPeople = eitherFetchPage People
+eitherListPeople = eitherFetchPage PeopleResource
 
 -- | Fetches a single person associated with the provided `PersonId`.
 --
@@ -121,7 +124,7 @@ eitherListPeople = eitherFetchPage People
 --
 -- `Right $ Person { ... }`
 eitherGetPerson :: PersonId -> IO (Either String Person)
-eitherGetPerson (PersonId personId) = eitherFetchOne People personId
+eitherGetPerson (PersonId personId) = eitherFetchOne PeopleResource personId
 
 -- | Searches for a person's name; results are paginated.
 --
@@ -138,7 +141,7 @@ eitherGetPerson (PersonId personId) = eitherFetchOne People personId
 --
 -- If the page provided is `NoPage`, it gives back `Left "This is an empty page"`.
 eitherSearchPeople :: Text -> Page -> IO (Either String (Index Person))
-eitherSearchPeople = eitherSearch People
+eitherSearchPeople = eitherSearch PeopleResource
 
 --------------------------------------------------------------------------------
 -- Film
@@ -157,13 +160,37 @@ eitherSearchPeople = eitherSearch People
 -- ```
 --
 -- If the page provided is `NoPage`, it gives back `Nothing`.
--- listFilms :: Page -> IO (Maybe (Index Film))
--- listFilms page =
---   runReq (getPage (Url.swapiBin /: "films") page)
+listFilms :: Page -> IO (Maybe (Index Film))
+listFilms = fetchPage FilmResource
+
+-- | Fetches a single film associated with the provided `FilmId`.
+--
+-- `ghci> getFilm (FilmId 1)`
+--
+-- `Just $ Film { ... }`
+getFilm :: FilmId -> IO (Maybe Film)
+getFilm (FilmId filmId) = fetchOne FilmResource filmId
+
+-- | Searches for a film's name; results are paginated.
+--
+-- `ghci> searchFilms "empire" (Page 1)`
+--
+-- ```haskell
+-- Right $ Index
+--   { iCount = 1
+--   , iNextPage = NoPage
+--   , iPreviousPage = NoPage
+--   , iResults = [ Person {...} ]
+--   }
+-- ```
+--
+-- If the page provided is `NoPage`, it gives back `Nothing`.
+searchFilms :: Text -> Page -> IO (Maybe (Index Film))
+searchFilms = search FilmResource
 
 -- | Fetches a list of films given a `Page`.
 --
--- `ghci> eitherListPeople (Page 1)`
+-- `ghci> eitherListFilms (Page 1)`
 --
 -- ```haskell
 -- Right $ Index
@@ -175,18 +202,33 @@ eitherSearchPeople = eitherSearch People
 -- ```
 --
 -- If the page provided is `NoPage`, it gives back `Left "This is an empty page"`.
--- eitherListFilms :: Page -> IO (Either String (Index Film))
--- eitherListFilms page =
---   runReq (eitherGetPage (Url.swapiBin /: "films") page)
+eitherListFilms :: Page -> IO (Either String (Index Film))
+eitherListFilms = eitherFetchPage FilmResource
 
 -- | Fetches a single film associated with the provided `FilmId`.
 --
--- `ghci> getFilm (FilmId 1)`
+-- `ghci> eitherGetFilm (FilmId 1)`
 --
--- `Just $ Film { ... }`
--- getFilm :: FilmId -> IO (Maybe Film)
--- getFilm filmId =
---   runReq (get (Url.swapiBin /: "films" /: Text.Show.showt filmId))
+-- `Right $ Film { ... }`
+eitherGetFilm :: FilmId -> IO (Either String Film)
+eitherGetFilm (FilmId filmId) = eitherFetchOne FilmResource filmId
+
+-- | Searches for a film's name; results are paginated.
+--
+-- `ghci> eitherSearchFilm "the empire strikes" (Page 1)`
+--
+-- ```haskell
+-- Right $ Index
+--   { iCount = 1
+--   , iNextPage = NoPage
+--   , iPreviousPage = NoPage
+--   , iResults = [ Film {...} ]
+--   }
+-- ```
+--
+-- If the page provided is `NoPage`, it gives back `Left "This is an empty page"`.
+eitherSearchFilms :: Text -> Page -> IO (Either String (Index Film))
+eitherSearchFilms = eitherSearch FilmResource
 
 --------------------------------------------------------------------------------
 -- Starship
