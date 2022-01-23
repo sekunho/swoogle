@@ -1,10 +1,13 @@
+{-# language DerivingVia #-}
+
 module SwapiClient.Vehicle where
 
 --------------------------------------------------------------------------------
 
+import Data.Aeson (FromJSON, ToJSON)
 import Data.Text (Text)
-import TextShow (TextShow)
 import Data.Time (UTCTime)
+import TextShow (TextShow)
 
 import SwapiClient.Id (PersonId, FilmId, VehicleId)
 import SwapiClient.Starship
@@ -15,6 +18,7 @@ import SwapiClient.Starship
   , Consumable
   , MaxAtmospheringSpeed
   , Manufacturer
+  , StarshipName (StarshipName)
   )
 
 --------------------------------------------------------------------------------
@@ -22,6 +26,7 @@ import SwapiClient.Starship
 newtype VehicleName = VehicleName Text
   deriving stock (Eq, Show)
   deriving newtype TextShow
+  deriving (FromJSON, ToJSON) via StarshipName
 
 newtype VehicleModel = VehicleModel Text
   deriving stock (Eq, Show)
