@@ -627,4 +627,5 @@ instance ToJSON (Index Starship :: Type) where
 --------------------------------------------------------------------------------
 -- Utils
 
+normalizeNumText :: Text -> Text
 normalizeNumText = Text.filter (/= ',')
