@@ -23,15 +23,15 @@ module SwapiClient.Starship
     , sId
     )
   , StarshipClass
-    ( Corvette
-    , StarDestroyer
-    , LandingCraft
-    , DeepSpaceMobileBattlestation
-    , LightFreighter
-    , AssaultStarfighter
-    , Starfighter
-    , StarDreadnought
-    , MediumTransport
+    ( SCCorvette
+    , SCStarDestroyer
+    , SCLandingCraft
+    , SCDeepSpaceMobileBattlestation
+    , SCLightFreighter
+    , SCAssaultStarfighter
+    , SCStarfighter
+    , SCStarDreadnought
+    , SCMediumTransport
     )
   , MaxMegalight (MaxMegalight, UnknownMegalight)
   , HyperdriveRating (Rating, UnknownRating)
@@ -39,7 +39,7 @@ module SwapiClient.Starship
   , StarshipLength (StarshipLength)
   , PassengerLimit (PassengerLimit, PLNotApplicable, UnknownPassengerLimit)
   , MaxAtmospheringSpeed (MaxSpeed, MASNotApplicable)
-  , CostInCredits (Amount, UnknownCost)
+  , Cost (Credits, UnknownCost)
   , Manufacturer (Manufacturer)
   , StarshipModel (StarshipModel)
   , StarshipName (StarshipName)
@@ -103,8 +103,8 @@ newtype Manufacturer = Manufacturer Text
   deriving stock (Eq, Show)
   deriving newtype TextShow
 
-data CostInCredits
-  = Amount Word
+data Cost
+  = Credits Word
   | UnknownCost
   deriving (Eq, Show)
 
@@ -140,36 +140,36 @@ data MaxMegalight
   deriving stock (Eq, Show)
 
 data StarshipClass
-  = Corvette
-  | StarDestroyer
-  | LandingCraft
-  | DeepSpaceMobileBattlestation
-  | LightFreighter
-  | Freighter
-  | AssaultStarfighter
-  | Starfighter
-  | StarDreadnought
-  | PatrolCraft
-  | ArmedGovernmentTransport
-  | Transport
-  | MediumTransport
-  | SpaceTransport
-  | EscortShip
-  | StarCruiser
-  | SpaceCruiser
-  | DroidControlShip
-  | Yacht
-  | DiplomaticBarge
-  | AssaultShip
-  | CapitalShip
-  | Cruiser
+  = SCCorvette
+  | SCStarDestroyer
+  | SCLandingCraft
+  | SCDeepSpaceMobileBattlestation
+  | SCLightFreighter
+  | SCFreighter
+  | SCAssaultStarfighter
+  | SCStarfighter
+  | SCStarDreadnought
+  | SCPatrolCraft
+  | SCArmedGovernmentTransport
+  | SCTransport
+  | SCMediumTransport
+  | SCSpaceTransport
+  | SCEscortShip
+  | SCStarCruiser
+  | SCSpaceCruiser
+  | SCDroidControlShip
+  | SCYacht
+  | SCDiplomaticBarge
+  | SCAssaultShip
+  | SCCapitalShip
+  | SCCruiser
   deriving stock (Eq, Show)
 
 data Starship = Starship
   { sName                 :: StarshipName
   , sModel                :: StarshipModel
   , sManufacturer         :: Manufacturer
-  , sCost                 :: CostInCredits
+  , sCost                 :: Cost
   , sLength               :: StarshipLength
   , sMaxAtmospheringSpeed :: MaxAtmospheringSpeed
   , sRequiredCrew         :: RequiredCrew
@@ -214,9 +214,9 @@ instance ToJSON (Manufacturer :: Type) where
   toJSON :: Manufacturer -> Value
   toJSON = String . Text.Show.showt
 
-instance FromJSON (CostInCredits :: Type) where
-  parseJSON :: Value -> Parser CostInCredits
-  parseJSON = Aeson.withText "CostInCredits" $
+instance FromJSON (Cost :: Type) where
+  parseJSON :: Value -> Parser Cost
+  parseJSON = Aeson.withText "Cost" $
     \case
       "unknown" ->
         pure UnknownCost
@@ -225,7 +225,7 @@ instance FromJSON (CostInCredits :: Type) where
         -- TODO: I unfortunately do not know a better way to parse `Text`.
         case Text.Read.decimal costText of
           Right (amount, "") ->
-            pure $ Amount amount
+            pure $ Credits amount
 
           Right _ ->
             fail "Unexpected format for cost"
@@ -233,11 +233,11 @@ instance FromJSON (CostInCredits :: Type) where
           Left e ->
             fail e
 
-instance ToJSON (CostInCredits :: Type) where
-  toJSON :: CostInCredits -> Value
+instance ToJSON (Cost :: Type) where
+  toJSON :: Cost -> Value
   toJSON = String .
     \case
-      Amount amount ->
+      Credits amount ->
         Text.Show.showt amount
 
       UnknownCost ->
@@ -501,58 +501,58 @@ instance FromJSON (StarshipClass :: Type) where
     Aeson.withText "StarshipClass" $
       \val ->
         case Text.toLower val of
-          "corvette" -> pure Corvette
-          "star destroyer" -> pure StarDestroyer
-          "landing craft" -> pure LandingCraft
-          "deep space mobile battlestation" -> pure DeepSpaceMobileBattlestation
-          "light freighter" -> pure LightFreighter
-          "assault starfighter" -> pure AssaultStarfighter
-          "starfighter" -> pure Starfighter
-          "star dreadnought" -> pure StarDreadnought
-          "medium transport" -> pure MediumTransport
-          "patrol craft" -> pure PatrolCraft
-          "armed government transport" -> pure ArmedGovernmentTransport
-          "escort ship" -> pure EscortShip
-          "star cruiser" -> pure StarCruiser
-          "space cruiser" -> pure SpaceCruiser
-          "droid control ship" -> pure DroidControlShip
-          "yacht" -> pure Yacht
-          "space transport" -> pure SpaceTransport
-          "diplomatic barge" -> pure DiplomaticBarge
-          "freighter" -> pure Freighter
-          "assault ship" -> pure AssaultShip
-          "capital ship" -> pure CapitalShip
-          "transport" -> pure Transport
-          "cruiser" -> pure Cruiser
+          "corvette" -> pure SCCorvette
+          "star destroyer" -> pure SCStarDestroyer
+          "landing craft" -> pure SCLandingCraft
+          "deep space mobile battlestation" -> pure SCDeepSpaceMobileBattlestation
+          "light freighter" -> pure SCLightFreighter
+          "assault starfighter" -> pure SCAssaultStarfighter
+          "starfighter" -> pure SCStarfighter
+          "star dreadnought" -> pure SCStarDreadnought
+          "medium transport" -> pure SCMediumTransport
+          "patrol craft" -> pure SCPatrolCraft
+          "armed government transport" -> pure SCArmedGovernmentTransport
+          "escort ship" -> pure SCEscortShip
+          "star cruiser" -> pure SCStarCruiser
+          "space cruiser" -> pure SCSpaceCruiser
+          "droid control ship" -> pure SCDroidControlShip
+          "yacht" -> pure SCYacht
+          "space transport" -> pure SCSpaceTransport
+          "diplomatic barge" -> pure SCDiplomaticBarge
+          "freighter" -> pure SCFreighter
+          "assault ship" -> pure SCAssaultShip
+          "capital ship" -> pure SCCapitalShip
+          "transport" -> pure SCTransport
+          "cruiser" -> pure SCCruiser
           _ -> fail "Unexpected value for `starship_class`."
 
 instance ToJSON (StarshipClass :: Type) where
   toJSON :: StarshipClass -> Value
   toJSON = String .
     \case
-      Corvette -> "Corvette"
-      StarDestroyer -> "Star Destroyer"
-      LandingCraft -> "Landing Craft"
-      DeepSpaceMobileBattlestation -> "Deep Space Mobile Battlestation"
-      LightFreighter -> "Light Freighter"
-      AssaultStarfighter -> "Assault Starfighter"
-      Starfighter -> "Starfighter"
-      StarDreadnought -> "Star Dreadnought"
-      MediumTransport -> "Medium Transport"
-      Transport -> "Transport"
-      SpaceTransport -> "Space Transport"
-      EscortShip -> "Escort Ship"
-      StarCruiser -> "Star Cruiser"
-      SpaceCruiser -> "Space Cruiser"
-      DroidControlShip -> "Droid Control Ship"
-      Yacht -> "Yacht"
-      DiplomaticBarge -> "Diplomatic Barge"
-      AssaultShip -> "Assault Ship"
-      CapitalShip -> "Capital Ship"
-      Cruiser -> "Cruiser"
-      Freighter -> "Freighter"
-      ArmedGovernmentTransport -> "Armed Government Transport"
-      PatrolCraft -> "Patrol Craft"
+      SCCorvette -> "Corvette"
+      SCStarDestroyer -> "Star Destroyer"
+      SCLandingCraft -> "Landing Craft"
+      SCDeepSpaceMobileBattlestation -> "Deep Space Mobile Battlestation"
+      SCLightFreighter -> "Light Freighter"
+      SCAssaultStarfighter -> "Assault Starfighter"
+      SCStarfighter -> "Starfighter"
+      SCStarDreadnought -> "Star Dreadnought"
+      SCMediumTransport -> "Medium Transport"
+      SCTransport -> "Transport"
+      SCSpaceTransport -> "Space Transport"
+      SCEscortShip -> "Escort Ship"
+      SCStarCruiser -> "Star Cruiser"
+      SCSpaceCruiser -> "Space Cruiser"
+      SCDroidControlShip -> "Droid Control Ship"
+      SCYacht -> "Yacht"
+      SCDiplomaticBarge -> "Diplomatic Barge"
+      SCAssaultShip -> "Assault Ship"
+      SCCapitalShip -> "Capital Ship"
+      SCCruiser -> "Cruiser"
+      SCFreighter -> "Freighter"
+      SCArmedGovernmentTransport -> "Armed Government Transport"
+      SCPatrolCraft -> "Patrol Craft"
 
 instance FromJSON (Starship :: Type) where
   parseJSON :: Value -> Parser Starship
