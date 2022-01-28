@@ -1,40 +1,50 @@
-{-# language DerivingVia #-}
-
-module SwapiClient.Vehicle where
+module SwapiClient.Vehicle
+  ( VehicleName (VehicleName)
+  , VehicleModel (VehicleModel)
+  , VehicleLength (VehicleLength)
+  , VehicleClass
+    ( VCWheeled
+    , VCRepulsorcraft
+    , VCStarfighter
+    , VCAirspeeder
+    , VCSpaceBomber
+    , VCAssaultWalker
+    , VCWalker
+    , VCSailBarge
+    , VCRepulsorcraftCargoSkiff
+    , VCSpeeder
+    , VCLandingCraft
+    , VCSubmarine
+    , VCGunship
+    , VCTransport
+    )
+  ) where
 
 --------------------------------------------------------------------------------
 
 import Data.Aeson (FromJSON, ToJSON)
 import Data.Text (Text)
-import Data.Time (UTCTime)
-import TextShow (TextShow)
-
-import SwapiClient.Id (PersonId, FilmId, VehicleId)
-import SwapiClient.Starship
-  ( Cost
-  , RequiredCrew
-  , PassengerLimit
-  , CargoCapacity
-  , Consumable
-  , MaxAtmospheringSpeed
-  , Manufacturer
-  , StarshipName (StarshipName)
-  )
+import Data.Time
 
 --------------------------------------------------------------------------------
 
+import SwapiClient.Id (PersonId, FilmId, VehicleId)
+import SwapiClient.Starship
+
+--------------------------------------------------------------------------------
+-- Data types
+
 newtype VehicleName = VehicleName Text
   deriving stock (Eq, Show)
-  deriving newtype TextShow
   deriving (FromJSON, ToJSON) via StarshipName
 
 newtype VehicleModel = VehicleModel Text
   deriving stock (Eq, Show)
-  deriving newtype TextShow
+  deriving (FromJSON, ToJSON) via StarshipName
 
 newtype VehicleLength = VehicleLength Double
   deriving stock (Eq, Show)
-  deriving newtype TextShow
+  deriving (FromJSON, ToJSON) via StarshipLength
 
 data VehicleClass
   = VCWheeled
@@ -72,3 +82,7 @@ data Vehicle = Vehicle
   , vId :: VehicleId
   }
   deriving stock (Eq, Show)
+
+--------------------------------------------------------------------------------
+-- Instances
+
