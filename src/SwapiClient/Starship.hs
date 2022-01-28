@@ -77,10 +77,10 @@ import SwapiClient.Id (StarshipId, PersonId, FilmId)
 -- Data types
 
 data RequiredCrew
-  = CrewRange Word Word
+  = CrewRange (Word, Word)
   | CrewAmount Word
   | UnknownAmount
-  deriving (Eq, Show)
+  deriving stock (Eq, Show)
 
 data Consumable
   = CHour Word
@@ -89,7 +89,7 @@ data Consumable
   | CMonth Word
   | CYear Word
   | UnknownConsumable
-  deriving (Eq, Show)
+  deriving stock (Eq, Show)
 
 newtype StarshipName = StarshipName Text
   deriving stock (Eq, Show)
@@ -97,28 +97,28 @@ newtype StarshipName = StarshipName Text
 
 newtype StarshipModel = StarshipModel Text
   deriving stock (Eq, Show)
-  deriving newtype TextShow
+  deriving (FromJSON, ToJSON) via StarshipName
 
 newtype Manufacturer = Manufacturer Text
   deriving stock (Eq, Show)
-  deriving newtype TextShow
+  deriving (FromJSON, ToJSON) via StarshipName
 
 data Cost
   = Credits Word
   | UnknownCost
-  deriving (Eq, Show)
+  deriving stock (Eq, Show)
 
 data MaxAtmospheringSpeed
   = MaxSpeed Word
   | MASNotApplicable
   | UnknownSpeed
-  deriving (Eq, Show)
+  deriving stock (Eq, Show)
 
 data PassengerLimit
   = PassengerLimit Word
   | PLNotApplicable
   | UnknownPassengerLimit
-  deriving (Eq, Show)
+  deriving stock (Eq, Show)
 
 newtype StarshipLength = StarshipLength Double
   deriving stock (Eq, Show)
@@ -198,22 +198,6 @@ instance ToJSON (StarshipName :: Type) where
   toJSON :: StarshipName -> Value
   toJSON = String . Text.Show.showt
 
-instance FromJSON (StarshipModel :: Type) where
-  parseJSON :: Value -> Parser StarshipModel
-  parseJSON = Aeson.withText "StarshipModel" (pure . StarshipModel)
-
-instance ToJSON (StarshipModel :: Type) where
-  toJSON :: StarshipModel -> Value
-  toJSON = String . Text.Show.showt
-
-instance FromJSON (Manufacturer :: Type) where
-  parseJSON :: Value -> Parser Manufacturer
-  parseJSON = Aeson.withText "Manufacturer" (pure . Manufacturer)
-
-instance ToJSON (Manufacturer :: Type) where
-  toJSON :: Manufacturer -> Value
-  toJSON = String . Text.Show.showt
-
 instance FromJSON (Cost :: Type) where
   parseJSON :: Value -> Parser Cost
   parseJSON = Aeson.withText "Cost" $
@@ -237,11 +221,8 @@ instance ToJSON (Cost :: Type) where
   toJSON :: Cost -> Value
   toJSON = String .
     \case
-      Credits amount ->
-        Text.Show.showt amount
-
-      UnknownCost ->
-        "unknown"
+      Credits amount -> Text.Show.showt amount
+      UnknownCost -> "unknown"
 
 instance FromJSON (StarshipLength :: Type) where
   parseJSON :: Value -> Parser StarshipLength
@@ -284,7 +265,7 @@ instance ToJSON (MaxAtmospheringSpeed :: Type) where
   toJSON :: MaxAtmospheringSpeed -> Value
   toJSON = String .
     \case
-      MaxSpeed maxSpeed -> Text.Show.showt maxSpeed <> "km"
+      MaxSpeed maxSpeed -> Text.Show.showt maxSpeed
       MASNotApplicable -> "n/a"
       UnknownSpeed -> "unknown"
 
@@ -297,7 +278,7 @@ instance FromJSON (RequiredCrew :: Type) where
 
         val ->
           case parseAmount val of
-            Right [minCrew, maxCrew] -> pure (CrewRange minCrew maxCrew)
+            Right [minCrew, maxCrew] -> pure (CrewRange (minCrew, maxCrew))
             Right [crewAmount] -> pure (CrewAmount crewAmount)
             Right _ -> fail "Unexpected format for `crew`"
             Left e -> fail e
@@ -312,7 +293,7 @@ instance ToJSON (RequiredCrew :: Type) where
   toJSON :: RequiredCrew -> Value
   toJSON = String .
     \case
-      CrewRange minCrew maxCrew ->
+      CrewRange (minCrew, maxCrew) ->
         Text.Show.showt minCrew <> "-" <> Text.Show.showt maxCrew
 
       CrewAmount amount -> Text.Show.showt amount
@@ -372,8 +353,8 @@ instance ToJSON (CargoCapacity :: Type) where
   toJSON :: CargoCapacity -> Value
   toJSON = String .
     \case
-      UnknownCapacity -> "unknown"
       Capacity capacity -> Text.Show.showt capacity
+      UnknownCapacity -> "unknown"
 
 instance FromJSON (Consumable :: Type) where
   parseJSON :: Value -> Parser Consumable
