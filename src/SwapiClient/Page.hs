@@ -43,12 +43,11 @@ data Index a = Index
   , iPreviousPage :: Page
   , iResults :: [a]
   }
-  deriving Show
+  deriving stock Show
 
 --------------------------------------------------------------------------------
 -- Instances
 
--- TODO: Refactor cause this is ugly
 instance FromJSON (Page :: Type) where
   parseJSON :: Value -> Parser Page
   parseJSON val =
