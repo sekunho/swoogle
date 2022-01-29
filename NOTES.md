@@ -3,6 +3,9 @@
 **Table of Contents**
 
 - [Notes](#notes)
+  - [Day 22 - 29/01/2022](#day-22---29012022)
+  - [Day 21 - 28/01/2022](#day-21---28012022)
+  - [Day 20 - 22/01/2022](#day-22---22012022)
   - [Day 19 - 21/01/2022](#day-19---21012022)
     - [Bubbling up exceptions](#bubbling-up-exceptions)
     - [Deal with the `(Word, Text) -> Word`](#deal-with-the-word-text---word)
@@ -44,6 +47,223 @@
   - [Day 1 - 25/11/2021](#day-1---25112021)
 
 Dates are formatted in DD-MM-YYYY.
+
+## Day 22 - 29/01/2022
+
+Only worked a little bit for today since I was swamped with other things. Damn,
+I'm never getting my electricity and fiber internet fixed. :(
+
+### Further generalizing `StarshipName`
+
+I wasn't so happy with deriving `ToJSON` via `StarshipName` for some newtypes
+with `Text` boxed in it. It's kinda ugly, and if I were to deal with a type that
+can be encoded as `Text`, I would have to find another `newtype`, or make a new
+one, and then write a `ToJSON` instance for it!
+
+```haskell
+{-# language DerivingStrategies #-}
+
+import TextShow qualified as Text.Show (showt)
+
+newtype StarshipName = StarshipName Text
+  deriving stock (Eq, Show)
+
+instance ToJSON (StarshipName :: Type) where
+  toJSON :: StarshipName -> Value
+  toJSON = String . Text.Show.showt
+  
+-- These newtypes can take advantage of the same behavior as `StarshipName`!
+newtype StarshipModel = MkStarshipModel Text
+
+newtype StarshipLength = MkStarshipLength Double
+```
+
+Well, `toJSON` here looks awfully general but is further constrained by
+`StarshipName`, which didn't really make much sense given the problem above. What
+if I just broaden it up a bit to anything that has a `TextShow` instance? The
+last two newtypes should be able to take advantage of whatever I defined for
+`StarshipName`, would save me the effort of manually writing down their `ToJSON`
+instances.
+
+I'll start with this brand (new) newtype.
+
+```haskell
+{-# language DerivingStrategies #-}
+
+import TextShow qualified as Text.Show (showt)
+
+newtype Wrapped a = MkWrapped a
+  deriving stock (Eq, Show)
+
+instance TextShow a => ToJSON (Wrapped a) where
+  toJSON :: Wrapped a -> Value
+  toJSON = String . _
+```
+
+Pretty standard instance. Whatever inhabits `a` has to be an instance of
+`TextShow`. The `_` here says I have to go from `Wrapped a` to `Text`. I _should_
+be able to use `showt` then right? Sure.
+
+``` diff
+{-# language DerivingStrategies #-}
+
+import TextShow qualified as Text.Show (showt)
+
+newtype Wrapped a = MkWrapped a
+  deriving stock (Eq, Show)
+
+  instance TextShow a => ToJSON (Wrapped a) where
+  toJSON :: Wrapped a -> Value
+- toJSON = String . _
++ toJSON = String . Text.Show.showt . _
+```
+
+But this isn't done yet. Now `_` wants me to go from `Wrapped a` to `a`. There
+are two things I found I could do.
+
+#### `Coercible`
+
+Newtypes have the same underlying representation during runtime so it should be
+safe (and fast) to coerce to and back, or I should be able to safely unwrap/wrap
+the newtype such as `Wrapped Int -> Int`, or `Int -> Wrapped Int`. And this is the
+case if I use `Coercible`! My (short) reading is paying off.
+
+``` diff
+{-# language DerivingStrategies #-}
+
+import TextShow qualified as Text.Show (showt)
+
+newtype Wrapped a = MkWrapped a
+  deriving stock (Eq, Show)
+
+- instance TextShow a => ToJSON (Wrapped a) where
++ instance (Coercible (Wrapped a) a, TextShow a) => ToJSON (Wrapped a) where -- (a)
+  toJSON :: Wrapped a -> Value
+- toJSON = String . Text.Show.showt . _
++ toJSON = String . Text.Show.showt . coerce -- (b)
+```
+
+*(a).* Here I added a constraint that says I should be able to go from `Wrapped a`
+to `a` since they're equivalent after compile time, and whatever `a` is also has
+to be a `TextShow` instance. `Coercible` instances are taken care of by GHC so
+I don't need to manually define it myself, which is great.
+
+*(b).* I'm going to unwrap `Wrapped a` to get just `a`.
+
+But disaster strikes and I get multiple errors.
+
+1. Haskell expects type class constraints to be formatted as
+`<CLASS> <TYPE VARIABLE>`, or multiple types and type variables. It does not seem
+to like `Coercible (Wrapped a) a` due to `Wrapped a` breaking that form. But not
+all is lost because I just flick on the `FlexibleContexts` extension and GHC is
+cool with it.
+2. Type variables in scope are not the same.
+
+```haskell
+src/SwapiClient/Starship.hs:614:39: error:
+    • Couldn't match representation of type ‘a0’ with that of ‘a’
+        arising from a use of ‘coerce’
+      ‘a’ is a rigid type variable bound by
+        the instance declaration
+        at src/SwapiClient/Starship.hs:612:10-78
+    • In the second argument of ‘(.)’, namely ‘coerce’
+      In the second argument of ‘(.)’, namely ‘Text.Show.showt . coerce’
+      In the expression: String . Text.Show.showt . coerce
+    • Relevant bindings include
+        toJSON :: Wrapped a -> Value
+          (bound at src/SwapiClient/Starship.hs:614:3)
+    |
+614 |   toJSON = String . Text.Show.showt . coerce
+    |                                       ^^^^^^
+Failed, 8 modules loaded.
+```
+
+What I got from this is the type variable `a` from the instance constraint is
+not the same as what `coerce` is expecting; they're different which is why GHC
+labeled the type variable `a0` for `coerce` while it's `a` for the constraint.
+
+``` diff
+{-# language DerivingStrategies #-}
++ {-# language FlexibleContexts #-}
++ {-# language ScopedTypeVariables #-}
+
+import TextShow qualified as Text.Show (showt)
+
+newtype Wrapped a = MkWrapped a
+  deriving stock (Eq, Show)
+
+instance (Coercible (Wrapped a) a, TextShow a) => ToJSON (Wrapped a) where -- (a)
+  toJSON :: Wrapped a -> Value
+  toJSON = String . Text.Show.showt . coerce -- (b)
+```
+
+Seems like turning on `ScopedTypeVariables` isn't enough to appease GHC. I have
+to help it out a bit by specifying the types for `coerce`. I basically need to
+go form `Wrapped a` to `a`, as pointed out several times before. This is where
+I find `TypeApplications` handy.
+
+``` diff
+{-# language DerivingStrategies #-}
+{-# language FlexibleContexts #-}
+{-# language ScopedTypeVariables #-}
+
+import TextShow qualified as Text.Show (showt)
+
+newtype Wrapped a = MkWrapped a
+  deriving stock (Eq, Show)
+
+instance (Coercible (Wrapped a) a, TextShow a) => ToJSON (Wrapped a) where -- (a)
+  toJSON :: Wrapped a -> Value
+- toJSON = String . Text.Show.showt . coerce
++ toJSON = String. Text.Show.showt . coerce @(Wrapped a) @a
+```
+
+So now GHC understands that the `a` I'm specifying in `@(Wrapped a)` and `@a` are
+the same as the type variable `a` introduced in the instance! It all compiles.
+
+#### `GeneralizedNewtypeDeriving`
+
+This one is much easier since I don't have to rely on a bunch of extensions. I
+could just do this:
+
+```haskell
+{-# language DerivingStrategies #-}
+{-# language GeneralizedNewtypeDeriving #-}
+
+import TextShow qualified as Text.Show (showt)
+
+newtype Wrapped a = MkWrapped a
+  deriving stock (Eq, Show)
+  deriving newtype TextShow
+
+instance TextShow a => ToJSON (Wrapped a) where
+  toJSON :: Wrapped a -> Value
+  toJSON = String . TextShow.showt
+```
+
+Here it's pretty much the same. The instances of the underlying type `a` from
+`Wrapped a` should be able to carry over to `Wrapped a` as well. So here I just
+derived `TextShow` for `Wrapped a`! It'll work as long as `a` is constrained to
+`TextShow`. But yeah, cool.
+
+Regardless of which approach (`Coercible` is a fun exercise though), it means I
+get to do this:
+
+```haskell
+newtype StarshipName = StarshipName Text
+  deriving ToJSON via (Wrapped Text)
+
+newtype Starshiplength = StarshipLength Double
+  deriving ToJSON via (Wrapped Double)
+```
+
+Since swapi.dev just encodes everything as a string, it doesn't matter if I
+encode numbers or doubles as strings as well. Which surprisingly, is a good thing
+after I've previously complained about it.
+
+Anyway this doesn't really save that many lines since the `ToJSON` instances for
+these are usually the shortest ones. But what it does help with is having to
+write instances with very short implementations. So it's kind of a good thing too.
 
 ## Day 21 - 28/01/2022
 
