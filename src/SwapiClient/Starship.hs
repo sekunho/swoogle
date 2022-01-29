@@ -1,8 +1,8 @@
 {-# language FlexibleInstances #-}
+{-# language FlexibleContexts #-}
 
 module SwapiClient.Starship
-  ( Starship
-    ( Starship
+  ( Starship ( Starship
     , sName
     , sModel
     , sManufacturer
@@ -45,6 +45,7 @@ module SwapiClient.Starship
   , StarshipName (StarshipName)
   , Consumable (CHour, CDay, CWeek, CMonth, CYear, UnknownConsumable)
   , RequiredCrew (CrewRange, CrewAmount, UnknownAmount)
+  , Wrapped (Wrapped)
   ) where
 
 --------------------------------------------------------------------------------
@@ -52,13 +53,15 @@ module SwapiClient.Starship
 import Data.Aeson (FromJSON, parseJSON, ToJSON, toJSON, (.=), (.:))
 import Data.Aeson qualified as Aeson
 import Data.Aeson.Types (Parser, Value (String))
+import Data.Coerce (Coercible, coerce)
+-- import Data.Coerce qualified as Coerce (coerce)
 import Data.Kind (Type)
 import Data.Text (Text)
 import Data.Text qualified as Text (split, toLower, filter)
 import Data.Text.Read qualified as Text.Read (decimal, double)
+import Data.Time (UTCTime)
 import TextShow (TextShow)
 import TextShow qualified as Text.Show (showt)
-import Data.Time (UTCTime)
 
 --------------------------------------------------------------------------------
 
@@ -75,6 +78,9 @@ import SwapiClient.Id (StarshipId, PersonId, FilmId)
 
 --------------------------------------------------------------------------------
 -- Data types
+
+newtype Wrapped a = Wrapped a
+  deriving stock (Eq, Show)
 
 data RequiredCrew
   = CrewRange (Word, Word)
@@ -93,15 +99,15 @@ data Consumable
 
 newtype StarshipName = StarshipName Text
   deriving stock (Eq, Show)
-  deriving newtype TextShow
+  deriving ToJSON via (Wrapped Text)
 
 newtype StarshipModel = StarshipModel Text
   deriving stock (Eq, Show)
-  deriving (FromJSON, ToJSON) via StarshipName
+  deriving ToJSON via (Wrapped Text)
 
 newtype Manufacturer = Manufacturer Text
   deriving stock (Eq, Show)
-  deriving (FromJSON, ToJSON) via StarshipName
+  deriving ToJSON via (Wrapped Text)
 
 data Cost
   = Credits Word
@@ -123,6 +129,7 @@ data PassengerLimit
 newtype StarshipLength = StarshipLength Double
   deriving stock (Eq, Show)
   deriving newtype TextShow
+  deriving ToJSON via (Wrapped Double)
 
 data CargoCapacity
   = Capacity Word
@@ -194,9 +201,9 @@ instance FromJSON (StarshipName :: Type) where
   parseJSON :: Value -> Parser StarshipName
   parseJSON = Aeson.withText "StarshipName" (pure . StarshipName)
 
-instance ToJSON (StarshipName :: Type) where
-  toJSON :: StarshipName -> Value
-  toJSON = String . Text.Show.showt
+-- instance ToJSON (StarshipName :: Type) where
+--   toJSON :: StarshipName -> Value
+--   toJSON = String . Text.Show.showt
 
 instance FromJSON (Cost :: Type) where
   parseJSON :: Value -> Parser Cost
@@ -239,10 +246,6 @@ instance FromJSON (StarshipLength :: Type) where
 
           Left e ->
             fail e
-
-instance ToJSON (StarshipLength :: Type) where
-  toJSON :: StarshipLength -> Value
-  toJSON =  String . Text.Show.showt
 
 instance FromJSON (MaxAtmospheringSpeed :: Type) where
   parseJSON :: Value -> Parser MaxAtmospheringSpeed
@@ -604,6 +607,18 @@ instance ToJSON (Index Starship :: Type) where
       , "previous" .= iPreviousPage starshipIndex
       , "results"  .= iResults starshipIndex
       ]
+
+instance (Coercible (Wrapped a) a, TextShow a) => ToJSON ((Wrapped a) :: Type) where
+  toJSON :: Wrapped a -> Value
+  toJSON = String . Text.Show.showt . coerce @(Wrapped a) @a
+
+instance FromJSON Manufacturer where
+  parseJSON :: Value -> Parser Manufacturer
+  parseJSON = Aeson.withText "Manufacturer" (pure . Manufacturer)
+
+instance FromJSON StarshipModel where
+  parseJSON :: Value -> Parser StarshipModel
+  parseJSON = Aeson.withText "StarshipModel" (pure . StarshipModel)
 
 --------------------------------------------------------------------------------
 -- Utils
