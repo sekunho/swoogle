@@ -39,6 +39,18 @@ basic Haskell concepts to be aware of – which makes it a good candidate for a
 starter project! Of course it doesn't require a deep dive in the aforementioned
 libraries; it's just enough to make things work.
 
+My goals for this project are:
+
+- Explore the different libraries in the ecosystem
+- Try out the more common language extensions (new Haskell report when?)
+- Make things explicit. e.g instance signatures, kind signatures, deriving, etc.
+- Try out the different testing strategies
+
+But of course I can't try out everything and I need to put a stop somewhere else
+I risk getting overwhelmed and back in "tutorial" hell again. I'll only read
+enough for what I need to know, and I'll stop there. So if you get mad at me
+for not using `<INSERT_YOUR_FAVORITE_THING_HERE>`, get a grip!
+
 ## Will this be a video
 
 Yeah! So far I've recorded most of each and every session that I worked on this.
