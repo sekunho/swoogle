@@ -39,6 +39,7 @@ library
                       , DerivingStrategies
                       , GeneralizedNewtypeDeriving
                       , DerivingVia
+                      , ScopedTypeVariables
 
     ghc-options:        -Wall -Werror
 
@@ -76,6 +77,7 @@ executable swapi-client
                       , DerivingStrategies
                       , GeneralizedNewtypeDeriving
                       , DerivingVia
+                      , ScopedTypeVariables
 
 test-suite swapi-client-test
     type:               exitcode-stdio-1.0
@@ -96,6 +98,7 @@ test-suite swapi-client-test
       , DerivingStrategies
       , GeneralizedNewtypeDeriving
       , DerivingVia
+      , ScopedTypeVariables
 
     other-modules:
         RootTest
