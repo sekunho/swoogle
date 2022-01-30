@@ -82,7 +82,10 @@ when I'm done. Subscribe to stay tuned! :)
   - [x] Index
   - [x] Search
   - [x] View
-- [ ] Species
+- [x] Species
+  - [x] Index
+  - [x] Search
+  - [x] View
 - [ ] Planet
 
 ## List of improvements for swapi.dev
