@@ -39,6 +39,18 @@ basic Haskell concepts to be aware of – which makes it a good candidate for a
 starter project! Of course it doesn't require a deep dive in the aforementioned
 libraries; it's just enough to make things work.
 
+My goals for this project are:
+
+- Explore the different libraries in the ecosystem
+- Try out the more common language extensions (new Haskell report when?)
+- Make things explicit. e.g instance signatures, kind signatures, deriving, etc.
+- Try out the different testing strategies
+
+But of course I can't try out everything and I need to put a stop somewhere else
+I risk getting overwhelmed and back in "tutorial" hell again. I'll only read
+enough for what I need to know, and I'll stop there. So if you get mad at me
+for not using `<INSERT_YOUR_FAVORITE_THING_HERE>`, get a grip!
+
 ## Will this be a video
 
 Yeah! So far I've recorded most of each and every session that I worked on this.
@@ -81,7 +93,7 @@ of using an array
 - Numbers are encoded as strings just because the field could be an actual string
 like `"n/a"`, or `"none"`
 
-- Inconsistent usage of units. e.g In `Starship`, it has a field called 
+- Inconsistent usage of units. e.g In `Starship`, it has a field called
 `max_atmosphering_speed` with the kilometer unit, and without. Both of which are
 numbers, just encoded as strings. What's the unitless number supposed to be?
 
@@ -92,6 +104,14 @@ numbers, just encoded as strings. What's the unitless number supposed to be?
 - `Starship`: `length`'s number formatting is inconsistent
 
 - `Starship`: `starship_class` character case is inconsistent
+
+- `Vehicle`: `length` has an extra whitespace at the end. Why...
+
+- `Vehicle`: `consumables`, (specifically id 6), is just `0`.
+
+- `Vehicle`: `vehicle_class` has classes that are the same but are formatted
+  diferently. e.g id 70 and id 69 are both airspeeders, but one of them has a
+  space in between.
 
 These changes won't be implemented here, unless the swapi.dev maintainer decides
 to do the same as well. `swapi` is just meant to be compatible with swapi.dev.

@@ -3,6 +3,10 @@
 **Table of Contents**
 
 - [Notes](#notes)
+  - [Day 23 - 30/01/2022](#day-23---30012022)
+  - [Day 22 - 29/01/2022](#day-22---29012022)
+  - [Day 21 - 28/01/2022](#day-21---28012022)
+  - [Day 20 - 22/01/2022](#day-22---22012022)
   - [Day 19 - 21/01/2022](#day-19---21012022)
     - [Bubbling up exceptions](#bubbling-up-exceptions)
     - [Deal with the `(Word, Text) -> Word`](#deal-with-the-word-text---word)
@@ -45,10 +49,355 @@
 
 Dates are formatted in DD-MM-YYYY.
 
+## Day 23 - 30/01/2022
+
+Added Vehicle instances for FromJSON. I don't think I'll focus on `ToJSON` for
+now since it has no impact on consuming the API. Feels like it's just a waste
+of time. It'll certainly be useful once I create an alternative JSON API, but
+only until then.
+
+I also wrote some decoding tests.
+
+## Day 22 - 29/01/2022
+
+Only worked a little bit for today since I was swamped with other things. Damn,
+I'm never getting my electricity and fiber internet fixed. :(
+
+### Further generalizing `StarshipName`
+
+I wasn't so happy with deriving `ToJSON` via `StarshipName` for some newtypes
+with `Text` boxed in it. It's kinda ugly, and if I were to deal with a type that
+can be encoded as `Text`, I would have to find another `newtype`, or make a new
+one, and then write a `ToJSON` instance for it!
+
+```haskell
+{-# language DerivingStrategies #-}
+
+import TextShow qualified as Text.Show (showt)
+
+newtype StarshipName = StarshipName Text
+  deriving stock (Eq, Show)
+
+instance ToJSON (StarshipName :: Type) where
+  toJSON :: StarshipName -> Value
+  toJSON = String . Text.Show.showt
+  
+-- These newtypes can take advantage of the same behavior as `StarshipName`!
+newtype StarshipModel = MkStarshipModel Text
+
+newtype StarshipLength = MkStarshipLength Double
+```
+
+Well, `toJSON` here looks awfully general but is further constrained by
+`StarshipName`, which didn't really make much sense given the problem above. What
+if I just broaden it up a bit to anything that has a `TextShow` instance? The
+last two newtypes should be able to take advantage of whatever I defined for
+`StarshipName`, would save me the effort of manually writing down their `ToJSON`
+instances.
+
+I'll start with this brand (new) newtype.
+
+```haskell
+{-# language DerivingStrategies #-}
+
+import TextShow qualified as Text.Show (showt)
+
+newtype Wrapped a = MkWrapped a
+  deriving stock (Eq, Show)
+
+instance TextShow a => ToJSON (Wrapped a) where
+  toJSON :: Wrapped a -> Value
+  toJSON = String . _
+```
+
+Pretty standard instance. Whatever inhabits `a` has to be an instance of
+`TextShow`. The `_` here says I have to go from `Wrapped a` to `Text`. I _should_
+be able to use `showt` then right? Sure.
+
+``` diff
+{-# language DerivingStrategies #-}
+
+import TextShow qualified as Text.Show (showt)
+
+newtype Wrapped a = MkWrapped a
+  deriving stock (Eq, Show)
+
+  instance TextShow a => ToJSON (Wrapped a) where
+  toJSON :: Wrapped a -> Value
+- toJSON = String . _
++ toJSON = String . Text.Show.showt . _
+```
+
+But this isn't done yet. Now `_` wants me to go from `Wrapped a` to `a`. There
+are two things I found I could do.
+
+#### `Coercible`
+
+Newtypes have the same underlying representation during runtime so it should be
+safe (and fast) to coerce to and back, or I should be able to safely unwrap/wrap
+the newtype such as `Wrapped Int -> Int`, or `Int -> Wrapped Int`. And this is the
+case if I use `Coercible`! My (short) reading is paying off.
+
+``` diff
+{-# language DerivingStrategies #-}
+
+import TextShow qualified as Text.Show (showt)
+
+newtype Wrapped a = MkWrapped a
+  deriving stock (Eq, Show)
+
+- instance TextShow a => ToJSON (Wrapped a) where
++ instance (Coercible (Wrapped a) a, TextShow a) => ToJSON (Wrapped a) where -- (a)
+  toJSON :: Wrapped a -> Value
+- toJSON = String . Text.Show.showt . _
++ toJSON = String . Text.Show.showt . coerce -- (b)
+```
+
+*(a).* Here I added a constraint that says I should be able to go from `Wrapped a`
+to `a` since they're equivalent after compile time, and whatever `a` is also has
+to be a `TextShow` instance. `Coercible` instances are taken care of by GHC so
+I don't need to manually define it myself, which is great.
+
+*(b).* I'm going to unwrap `Wrapped a` to get just `a`.
+
+But disaster strikes and I get multiple errors.
+
+1. Haskell expects type class constraints to be formatted as
+`<CLASS> <TYPE VARIABLE>`, or multiple types and type variables. It does not seem
+to like `Coercible (Wrapped a) a` due to `Wrapped a` breaking that form. But not
+all is lost because I just flick on the `FlexibleContexts` extension and GHC is
+cool with it.
+2. Type variables in scope are not the same.
+
+```haskell
+src/SwapiClient/Starship.hs:614:39: error:
+    • Couldn't match representation of type ‘a0’ with that of ‘a’
+        arising from a use of ‘coerce’
+      ‘a’ is a rigid type variable bound by
+        the instance declaration
+        at src/SwapiClient/Starship.hs:612:10-78
+    • In the second argument of ‘(.)’, namely ‘coerce’
+      In the second argument of ‘(.)’, namely ‘Text.Show.showt . coerce’
+      In the expression: String . Text.Show.showt . coerce
+    • Relevant bindings include
+        toJSON :: Wrapped a -> Value
+          (bound at src/SwapiClient/Starship.hs:614:3)
+    |
+614 |   toJSON = String . Text.Show.showt . coerce
+    |                                       ^^^^^^
+Failed, 8 modules loaded.
+```
+
+What I got from this is the type variable `a` from the instance constraint is
+not the same as what `coerce` is expecting; they're different which is why GHC
+labeled the type variable `a0` for `coerce` while it's `a` for the constraint.
+
+``` diff
+{-# language DerivingStrategies #-}
++ {-# language FlexibleContexts #-}
++ {-# language ScopedTypeVariables #-}
+
+import TextShow qualified as Text.Show (showt)
+
+newtype Wrapped a = MkWrapped a
+  deriving stock (Eq, Show)
+
+instance (Coercible (Wrapped a) a, TextShow a) => ToJSON (Wrapped a) where -- (a)
+  toJSON :: Wrapped a -> Value
+  toJSON = String . Text.Show.showt . coerce -- (b)
+```
+
+Seems like turning on `ScopedTypeVariables` isn't enough to appease GHC. I have
+to help it out a bit by specifying the types for `coerce`. I basically need to
+go form `Wrapped a` to `a`, as pointed out several times before. This is where
+I find `TypeApplications` handy.
+
+``` diff
+{-# language DerivingStrategies #-}
+{-# language FlexibleContexts #-}
+{-# language ScopedTypeVariables #-}
+
+import TextShow qualified as Text.Show (showt)
+
+newtype Wrapped a = MkWrapped a
+  deriving stock (Eq, Show)
+
+instance (Coercible (Wrapped a) a, TextShow a) => ToJSON (Wrapped a) where -- (a)
+  toJSON :: Wrapped a -> Value
+- toJSON = String . Text.Show.showt . coerce
++ toJSON = String. Text.Show.showt . coerce @(Wrapped a) @a
+```
+
+So now GHC understands that the `a` I'm specifying in `@(Wrapped a)` and `@a` are
+the same as the type variable `a` introduced in the instance! It all compiles.
+
+#### `GeneralizedNewtypeDeriving`
+
+This one is much easier since I don't have to rely on a bunch of extensions. I
+could just do this:
+
+```haskell
+{-# language DerivingStrategies #-}
+{-# language GeneralizedNewtypeDeriving #-}
+
+import TextShow qualified as Text.Show (showt)
+
+newtype Wrapped a = MkWrapped a
+  deriving stock (Eq, Show)
+  deriving newtype TextShow
+
+instance TextShow a => ToJSON (Wrapped a) where
+  toJSON :: Wrapped a -> Value
+  toJSON = String . TextShow.showt
+```
+
+Here it's pretty much the same. The instances of the underlying type `a` from
+`Wrapped a` should be able to carry over to `Wrapped a` as well. So here I just
+derived `TextShow` for `Wrapped a`! It'll work as long as `a` is constrained to
+`TextShow`. But yeah, cool.
+
+Regardless of which approach (`Coercible` is a fun exercise though), it means I
+get to do this:
+
+```haskell
+newtype StarshipName = StarshipName Text
+  deriving ToJSON via (Wrapped Text)
+
+newtype Starshiplength = StarshipLength Double
+  deriving ToJSON via (Wrapped Double)
+```
+
+Since swapi.dev just encodes everything as a string, it doesn't matter if I
+encode numbers or doubles as strings as well. Which surprisingly, is a good thing
+after I've previously complained about it.
+
+Anyway this doesn't really save that many lines since the `ToJSON` instances for
+these are usually the shortest ones. But what it does help with is having to
+write instances with very short implementations. So it's kind of a good thing too.
+
+## Day 21 - 28/01/2022
+
+LTE was not cooperating for the past few days so I wasn't feeling it. Still no
+news on the ISP replacing that one broken fiber cable. Oh well 43 days down, and
+probably 4 more months of torture to go.
+
+### Doing a little bit of digging with `coerce`
+
+I used `DerivingVia` for some things previously, although not the best because
+repetitions and all that (I will sort it out), and wanted to read the docs for
+that
+([here](https://ghc.gitlab.haskell.org/ghc/doc/users_guide/exts/deriving_via.html#deriving-via))
+. I ran into this example:
+
+``` haskell
+{-# LANGUAGE DerivingVia #-}
+
+import Numeric
+
+newtype Hex a = Hex a
+
+instance (Integral a, Show a) => Show (Hex a) where
+  show (Hex a) = "0x" ++ showHex a ""
+
+newtype Unicode = U Int
+  deriving Show
+    via (Hex Int)
+
+-- >>> euroSign
+-- 0x20ac
+euroSign :: Unicode
+euroSign = U 0x20ac
+```
+
+which the compiler generates an instance for if you use `DerivingVia`:
+
+``` haskell
+instance Show Unicode where
+  show :: Unicode -> String
+  show = Data.Coerce.coerce
+    @(Hex Int -> String)
+    @(Unicode -> String)
+    show
+```
+
+Hmm... but what IS `coerce`? Well, it has this type `Coercible a b => a -> b`.
+Seems like anything with `Coercible` instances can go from one to the
+other. For that instance it's coercing a pair of arrows, `Hex Int -> String` to
+`Unicode -> String`. Because after all, the underlying representation of these
+newtypes during runtime are essentially the same; they're just boxes for `Int`.
+As long as I define an instance for `Integral a => Hex a -> String` then it
+should be fine.
+
+Another thing I discovered from the paper _Safe Zero-cost Coercions for Haskell_
+, and from clarifying with some folks on Twitter, is that these instances of
+`Coercible` are generated by the compiler, and cannot be manually instantiated
+by us. I would've loved to be able to see what instances are available, but I
+guess that's just not possible.
+
+Other things that are pretty cool is I can unwrap newtypes with `coerce`, as well
+as lift them. Some fun examples:
+
+```haskell
+-- | Unbox!
+--
+-- > unboxNT (U 24)
+--
+-- 24
+unboxNT :: Unicode -> Int
+unboxNT = coerce @Unicode @Int
+
+-- | Lift through types!
+--
+-- > hexesToUnicodes [Hex 24, Hex 25, Hex 26]
+--
+-- [U 24, U 25, U 26]
+hexesToUnicodes :: [Hex Int] -> [Unicode]
+hexesToUnicodes = coerce
+
+-- | More lifting through types
+--
+-- > bruh (Left (Hex 24))
+--
+-- > Left 24
+bruh :: Either (Hex Int) Int -> Either Int Int
+bruh = coerce
+
+-- | Coerce without monads
+--
+-- > ioGoodness (pure (Hex 24))
+--
+-- IO (U 24)
+ioGoodness :: IO (Hex Int) -> IO Unicode
+ioGoodness = coerce
+```
+
+All these at zero cost! Which is pretty convenient because I would've had to
+manually map through `[Hex Int]` to get a `[Unicode]`.
+
+You can do more with it than these examples, and I have not read the paper fully
+since I was only curious how it worked for newtypes. It seems like it has this
+role called `representational`, and to be honest, I don't even know what roles
+role has here (heh). I will save this in the list of papers to read, and will
+continue this some other time. Otherwise I'll be stuck in this rabbit hole of
+papers, which I'd love to avoid doing for now.
+
+Now one thing is that I wish the user guide went into more detail on this topic,
+not just linking to papers. Here is what it says regarding the `Coercible`
+constraint:
+
+> The constraint Coercible t1 t2 is similar to t1 ~ t2, but denotes representational
+> equality between t1 and t2 in the sense of Roles (Roles). It is exported by
+> Data.Coerce, which also contains the documentation. More details and discussion
+> can be found in the paper “Safe Coercions”.
+
+I would've preferred _not_ to read the paper just to know what the behavior is
+like. After all, isn't that the purpose of the user guide anyway? I don't know
+if it's just me.
+
 ## Day 20 - 22/01/2022
 
 3 resources done, only 3 more to go. This sure gets tiring _really_ fast. I'm
-starting to understand why people use `DerivingGenerics` now... but I will
+starting to understand why people use `DerivingGenerics` now. I will
 persevere and continue manually writing instances like a monkey.
 
 ## Day 19 - 21/01/2022
