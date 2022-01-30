@@ -24,6 +24,7 @@ library
       , SwapiClient.Page
       , SwapiClient.Starship
       , SwapiClient.Vehicle
+      , SwapiClient.Species
 
     hs-source-dirs:     src
     default-language:   Haskell2010
@@ -114,6 +115,7 @@ test-suite swapi-client-test
       , FilmTest
       , StarshipTest
       , VehicleTest
+      , SpeciesTest
       , Util
 
     ghc-options:
