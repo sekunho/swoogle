@@ -68,7 +68,7 @@ data Species = Species
   , spHairColors :: [HairColor]
   , spEyeColors :: [EyeColor]
   , spAverageLifespan :: AverageLifespan
-  , spHomeworld :: HomeworldId
+  , spHomeworld :: Maybe HomeworldId
   , spLanguage :: Language
   , spPeople :: [PersonId]
   , spFilms :: [FilmId]

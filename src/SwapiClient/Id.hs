@@ -13,7 +13,7 @@ module SwapiClient.Id
 import Data.Aeson
   ( FromJSON (parseJSON)
   , ToJSON (toJSON)
-  , Value (String, Null)
+  , Value (String)
   )
 import Data.Aeson qualified as Aeson (withText)
 import Data.Aeson.Types (Parser)
@@ -40,15 +40,13 @@ import SwapiClient.Url qualified as Url (resourceUrl, getId)
 --------------------------------------------------------------------------------
 -- Data types
 
--- TODO(sekun): Refactor IDs to allow `Null`, so `No<ID_NAME>` would do.
 newtype FilmId = FilmId Int
   deriving stock (Eq, Show)
   deriving newtype TextShow
 
-data HomeworldId
-  = HomeworldId Int
-  | NoHomeworld
+newtype HomeworldId = HomeworldId Int
   deriving stock (Eq, Show)
+  deriving newtype TextShow
 
 newtype SpeciesId = SpeciesId Int
   deriving stock (Eq, Show)
@@ -80,23 +78,22 @@ instance FromJSON (FilmId :: Type) where
 
 instance ToJSON (FilmId :: Type) where
   toJSON :: FilmId -> Value
-  toJSON = maybe Null String . buildFilmUrl
+  toJSON = String . buildFilmUrl
 
 instance FromJSON (HomeworldId :: Type) where
   parseJSON :: Value -> Parser HomeworldId
   parseJSON val =
     case val of
-      Null -> pure NoHomeworld
       String homeworldUrl ->
         case Url.getId homeworldUrl of
-          Just resourceId -> pure . HomeworldId $ resourceId
+          Just resourceId -> pure (HomeworldId resourceId)
           Nothing -> fail "Unable to get ID from URL"
 
       _ -> fail "Unexpected type for homeworld URL"
 
 instance ToJSON (HomeworldId :: Type) where
   toJSON :: HomeworldId -> Value
-  toJSON = maybe Null String . buildPlanetUrl
+  toJSON = String . buildPlanetUrl
 
 instance FromJSON (SpeciesId :: Type) where
   parseJSON :: Value -> Parser SpeciesId
@@ -109,7 +106,7 @@ instance FromJSON (SpeciesId :: Type) where
 
 instance ToJSON (SpeciesId :: Type) where
   toJSON :: SpeciesId -> Value
-  toJSON = maybe Null String . buildSpeciesUrl
+  toJSON = String . buildSpeciesUrl
 
 instance FromJSON (VehicleId :: Type) where
   parseJSON :: Value -> Parser VehicleId
@@ -122,7 +119,7 @@ instance FromJSON (VehicleId :: Type) where
 
 instance ToJSON (VehicleId :: Type) where
   toJSON :: VehicleId -> Value
-  toJSON = maybe Null String . buildVehicleUrl
+  toJSON = String . buildVehicleUrl
 
 instance FromJSON (StarshipId :: Type) where
   parseJSON :: Value -> Parser StarshipId
@@ -135,7 +132,7 @@ instance FromJSON (StarshipId :: Type) where
 
 instance ToJSON (StarshipId :: Type) where
   toJSON :: StarshipId -> Value
-  toJSON = maybe Null String . buildStarshipUrl
+  toJSON = String . buildStarshipUrl
 
 instance FromJSON (PersonId :: Type) where
   -- Gonna parse it from `url` which is why it's from text
@@ -149,59 +146,51 @@ instance FromJSON (PersonId :: Type) where
 
 instance ToJSON (PersonId :: Type) where
   toJSON :: PersonId -> Value
-  toJSON = maybe Null String . buildPersonUrl
+  toJSON = String . buildPersonUrl
 
 ------------------------------------------------------------------------------
 -- Other functions
 -- TODO(sekun): Refactor to use `URLData`.
 -- TODO(sekun): Refactor remaining URL builders to accommodate the ID sum types
 
-buildFilmUrl :: FilmId -> Maybe Text
+buildFilmUrl :: FilmId -> Text
 buildFilmUrl filmId =
-  Just $ mconcat [Url.resourceUrl FilmResource, Text.Show.showt filmId, "/"]
+  mconcat [Url.resourceUrl FilmResource, Text.Show.showt filmId, "/"]
 
-buildPlanetUrl :: HomeworldId -> Maybe Text
+buildPlanetUrl :: HomeworldId -> Text
 buildPlanetUrl homeworldId =
-  case homeworldId of
-    HomeworldId hId ->
-        Just $ mconcat
-          [ Url.resourceUrl PlanetResource
-          , Text.Show.showt hId
-          , "/"
-          ]
+  mconcat
+    [ Url.resourceUrl PlanetResource
+    , Text.Show.showt homeworldId
+    , "/"
+    ]
 
-    NoHomeworld -> Nothing
-
-buildSpeciesUrl :: SpeciesId -> Maybe Text
+buildSpeciesUrl :: SpeciesId -> Text
 buildSpeciesUrl speciesId =
-  Just $
     mconcat
       [ Url.resourceUrl SpeciesResource
       , Text.Show.showt speciesId
       , "/"
       ]
 
-buildVehicleUrl :: VehicleId -> Maybe Text
+buildVehicleUrl :: VehicleId -> Text
 buildVehicleUrl vehicleId =
-  Just $
     mconcat
       [ Url.resourceUrl VehicleResource
       , Text.Show.showt vehicleId
       , "/"
       ]
 
-buildStarshipUrl :: StarshipId -> Maybe Text
+buildStarshipUrl :: StarshipId -> Text
 buildStarshipUrl starshipId =
-  Just $
     mconcat
       [ Url.resourceUrl StarshipResource
       , Text.Show.showt starshipId
       , "/"
       ]
 
-buildPersonUrl :: PersonId -> Maybe Text
+buildPersonUrl :: PersonId -> Text
 buildPersonUrl personId =
-  Just $
     mconcat
       [ Url.resourceUrl PeopleResource
       , Text.Show.showt personId
