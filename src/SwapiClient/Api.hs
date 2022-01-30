@@ -5,26 +5,32 @@ module SwapiClient.Api
   , listFilms
   , listStarships
   , listVehicles
+  , listSpecies
   , getPerson
   , getFilm
   , getStarship
   , getVehicle
+  , getSpecies
   , searchPeople
   , searchFilms
   , searchStarships
   , searchVehicles
+  , searchSpecies
   , eitherListPeople
   , eitherListFilms
   , eitherListStarships
   , eitherListVehicles
+  , eitherListSpecies
   , eitherGetPerson
   , eitherGetFilm
   , eitherGetStarship
   , eitherGetVehicle
+  , eitherGetSpecies
   , eitherSearchPeople
   , eitherSearchFilms
   , eitherSearchStarships
   , eitherSearchVehicles
+  , eitherSearchSpecies
   ) where
 
 --------------------------------------------------------------------------------
@@ -58,6 +64,7 @@ import SwapiClient.Film
 import SwapiClient.Id
 import SwapiClient.Page (Page (Page, NoPage), Index)
 import SwapiClient.Person (Person)
+import SwapiClient.Species (Species)
 import SwapiClient.Starship
 import SwapiClient.Url
 import SwapiClient.Url qualified as Url (fromResource)
@@ -412,6 +419,94 @@ eitherGetVehicle (VehicleId vehicleId) =
 -- If the page provided is `NoPage`, it gives back `Left "This is an empty page"`.
 eitherSearchVehicles :: Text -> Page -> IO (Either String (Index Vehicle))
 eitherSearchVehicles = eitherSearch VehicleResource
+
+--------------------------------------------------------------------------------
+-- Species
+
+-- | Fetches a list of speciess given a `Page`.
+--
+-- `ghci> listSpecies (Page 1)`
+--
+-- ```haskell
+-- Just $ Index
+--   { iCount = 1
+--   , iNextPage = NoPage
+--   , iPreviousPage = NoPage
+--   , iResults = [ Species {...} ]
+--   }
+-- ```
+--
+-- If the page provided is `NoPage`, it gives back `Nothing`.
+listSpecies :: Page -> IO (Maybe (Index Species))
+listSpecies = fetchPage SpeciesResource
+
+-- | Fetches a single species associated with the provided `SpeciesId`.
+--
+-- `ghci> getSpecies (SpeciesId 6)`
+--
+-- `Just $ Species { ... }`
+getSpecies :: SpeciesId -> IO (Maybe Species)
+getSpecies (SpeciesId speciesId) = fetchOne SpeciesResource speciesId
+
+-- | Searches for a species' name; results are paginated.
+--
+-- `ghci> searchSpecies "human" (Page 1)`
+--
+-- ```haskell
+-- Right $ Index
+--   { iCount = 1
+--   , iNextPage = NoPage
+--   , iPreviousPage = NoPage
+--   , iResults = [ Species {...} ]
+--   }
+-- ```
+--
+-- If the page provided is `NoPage`, it gives back `Nothing`.
+searchSpecies :: Text -> Page -> IO (Maybe (Index Species))
+searchSpecies = search SpeciesResource
+
+-- | Fetches a list of speciess given a `Page`.
+--
+-- `ghci> eitherListSpecies (Page 1)`
+--
+-- ```haskell
+-- Right $ Index
+--   { iCount = 1
+--   , iNextPage = NoPage
+--   , iPreviousPage = NoPage
+--   , iResults = [ Species {...} ]
+--   }
+-- ```
+--
+-- If the page provided is `NoPage`, it gives back `Left "This is an empty page"`.
+eitherListSpecies :: Page -> IO (Either String (Index Species))
+eitherListSpecies = eitherFetchPage SpeciesResource
+
+-- | Fetches a single species associated with the provided `SpeciesId`.
+--
+-- `ghci> eitherGetSpecies (SpeciesId 6)`
+--
+-- `Right $ Species { ... }`
+eitherGetSpecies :: SpeciesId -> IO (Either String Species)
+eitherGetSpecies (SpeciesId speciesId) =
+  eitherFetchOne SpeciesResource speciesId
+
+-- | Searches for a species' name; results are paginated.
+--
+-- `ghci> eitherSearchSpecies "human" (Page 1)`
+--
+-- ```haskell
+-- Right $ Index
+--   { iCount = 1
+--   , iNextPage = NoPage
+--   , iPreviousPage = NoPage
+--   , iResults = [ Species {...} ]
+--   }
+-- ```
+--
+-- If the page provided is `NoPage`, it gives back `Left "This is an empty page"`.
+eitherSearchSpecies :: Text -> Page -> IO (Either String (Index Species))
+eitherSearchSpecies = eitherSearch SpeciesResource
 
 --------------------------------------------------------------------------------
 -- Utils
