@@ -1,6 +1,3 @@
-{-# language FlexibleInstances #-}
-{-# language FlexibleContexts #-}
-
 module SwapiClient.Starship
   ( Starship ( Starship
     , sName
