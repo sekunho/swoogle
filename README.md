@@ -78,7 +78,10 @@ when I'm done. Subscribe to stay tuned! :)
   - [x] Index
   - [x] Search
   - [x] View
-- [ ] Vehicle
+- [x] Vehicle
+  - [x] Index
+  - [x] Search
+  - [x] View
 - [ ] Species
 - [ ] Planet
 
