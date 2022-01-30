@@ -105,5 +105,9 @@ numbers, just encoded as strings. What's the unitless number supposed to be?
 
 - `Starship`: `starship_class` character case is inconsistent
 
+- `Vehicle`: `length` has an extra whitespace at the end. Why...
+
+- `Vehicle`: `consumables`, (specifically id 6), is just `0`.
+
 These changes won't be implemented here, unless the swapi.dev maintainer decides
 to do the same as well. `swapi` is just meant to be compatible with swapi.dev.

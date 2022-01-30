@@ -18,6 +18,24 @@ module SwapiClient.Vehicle
     , VCGunship
     , VCTransport
     )
+  , Vehicle
+    ( vName
+    , vModel
+    , vManufacturer
+    , vCost
+    , vLength
+    , vMaxAtmospheringSpeed
+    , vRequiredCrew
+    , vPassengerLimit
+    , vCargoCapacity
+    , vConsumables
+    , vVehicleClass
+    , vPilots
+    , vFilms
+    , vCreatedAt
+    , vEditedAt
+    , vId
+    )
   ) where
 
 --------------------------------------------------------------------------------
@@ -27,13 +45,14 @@ import Data.Aeson.Types (FromJSON, ToJSON, Parser, Value)
 import Data.Aeson qualified as Aeson (withText, withObject)
 import Data.Kind (Type)
 import Data.Text (Text)
-import Data.Text qualified as Text (toLower)
+import Data.Text qualified as Text (toLower, stripEnd)
 import Data.Text.Read qualified as Text.Read (double)
 import Data.Time (UTCTime)
 
 --------------------------------------------------------------------------------
 
 import SwapiClient.Id (PersonId, FilmId, VehicleId)
+import SwapiClient.Page (Index (Index))
 import SwapiClient.Starship
   ( CargoCapacity
   , Consumable
@@ -109,7 +128,7 @@ instance FromJSON (VehicleModel :: Type) where
 instance FromJSON (VehicleLength :: Type) where
   parseJSON = Aeson.withText "VehicleLength" $
     \val ->
-      case Text.Read.double val of
+      case Text.Read.double . Text.stripEnd $ val of
         Right (vehicleLength, "") -> pure $ VehicleLength vehicleLength
         Right _ -> fail "VehicleLength is just supposed to be a number"
         Left s -> fail s
@@ -123,7 +142,7 @@ instance FromJSON (VehicleClass :: Type) where
           "repulsorcraft" -> pure VCRepulsorcraft
           "starfighter" -> pure VCStarfighter
           "airspeeder" -> pure VCAirspeeder
-          "space bomber" -> pure VCSpaceBomber
+          "space/planetary bomber" -> pure VCSpaceBomber
           "assault walker" -> pure VCAssaultWalker
           "walker" -> pure VCWalker
           "sail barge" -> pure VCSailBarge
@@ -157,3 +176,14 @@ instance FromJSON (Vehicle :: Type) where
           <*> val .: "created"
           <*> val .: "edited"
           <*> val .: "url"
+
+instance FromJSON ((Index Vehicle) :: Type) where
+  parseJSON :: Value -> Parser (Index Vehicle)
+  parseJSON =
+    Aeson.withObject "Index Vehicle" $
+      \val ->
+        Index
+          <$> val .: "count"
+          <*> val .: "next"
+          <*> val .: "previous"
+          <*> val .: "results"
