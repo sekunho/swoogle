@@ -1,4 +1,3 @@
-{-# LANGUAGE FlexibleContexts #-}
 {-# language DataKinds #-}
 
 module SwapiClient.Api
@@ -66,7 +65,6 @@ import SwapiClient.Vehicle (Vehicle)
 
 --------------------------------------------------------------------------------
 -- People
--- TODO(sekun): Refactor API calls to deal with the new ID sum types.
 
 -- | Fetches a list of people given a `Page`.
 --
