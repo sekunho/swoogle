@@ -40,6 +40,7 @@ import SwapiClient.Url qualified as Url (resourceUrl, getId)
 --------------------------------------------------------------------------------
 -- Data types
 
+-- TODO(sekun): Refactor IDs to allow `Null`, so `No<ID_NAME>` would do.
 newtype FilmId = FilmId Int
   deriving stock (Eq, Show)
   deriving newtype TextShow
@@ -153,7 +154,7 @@ instance ToJSON (PersonId :: Type) where
 ------------------------------------------------------------------------------
 -- Other functions
 -- TODO(sekun): Refactor to use `URLData`.
--- TODO(sekun): Refactor IDs to have null or n/a options
+-- TODO(sekun): Refactor remaining URL builders to accommodate the ID sum types
 
 buildFilmUrl :: FilmId -> Maybe Text
 buildFilmUrl filmId =
