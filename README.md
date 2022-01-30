@@ -93,7 +93,7 @@ of using an array
 - Numbers are encoded as strings just because the field could be an actual string
 like `"n/a"`, or `"none"`
 
-- Inconsistent usage of units. e.g In `Starship`, it has a field called 
+- Inconsistent usage of units. e.g In `Starship`, it has a field called
 `max_atmosphering_speed` with the kilometer unit, and without. Both of which are
 numbers, just encoded as strings. What's the unitless number supposed to be?
 
@@ -108,6 +108,10 @@ numbers, just encoded as strings. What's the unitless number supposed to be?
 - `Vehicle`: `length` has an extra whitespace at the end. Why...
 
 - `Vehicle`: `consumables`, (specifically id 6), is just `0`.
+
+- `Vehicle`: `vehicle_class` has classes that are the same but are formatted
+  diferently. e.g id 70 and id 69 are both airspeeders, but one of them has a
+  space in between.
 
 These changes won't be implemented here, unless the swapi.dev maintainer decides
 to do the same as well. `swapi` is just meant to be compatible with swapi.dev.
