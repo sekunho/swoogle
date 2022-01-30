@@ -5,21 +5,27 @@ module SwapiClient.Api
   ( listPeople
   , listFilms
   , listStarships
+  , listVehicles
   , getPerson
   , getFilm
   , getStarship
+  , getVehicle
   , searchPeople
   , searchFilms
   , searchStarships
+  , searchVehicles
   , eitherListPeople
   , eitherListFilms
   , eitherListStarships
+  , eitherListVehicles
   , eitherGetPerson
   , eitherGetFilm
   , eitherGetStarship
+  , eitherGetVehicle
   , eitherSearchPeople
   , eitherSearchFilms
   , eitherSearchStarships
+  , eitherSearchVehicles
   ) where
 
 --------------------------------------------------------------------------------
@@ -56,6 +62,7 @@ import SwapiClient.Person (Person)
 import SwapiClient.Starship
 import SwapiClient.Url
 import SwapiClient.Url qualified as Url (fromResource)
+import SwapiClient.Vehicle (Vehicle)
 
 --------------------------------------------------------------------------------
 -- People
@@ -318,6 +325,94 @@ eitherGetStarship (StarshipId starshipId) =
 -- If the page provided is `NoPage`, it gives back `Left "This is an empty page"`.
 eitherSearchStarships :: Text -> Page -> IO (Either String (Index Starship))
 eitherSearchStarships = eitherSearch StarshipResource
+
+--------------------------------------------------------------------------------
+-- Vehicle
+
+-- | Fetches a list of vehicles given a `Page`.
+--
+-- `ghci> listVehicles (Page 1)`
+--
+-- ```haskell
+-- Just $ Index
+--   { iCount = 1
+--   , iNextPage = NoPage
+--   , iPreviousPage = NoPage
+--   , iResults = [ Vehicle {...} ]
+--   }
+-- ```
+--
+-- If the page provided is `NoPage`, it gives back `Nothing`.
+listVehicles :: Page -> IO (Maybe (Index Vehicle))
+listVehicles = fetchPage VehicleResource
+
+-- | Fetches a single vehicle associated with the provided `VehicleId`.
+--
+-- `ghci> getVehicle (VehicleId 6)`
+--
+-- `Just $ Vehicle { ... }`
+getVehicle :: VehicleId -> IO (Maybe Vehicle)
+getVehicle (VehicleId vehicleId) = fetchOne VehicleResource vehicleId
+
+-- | Searches for a vehicle's name; results are paginated.
+--
+-- `ghci> searchVehicles "emergency" (Page 1)`
+--
+-- ```haskell
+-- Right $ Index
+--   { iCount = 1
+--   , iNextPage = NoPage
+--   , iPreviousPage = NoPage
+--   , iResults = [ Vehicle {...} ]
+--   }
+-- ```
+--
+-- If the page provided is `NoPage`, it gives back `Nothing`.
+searchVehicles :: Text -> Page -> IO (Maybe (Index Vehicle))
+searchVehicles = search VehicleResource
+
+-- | Fetches a list of vehicles given a `Page`.
+--
+-- `ghci> eitherListVehicles (Page 1)`
+--
+-- ```haskell
+-- Right $ Index
+--   { iCount = 1
+--   , iNextPage = NoPage
+--   , iPreviousPage = NoPage
+--   , iResults = [ Vehicle {...} ]
+--   }
+-- ```
+--
+-- If the page provided is `NoPage`, it gives back `Left "This is an empty page"`.
+eitherListVehicles :: Page -> IO (Either String (Index Vehicle))
+eitherListVehicles = eitherFetchPage VehicleResource
+
+-- | Fetches a single vehicle associated with the provided `VehicleId`.
+--
+-- `ghci> eitherGetVehicle (VehicleId 6)`
+--
+-- `Right $ Vehicle { ... }`
+eitherGetVehicle :: VehicleId -> IO (Either String Vehicle)
+eitherGetVehicle (VehicleId vehicleId) =
+  eitherFetchOne VehicleResource vehicleId
+
+-- | Searches for a vehicle's name; results are paginated.
+--
+-- `ghci> eitherSearchVehicle "millennium falcon" (Page 1)`
+--
+-- ```haskell
+-- Right $ Index
+--   { iCount = 1
+--   , iNextPage = NoPage
+--   , iPreviousPage = NoPage
+--   , iResults = [ Vehicle {...} ]
+--   }
+-- ```
+--
+-- If the page provided is `NoPage`, it gives back `Left "This is an empty page"`.
+eitherSearchVehicles :: Text -> Page -> IO (Either String (Index Vehicle))
+eitherSearchVehicles = eitherSearch VehicleResource
 
 --------------------------------------------------------------------------------
 -- Utils
