@@ -17,6 +17,10 @@ module SwapiClient.Vehicle
     , VCSubmarine
     , VCGunship
     , VCTransport
+    , VCWheeledWalker
+    , VCFireSuppressionShip
+    , VCDroidStarfighter
+    , VCDroidTank
     )
   , Vehicle
     ( vName
@@ -75,9 +79,10 @@ newtype VehicleModel = VehicleModel Text
   deriving stock (Eq, Show)
   deriving ToJSON via (Wrapped Text)
 
-newtype VehicleLength = VehicleLength Double
+data VehicleLength
+  = VehicleLength Double
+  | UnknownVehicleLength
   deriving stock (Eq, Show)
-  deriving ToJSON via (Wrapped Double)
 
 data VehicleClass
   = VCWheeled
@@ -94,6 +99,10 @@ data VehicleClass
   | VCSubmarine
   | VCGunship
   | VCTransport
+  | VCWheeledWalker
+  | VCFireSuppressionShip
+  | VCDroidStarfighter
+  | VCDroidTank
   deriving stock (Eq, Show)
 
 data Vehicle = Vehicle
@@ -127,11 +136,13 @@ instance FromJSON (VehicleModel :: Type) where
 
 instance FromJSON (VehicleLength :: Type) where
   parseJSON = Aeson.withText "VehicleLength" $
-    \val ->
-      case Text.Read.double . Text.stripEnd $ val of
-        Right (vehicleLength, "") -> pure $ VehicleLength vehicleLength
-        Right _ -> fail "VehicleLength is just supposed to be a number"
-        Left s -> fail s
+    \case
+      "unknown" -> pure UnknownVehicleLength
+      val ->
+        case Text.Read.double . Text.stripEnd $ val of
+          Right (vehicleLength, "") -> pure $ VehicleLength vehicleLength
+          Right _ -> fail "VehicleLength is just supposed to be a number"
+          Left s -> fail s
 
 instance FromJSON (VehicleClass :: Type) where
   parseJSON =
@@ -141,10 +152,12 @@ instance FromJSON (VehicleClass :: Type) where
           "wheeled" -> pure VCWheeled
           "repulsorcraft" -> pure VCRepulsorcraft
           "starfighter" -> pure VCStarfighter
+          "air speeder" -> pure VCAirspeeder
           "airspeeder" -> pure VCAirspeeder
           "space/planetary bomber" -> pure VCSpaceBomber
           "assault walker" -> pure VCAssaultWalker
           "walker" -> pure VCWalker
+          "droid tank" -> pure VCDroidTank
           "sail barge" -> pure VCSailBarge
           "repulsorcraft cargo skiff" -> pure VCRepulsorcraftCargoSkiff
           "speeder" -> pure VCSpeeder
@@ -152,6 +165,9 @@ instance FromJSON (VehicleClass :: Type) where
           "submarine" -> pure VCSubmarine
           "gunship" -> pure VCGunship
           "transport" -> pure VCTransport
+          "wheeled walker" -> pure VCWheeledWalker
+          "fire suppression ship" -> pure VCFireSuppressionShip
+          "droid starfighter" -> pure VCDroidStarfighter
           _ -> fail "Unexpected value for VehicleClass"
 
 instance FromJSON (Vehicle :: Type) where
