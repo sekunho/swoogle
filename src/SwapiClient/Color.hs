@@ -1,5 +1,3 @@
-{-# language FlexibleInstances #-}
-
 module SwapiClient.Color
   ( HairColor
     ( AuburnHair
@@ -9,6 +7,8 @@ module SwapiClient.Color
     , GreyHair
     , NoHairColor
     , WhiteHair
+    , BlueHair
+    , RedHair
     )
   , SkinColor
     ( BlueSkin
@@ -31,6 +31,10 @@ module SwapiClient.Color
     , UnknownSkinColor
     , WhiteSkin
     , YellowSkin
+    , CaucasianSkin
+    , BlackSkin
+    , AsianSkin
+    , HispanicSkin
     )
   , EyeColor
     ( BlackEye
@@ -46,6 +50,8 @@ module SwapiClient.Color
     , UnknownEyeColor
     , YellowEye
     , WhiteEye
+    , AmberEye
+    , GreyEye
     )
   ) where
 
@@ -60,7 +66,7 @@ import Data.Aeson.Types
     )
 import Data.Kind (Type)
 import Data.Text (Text)
-import Data.Text qualified as Text (splitOn, intercalate)
+import Data.Text qualified as Text (splitOn, intercalate, unpack)
 import TextShow ( Builder, TextShow(showb), showt)
 
 --------------------------------------------------------------------------------
@@ -74,6 +80,8 @@ data HairColor
   | GreyHair
   | NoHairColor
   | WhiteHair
+  | RedHair
+  | BlueHair
   deriving (Eq, Show)
 
 data SkinColor
@@ -87,6 +95,7 @@ data SkinColor
   | GreenTanSkin
   | GreySkin
   | LightSkin
+  | MagentaSkin
   | MetalSkin
   | MottledGreenSkin
   | OrangeSkin
@@ -94,25 +103,33 @@ data SkinColor
   | RedSkin
   | SilverSkin
   | TanSkin
-  | UnknownSkinColor
   | WhiteSkin
   | YellowSkin
+  | CaucasianSkin
+  | BlackSkin
+  | AsianSkin
+  | HispanicSkin
+  | SkinColorNotApplicable
+  | UnknownSkinColor
   deriving (Eq, Show)
 
 data EyeColor
-  = BlackEye
+  = AmberEye
+  | BlackEye
   | BlueEye
   | BlueGreyEye
   | BrownEye
   | GoldEye
   | GreenEye
+  | GreyEye
   | HazelEye
   | OrangeEye
   | PinkEye -- lmao
   | RedEye
-  | UnknownEyeColor
   | YellowEye
   | WhiteEye
+  | EyeColorNotApplicable
+  | UnknownEyeColor
   deriving (Eq, Show)
 
 -------------------------------------------------------------------------------
@@ -130,6 +147,8 @@ instance TextShow (HairColor :: Type) where
     GreyHair -> "grey"
     NoHairColor -> "none"
     WhiteHair -> "white"
+    RedHair -> "red"
+    BlueHair -> "blue"
 
 instance TextShow (SkinColor :: Type) where
   showb :: SkinColor -> Builder
@@ -144,6 +163,7 @@ instance TextShow (SkinColor :: Type) where
     GreenTanSkin -> "green-tan"
     GreySkin -> "grey"
     LightSkin -> "light"
+    MagentaSkin -> "magenta"
     MetalSkin -> "metal"
     MottledGreenSkin -> "mottled green"
     OrangeSkin -> "orange"
@@ -151,26 +171,34 @@ instance TextShow (SkinColor :: Type) where
     RedSkin -> "red"
     SilverSkin -> "silver"
     TanSkin -> "tan"
-    UnknownSkinColor -> "unknown"
     WhiteSkin -> "white"
     YellowSkin -> "yellow"
+    CaucasianSkin -> "caucasian"
+    BlackSkin -> "black"
+    AsianSkin -> "asian"
+    HispanicSkin -> "hispanic"
+    SkinColorNotApplicable -> "n/a"
+    UnknownSkinColor -> "unknown"
 
 instance TextShow (EyeColor :: Type) where
   showb :: EyeColor -> Builder
   showb = \case
-    BlackEye        -> "black"
-    BlueEye         -> "blue"
-    BlueGreyEye     -> "blue-grey"
-    BrownEye        -> "brown"
-    GoldEye         -> "gold"
-    GreenEye        -> "green"
-    HazelEye        -> "hazel"
-    OrangeEye       -> "orange"
-    PinkEye         -> "pink"
-    RedEye          -> "red"
-    UnknownEyeColor -> "unknown"
-    YellowEye       -> "yellow"
-    WhiteEye        -> "white"
+    BlackEye              -> "black"
+    BlueEye               -> "blue"
+    BlueGreyEye           -> "blue-grey"
+    BrownEye              -> "brown"
+    GoldEye               -> "gold"
+    GreenEye              -> "green"
+    HazelEye              -> "hazel"
+    OrangeEye             -> "orange"
+    PinkEye               -> "pink"
+    RedEye                -> "red"
+    YellowEye             -> "yellow"
+    WhiteEye              -> "white"
+    AmberEye              -> "amber"
+    GreyEye               -> "grey"
+    EyeColorNotApplicable -> "n/a"
+    UnknownEyeColor       -> "unknown"
 
 -- Aeson instances
 
@@ -210,21 +238,10 @@ instance FromJSON (EyeColor :: Type) where
   parseJSON :: Value -> Parser EyeColor
   parseJSON =
    Aeson.withText "EyeColor" $
-     \case
-       "black" -> pure BlackEye
-       "blue" -> pure BlueEye
-       "blue-gray" -> pure BlueGreyEye
-       "blue-grey" -> pure BlueGreyEye
-       "brown" -> pure BrownEye
-       "gold" -> pure GoldEye
-       "green" -> pure GreenEye
-       "hazel" -> pure HazelEye
-       "orange" -> pure OrangeEye
-       "pink" -> pure PinkEye
-       "red" -> pure RedEye
-       "unknown" -> pure UnknownEyeColor
-       "yellow" -> pure YellowEye
-       _ -> fail "ERROR: Invalid eye color value/format"
+     \val ->
+       case textToEyeColor val of
+         Right eyeColor -> pure eyeColor
+         Left e -> fail e
 
 instance ToJSON (EyeColor :: Type) where
   toJSON :: EyeColor -> Value
@@ -255,6 +272,8 @@ textToHairColor hct = case hct of
   "brown"      -> Right BrownHair
   "grey"       -> Right GreyHair
   "white"      -> Right WhiteHair
+  "blue"       -> Right BlueHair
+  "red"        -> Right RedHair
   "n/a"        -> Right NoHairColor
   "none"       -> Right NoHairColor
   _            -> Left "ERROR: Invalid hair color value/format"
@@ -270,7 +289,9 @@ textToSkinColor sct = case sct of
   "green" -> Right GreenSkin
   "green-tan" -> Right GreenTanSkin
   "grey" -> Right GreySkin
+  "gray" -> Right GreySkin
   "light" -> Right LightSkin
+  "magenta" -> Right MagentaSkin
   "metal" -> Right MetalSkin
   "mottled green" -> Right MottledGreenSkin
   "orange" -> Right OrangeSkin
@@ -280,8 +301,13 @@ textToSkinColor sct = case sct of
   "tan" -> Right TanSkin
   "white" -> Right WhiteSkin
   "yellow" -> Right YellowSkin
+  "caucasian"  -> Right CaucasianSkin
+  "black" -> Right BlackSkin
+  "asian" -> Right AsianSkin
+  "hispanic" -> Right HispanicSkin
+  "n/a" -> Right SkinColorNotApplicable
   "unknown" -> Right UnknownSkinColor
-  _ -> Left "ERROR: Invalid skin color/format"
+  s -> Left ("ERROR: Invalid skin color/format " <> Text.unpack s)
 
 textToEyeColor :: Text -> Either String EyeColor
 textToEyeColor ect = case ect of
@@ -291,15 +317,18 @@ textToEyeColor ect = case ect of
   "blue-grey" -> pure BlueGreyEye
   "brown" -> pure BrownEye
   "gold" -> pure GoldEye
+  "golden" -> pure GoldEye
   "green" -> pure GreenEye
   "hazel" -> pure HazelEye
   "orange" -> pure OrangeEye
   "pink" -> pure PinkEye
   "red" -> pure RedEye
   "unknown" -> pure UnknownEyeColor
-  "white" -> pure WhiteEye
   "yellow" -> pure YellowEye
-  _ -> Left "ERROR: Invalid eye color value/format"
+  "amber" -> pure AmberEye
+  "grey" -> pure GreyEye
+  "n/a" -> pure EyeColorNotApplicable
+  e -> Left ("ERROR: Invalid eye color value/format " <> Text.unpack e)
 
 
 --------------------------------------------------------------------------------
