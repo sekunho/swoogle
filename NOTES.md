@@ -3,6 +3,7 @@
 **Table of Contents**
 
 - [Notes](#notes)
+  - [Day 23 - 30/01/2022](#day-23---30012022)
   - [Day 22 - 29/01/2022](#day-22---29012022)
   - [Day 21 - 28/01/2022](#day-21---28012022)
   - [Day 20 - 22/01/2022](#day-22---22012022)
@@ -47,6 +48,15 @@
   - [Day 1 - 25/11/2021](#day-1---25112021)
 
 Dates are formatted in DD-MM-YYYY.
+
+## Day 23 - 30/01/2022
+
+Added Vehicle instances for FromJSON. I don't think I'll focus on `ToJSON` for
+now since it has no impact on consuming the API. Feels like it's just a waste
+of time. It'll certainly be useful once I create an alternative JSON API, but
+only until then.
+
+I also wrote some decoding tests.
 
 ## Day 22 - 29/01/2022
 
