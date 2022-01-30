@@ -107,13 +107,13 @@ test-suite swapi-client-test
       , FlexibleInstances
       , FlexibleContexts
 
-
     other-modules:
         RootTest
       , UrlTest
       , PersonTest
       , FilmTest
       , StarshipTest
+      , VehicleTest
       , Util
 
     ghc-options:

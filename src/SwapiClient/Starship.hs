@@ -91,6 +91,8 @@ data Consumable
   | CWeek Word
   | CMonth Word
   | CYear Word
+  | LiveFoodTanks
+  | NoConsumable
   | UnknownConsumable
   deriving stock (Eq, Show)
 
@@ -130,6 +132,7 @@ newtype StarshipLength = StarshipLength Double
 
 data CargoCapacity
   = Capacity Word
+  | NoCapacity
   | UnknownCapacity
   deriving stock (Eq, Show)
 
@@ -338,6 +341,7 @@ instance FromJSON (CargoCapacity :: Type) where
     Aeson.withText "CargoCapacity" $
       \case
         "unknown" -> pure UnknownCapacity
+        "none" -> pure NoCapacity
         val ->
           case Text.Read.decimal val of
             Right (cargoCapacity, "") ->
@@ -355,6 +359,7 @@ instance ToJSON (CargoCapacity :: Type) where
     \case
       Capacity capacity -> Text.Show.showt capacity
       UnknownCapacity -> "unknown"
+      NoCapacity -> "none"
 
 instance FromJSON (Consumable :: Type) where
   parseJSON :: Value -> Parser Consumable
@@ -362,8 +367,13 @@ instance FromJSON (Consumable :: Type) where
     Aeson.withText "Consumable" $
       \case
         "unknown" -> pure UnknownConsumable
+        "none" -> pure NoConsumable
+        "Live food tanks" -> pure LiveFoodTanks
         val ->
           case Text.Read.decimal val of
+            Right (0, "") ->
+              pure NoConsumable
+
             Right (timeLength, " hour") ->
               pure (CHour timeLength)
 
@@ -419,8 +429,10 @@ instance ToJSON (Consumable :: Type) where
       CYear timeLength ->
         Text.Show.showt timeLength <> appendS timeLength " year"
 
-      UnknownConsumable ->
-        "unknown"
+      LiveFoodTanks -> "Live food tanks"
+
+      NoConsumable -> "none"
+      UnknownConsumable -> "unknown"
 
     where
       appendS :: Word -> Text -> Text
