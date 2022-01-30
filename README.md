@@ -116,5 +116,7 @@ numbers, just encoded as strings. What's the unitless number supposed to be?
   diferently. e.g id 70 and id 69 are both airspeeders, but one of them has a
   space in between.
 
+- `Species`: `language`'s `"Galactic basic"` and `"Galatic Basic"`
+
 These changes won't be implemented here, unless the swapi.dev maintainer decides
 to do the same as well. `swapi` is just meant to be compatible with swapi.dev.
