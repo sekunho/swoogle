@@ -40,6 +40,9 @@ library
                       , GeneralizedNewtypeDeriving
                       , DerivingVia
                       , ScopedTypeVariables
+                      , FlexibleInstances
+                      , FlexibleContexts
+
 
     ghc-options:        -Wall -Werror
 
@@ -78,6 +81,8 @@ executable swapi-client
                       , GeneralizedNewtypeDeriving
                       , DerivingVia
                       , ScopedTypeVariables
+                      , FlexibleInstances
+                      , FlexibleContexts
 
 test-suite swapi-client-test
     type:               exitcode-stdio-1.0
@@ -99,6 +104,9 @@ test-suite swapi-client-test
       , GeneralizedNewtypeDeriving
       , DerivingVia
       , ScopedTypeVariables
+      , FlexibleInstances
+      , FlexibleContexts
+
 
     other-modules:
         RootTest
