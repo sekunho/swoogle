@@ -3,6 +3,7 @@
 **Table of Contents**
 
 - [Notes](#notes)
+  - [Day 24 - 31/01/2022](#day-24---31012022)
   - [Day 23 - 30/01/2022](#day-23---30012022)
   - [Day 22 - 29/01/2022](#day-22---29012022)
   - [Day 21 - 28/01/2022](#day-21---28012022)
@@ -48,6 +49,200 @@
   - [Day 1 - 25/11/2021](#day-1---25112021)
 
 Dates are formatted in DD-MM-YYYY.
+
+## Day 24 - 31/01/2022
+
+### Refining `Species` to deal with null homeworld
+
+The JSON API is a bit strange. This is one of the few times I ran into an actual
+null value for a field. Normally `none`/`unknown`/`n/a` are used, which I just
+model with sum types. But this was an actual null! My first instinct was to take
+advantage of `Maybe`.
+
+Currently `Species` is defined as
+
+```haskell
+data Species = Species
+  { spName :: SpeciesName
+  , spClassification :: Classification
+  , spDesignation :: Designation
+  , spAverageHeight :: AverageHeight
+  , spSkinColors :: [SkinColor]
+  , spHairColors :: [HairColor]
+  , spEyeColors :: [EyeColor]
+  , spAverageLifespan :: AverageLifespan
+  , spHomeworld :: Maybe HomeworldId      -- To handle `Null`!
+  , spLanguage :: Language
+  , spPeople :: [PersonId]
+  , spFilms :: [FilmId]
+  , spCreatedAt :: UTCTime
+  , spEditedAt :: UTCTime
+  , spId :: SpeciesId
+  }
+  deriving (Eq, Show)
+```
+
+But this might be annoying to validate is `spHomeworld :: Maybe HomeworldId`. I
+added the maybe context because not all species have a homeworld.
+
+So to remove the overhead of validation, I replaced it with 2 more types
+
+```haskell
+data Species = MkSpecies
+  { spName :: SpeciesName
+  , spClassification :: Classification
+  , spDesignation :: Designation
+  , spAverageHeight :: AverageHeight
+  , spSkinColors :: [SkinColor]
+  , spHairColors :: [HairColor]
+  , spEyeColors :: [EyeColor]
+  , spAverageLifespan :: AverageLifespan
+  , spHomeworld :: HomeworldId
+  , spLanguage :: Language
+  , spPeople :: [PersonId]
+  , spFilms :: [FilmId]
+  , spCreatedAt :: UTCTime
+  , spEditedAt :: UTCTime
+  , spId :: SpeciesId
+  }
+  deriving (Eq, Show)
+
+data OriginlessSpecies = MkOriginlessSpecies
+  { hSpName :: SpeciesName
+  , hSpClassification :: Classification
+  , hSpDesignation :: Designation
+  , hSpAverageHeight :: AverageHeight
+  , hSpSkinColors :: [SkinColor]
+  , hSpHairColors :: [HairColor]
+  , hSpEyeColors :: [EyeColor]
+  , hSpAverageLifespan :: AverageLifespan
+  , hSpLanguage :: Language
+  , hSpPeople :: [PersonId]
+  , hSpFilms :: [FilmId]
+  , hSpCreatedAt :: UTCTime
+  , hSpEditedAt :: UTCTime
+  , hSpId :: SpeciesId
+  }
+  deriving (Eq, Show)
+```
+
+Then I created a sum type that relates them in some way
+
+```haskell
+data SpeciesType
+  = HasOrigin Species
+  | NoOrigin OriginlessSpecies
+  deriving (Eq, Show)
+```
+
+I also had to fix the `FromJSON` instances. The behavior I wanted was when
+`aeson` runs into a `Null` value in `homeworld`, I want to use the
+`OriginlessSpecies` instance, otherwise it's `Species`.
+
+```haskell
+instance FromJSON (Species :: Type) where
+  parseJSON :: Value -> Parser Species
+  parseJSON =
+    Aeson.withObject "Species" $
+      \val ->
+        MkSpecies
+          <$> val .: "name"
+          <*> val .: "classification"
+          <*> val .: "designation"
+          <*> val .: "average_height"
+          <*> val .: "skin_colors"
+          <*> val .: "hair_colors"
+          <*> val .: "eye_colors"
+          <*> val .: "average_lifespan"
+          <*> val .: "homeworld"
+          <*> val .: "language"
+          <*> val .: "people"
+          <*> val .: "films"
+          <*> val .: "created"
+          <*> val .: "edited"
+          <*> val .: "url"
+
+instance FromJSON (OriginlessSpecies :: Type) where
+  parseJSON :: Value -> Parser OriginlessSpecies
+  parseJSON =
+    Aeson.withObject "OriginlessSpecies" $
+      \val ->
+        MkOriginlessSpecies
+          <$> val .: "name"
+          <*> val .: "classification"
+          <*> val .: "designation"
+          <*> val .: "average_height"
+          <*> val .: "skin_colors"
+          <*> val .: "hair_colors"
+          <*> val .: "eye_colors"
+          <*> val .: "average_lifespan"
+          <*> val .: "language"
+          <*> val .: "people"
+          <*> val .: "films"
+          <*> val .: "created"
+          <*> val .: "edited"
+          <*> val .: "url"
+
+instance FromJSON (SpeciesType :: Type) where
+  parseJSON :: Value -> Parser SpeciesType
+  parseJSON =
+    Aeson.withObject "SpeciesType" $
+      \val ->
+        case Keymap.lookup "homeworld" val of
+          Nothing -> fail "Species is supposed to contain a homeworld field."
+          Just val' -> case val' of
+            String _ -> HasOrigin <$> parseJSON @Species (Object val)
+            Null -> NoOrigin <$> parseJSON @OriginlessSpecies (Object val)
+            _ ->
+              fail "Species' homeworld field is supposed to be null or a string."
+
+instance FromJSON (Index SpeciesType :: Type) where
+  parseJSON :: Value -> Parser (Index SpeciesType)
+  parseJSON =
+    Aeson.withObject "Index Species" $
+      \val ->
+        Index
+          <$> val .: "count"
+          <*> val .: "next"
+          <*> val .: "previous"
+          <*> val .: "results"
+```
+
+It was a bit confusing at first especially with using `parseJSON` within
+`parseJSON`. I just followed the types and found my way to the solution. There
+might be better ways around this that I'm not seeing right now, but hey, it
+works!
+
+The breakage isn't that bad. I just had to replace all instances of `Species`
+and `Index Species` with the `SpeciesType` counterpart.
+
+`getSpecies (SpeciesId 2)` (no homeworld) results in this output
+
+```haskell
+Just $
+  NoOrigin $
+    MkOriginlessSpecies
+      { hSpName = SpeciesName "Droid"
+      , hSpClassification = ArtificialClass
+      , hSpDesignation = SentientDesignation
+      , hSpAverageHeight = HeightNotApplicable
+      , hSpSkinColors = [SkinColorNotApplicable]
+      , hSpHairColors = [NoHairColor]
+      , hSpEyeColors = [EyeColorNotApplicable]
+      , hSpAverageLifespan = Indefinite
+      , hSpLanguage = NoLanguage
+      , hSpPeople = [PersonId 2,PersonId 3,PersonId 8,PersonId 23]
+      , hSpFilms = [FilmId 1,FilmId 2,FilmId 3,FilmId 4,FilmId 5,FilmId 6]
+      , hSpCreatedAt = 2014-12-10 15:16:16.259 UTC
+      , hSpEditedAt = 2014-12-20 21:36:42.139 UTC
+      , hSpId = SpeciesId 2
+      }
+```
+
+While `getSpecies (SpeciesId 1)` (has homeworld) results in this output
+
+I could probably refine this further by creating types for each class but I
+think that might be too much. There's a possibility, however.
 
 ## Day 23 - 30/01/2022
 
