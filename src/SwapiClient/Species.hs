@@ -119,6 +119,8 @@ data Language
   | NoLanguage
   deriving (Eq, Show)
 
+-- | The reason behind why I split `Species` is here:
+-- https://github.com/sekunho/swapi/pull/24
 data SpeciesType
   = HasOrigin Species
   | NoOrigin OriginlessSpecies
