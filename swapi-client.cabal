@@ -26,7 +26,6 @@ library
         SwapiClient
       , SwapiClient.Api
       , SwapiClient.Person
-      , SwapiClient.Homeworld
       , SwapiClient.Film
       , SwapiClient.Id
       , SwapiClient.Url
@@ -36,6 +35,7 @@ library
       , SwapiClient.Starship
       , SwapiClient.Vehicle
       , SwapiClient.Species
+      , SwapiClient.Planet
 
     hs-source-dirs:     src
     default-language:   Haskell2010

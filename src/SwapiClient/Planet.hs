@@ -1,0 +1,103 @@
+module SwapiClient.Planet (
+  ) where
+
+--------------------------------------------------------------------------------
+
+import Data.Text (Text)
+import TextShow  (TextShow)
+
+--------------------------------------------------------------------------------
+-- Data types
+
+newtype PlanetName = MkPlanetName Text
+  deriving stock (Eq, Show)
+  deriving newtype (TextShow)
+
+newtype RotationPeriod = MkRotationPeriod Word
+  deriving stock (Eq, Show)
+  deriving newtype (TextShow)
+
+newtype OrbitalPeriod = MkOrbitalPeriod Word
+  deriving stock (Eq, Show)
+  deriving newtype (TextShow)
+
+newtype Diameter = MkDiameter Word
+  deriving stock (Eq, Show)
+  deriving newtype (TextShow)
+
+data Climate
+  = Arctic
+  | Arid
+  | ArtificialTemperate
+  | Frigid
+  | Frozen
+  | Hot
+  | Humid
+  | Moist
+  | Murky
+  | Polluted
+  | Rocky
+  | Temperate
+  | Tropical
+  | UnknownClimate
+  | Windy
+  deriving stock (Eq, Show)
+
+data Gravity
+  = Standard Word
+  | UnknownGravity
+  | GravityNotApplicable
+  deriving stock (Eq, Show)
+
+data Terrain
+  = Desert
+  | Grassland
+  | Mountain
+  | Jungle
+  | Rainforest
+  | IceCave
+  | MountainRange
+  | GasGiant
+  | Ocean
+  | Lake
+  | GrassyHill
+  | Swamp
+  | Forest
+  | Rock
+  | Barren
+  | Scrubland
+  | Savanna
+  | Canyon
+  | Sinkhole
+  | Volcanoe
+  | LavaRiver
+  | Cave
+  | Rivers
+  | AirlessAsteroid
+  | Glacier
+  | IceCanyon
+  | FungusForest
+  | Field
+  | RockArch
+  | Cityscape
+  | Plain
+  | Urban
+  | Hill
+  | Bog
+  | RockyIsland
+  | Mesas
+  | UnknownTerrain
+  | Reef
+  | Island
+  | RockyDesert
+  | Valley
+  | Tundra
+  | Ash
+  | ToxicCloudsea
+  | Plateau
+  | Verdant
+  | AcidPool
+  | RockyCanyon
+
+--------------------------------------------------------------------------------
+-- Instances
