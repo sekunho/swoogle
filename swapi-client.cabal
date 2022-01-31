@@ -7,7 +7,12 @@ homepage:           https://swapi-client.sekun.dev
 bug-reports:        https://github.com/sekunho/swapi
 synopsis:           A Haskell client for SWAPI
 category:           Web
-extra-source-files: CHANGELOG.md
+extra-source-files:
+  CHANGELOG.md
+  testdata/fixtures/**/*.json
+  testdata/**/*.golden
+  testdata/**/*.data
+
 tested-with:        GHC == 8.10.7
 
 library
