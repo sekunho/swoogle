@@ -4,6 +4,7 @@
 
 # SWAPI Client
 
+[![Haskell-CI](https://github.com/sekunho/swapi/actions/workflows/haskell-ci.yml/badge.svg?branch=main)](https://github.com/sekunho/swapi/actions/workflows/haskell-ci.yml)
 [![License: MIT](https://img.shields.io/badge/license-BSD--3--Clause-yellow)](https://opensource.org/licenses/BSD-3-Clause)
 
 `swapi-client` is a client library (without much bells and whistles) to interact
