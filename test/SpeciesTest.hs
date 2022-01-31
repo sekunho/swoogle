@@ -11,7 +11,7 @@ import Test.Tasty.Golden qualified as Golden (findByExtension)
 --------------------------------------------------------------------------------
 
 import SwapiClient.Page (Index)
-import SwapiClient.Species (Species)
+import SwapiClient.Species (SpeciesType)
 import Util qualified (batchGoldenVsFile)
 
 --------------------------------------------------------------------------------
@@ -24,7 +24,7 @@ test_decodeSpeciesIndex = mkGoldenTests <$> speciesIndexJSONPaths
       -> ByteString  -- Contents to write in file
       -> IO ()
     decodeAndWriteDestFile destFile =
-      writeFile destFile . show . Aeson.eitherDecodeStrict @(Index Species)
+      writeFile destFile . show . Aeson.eitherDecodeStrict @(Index SpeciesType)
 
     mkGoldenTests
       :: [FilePath]  -- List of fixture paths
