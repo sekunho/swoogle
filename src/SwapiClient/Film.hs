@@ -1,4 +1,4 @@
-{-# language FlexibleInstances #-}
+{-# LANGUAGE FlexibleInstances #-}
 
 module SwapiClient.Film
   ( Film
@@ -24,52 +24,39 @@ module SwapiClient.Film
 
 --------------------------------------------------------------------------------
 
-import Data.Aeson
-  ( FromJSON
-  , ToJSON
-  , parseJSON
-  , toJSON
-  , (.:)
-  , (.=)
-  )
-import Data.Aeson qualified as Aeson (withObject, withText, object)
+import Data.Aeson       (FromJSON, ToJSON, parseJSON, toJSON, (.:), (.=))
+import Data.Aeson       qualified as Aeson (object, withObject, withText)
 import Data.Aeson.Types (Parser, Value (String))
-import Data.Kind (Type)
-import Data.Text (Text)
-import Data.Text qualified as Text (splitOn, intercalate)
-import TextShow (TextShow)
-import TextShow qualified as Text.Show (showt)
-import Data.Time (Day, UTCTime)
+import Data.Kind        (Type)
+import Data.Text        (Text)
+import Data.Text        qualified as Text (intercalate, splitOn)
+import Data.Time        (Day, UTCTime)
+import TextShow         (TextShow)
+import TextShow         qualified as Text.Show (showt)
 
 --------------------------------------------------------------------------------
 
-import SwapiClient.Id
-  ( PersonId
-  , HomeworldId
-  , VehicleId
-  , SpeciesId
-  , StarshipId
-  , FilmId
-  )
+import SwapiClient.Id   (FilmId, HomeworldId, PersonId, SpeciesId, StarshipId,
+                         VehicleId)
 import SwapiClient.Page (Index (Index, iCount, iNextPage, iPreviousPage, iResults))
 
 --------------------------------------------------------------------------------
 
 data Film = Film
-  { fTitle            :: Text
-  , fEpisodeId        :: Int
-  , fOpeningCrawl     :: OpeningCrawl
-  , fDirector         :: Director
-  , fProducers        :: [Producer]
-  , fReleaseDate      :: Day
-  , fCharacters       :: [PersonId]
-  , fPlanets          :: [HomeworldId]
-  , fStarships        :: [StarshipId]
-  , fVehicles         :: [VehicleId]
-  , fSpecies          :: [SpeciesId]
-  , fCreatedAt        :: UTCTime
-  , fEditedAt         :: UTCTime
-  , fId               :: FilmId
+  { fTitle        :: Text
+  , fEpisodeId    :: Int
+  , fOpeningCrawl :: OpeningCrawl
+  , fDirector     :: Director
+  , fProducers    :: [Producer]
+  , fReleaseDate  :: Day
+  , fCharacters   :: [PersonId]
+  , fPlanets      :: [HomeworldId]
+  , fStarships    :: [StarshipId]
+  , fVehicles     :: [VehicleId]
+  , fSpecies      :: [SpeciesId]
+  , fCreatedAt    :: UTCTime
+  , fEditedAt     :: UTCTime
+  , fId           :: FilmId
   } deriving (Eq, Show)
 
 

@@ -122,5 +122,7 @@ numbers, just encoded as strings. What's the unitless number supposed to be?
 
 - `Species`: `language`'s `"Galactic basic"` and `"Galatic Basic"`
 
+- `Planet`: `gravity` has a capitalized `"N/A"` rather than the usual lowercase
+
 These changes won't be implemented here, unless the swapi.dev maintainer decides
 to do the same as well. `swapi` is just meant to be compatible with swapi.dev.

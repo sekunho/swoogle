@@ -11,21 +11,17 @@ module SwapiClient.Page
 
 --------------------------------------------------------------------------------
 
-import Data.Aeson.Types
-  ( FromJSON (parseJSON)
-  , ToJSON (toJSON)
-  , Value (String, Null)
-  , Parser
-  )
-import Data.Map.Strict qualified as Map (lookup, fromList)
-import Data.Kind (Type)
-import Data.Text.Read qualified as Text.Read (decimal)
-import TextShow qualified as Text.Show (showt)
+import Data.Aeson.Types (FromJSON (parseJSON), Parser, ToJSON (toJSON),
+                         Value (Null, String))
+import Data.Kind        (Type)
+import Data.Map.Strict  qualified as Map (fromList, lookup)
+import Data.Text.Read   qualified as Text.Read (decimal)
+import TextShow         qualified as Text.Show (showt)
 
 --------------------------------------------------------------------------------
 
-import SwapiClient.Url (UrlData (UrlData, udParams, udSubdir))
-import SwapiClient.Url qualified as Url (urlToUrlData, urlDataToUrl)
+import SwapiClient.Url  (UrlData (UrlData, udParams, udSubdir))
+import SwapiClient.Url  qualified as Url (urlDataToUrl, urlToUrlData)
 
 --------------------------------------------------------------------------------
 -- Data types
@@ -38,10 +34,10 @@ data Page
   deriving stock (Eq, Show)
 
 data Index a = Index
-  { iCount :: Int
-  , iNextPage :: Page
+  { iCount        :: Int
+  , iNextPage     :: Page
   , iPreviousPage :: Page
-  , iResults :: [a]
+  , iResults      :: [a]
   }
   deriving stock Show
 

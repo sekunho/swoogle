@@ -1,4 +1,4 @@
-{-# language DataKinds #-}
+{-# LANGUAGE DataKinds #-}
 
 module SwapiClient.Api
   ( listPeople
@@ -35,40 +35,29 @@ module SwapiClient.Api
 
 --------------------------------------------------------------------------------
 
-import Data.Aeson (FromJSON)
-import Data.Aeson qualified as Aeson (decodeStrict, eitherDecodeStrict)
-import Data.ByteString (ByteString)
-import Data.Functor ((<&>))
-import Data.Text (Text)
-import Network.HTTP.Req
-  ( Req
-  , GET (GET)
-  , NoReqBody (NoReqBody)
-  , (/:)
-  , (=:)
-  , Url
-  , Option
-  )
-import Network.HTTP.Req qualified as Req
-  ( req
-  , runReq
-  , defaultHttpConfig
-  , bsResponse
-  , responseBody
-  )
-import TextShow qualified as Text.Show (showt)
+import Data.Aeson           (FromJSON)
+import Data.Aeson           qualified as Aeson (decodeStrict,
+                                                eitherDecodeStrict)
+import Data.ByteString      (ByteString)
+import Data.Functor         ((<&>))
+import Data.Text            (Text)
+import Network.HTTP.Req     (GET (GET), NoReqBody (NoReqBody), Option, Req, Url,
+                             (/:), (=:))
+import Network.HTTP.Req     qualified as Req (bsResponse, defaultHttpConfig,
+                                              req, responseBody, runReq)
+import TextShow             qualified as Text.Show (showt)
 
 --------------------------------------------------------------------------------
 
 import SwapiClient.Film
 import SwapiClient.Id
-import SwapiClient.Page (Page (Page, NoPage), Index)
-import SwapiClient.Person (Person)
-import SwapiClient.Species (SpeciesType)
+import SwapiClient.Page     (Index, Page (NoPage, Page))
+import SwapiClient.Person   (Person)
+import SwapiClient.Species  (SpeciesType)
 import SwapiClient.Starship
 import SwapiClient.Url
-import SwapiClient.Url qualified as Url (fromResource)
-import SwapiClient.Vehicle (Vehicle)
+import SwapiClient.Url      qualified as Url (fromResource)
+import SwapiClient.Vehicle  (Vehicle)
 
 --------------------------------------------------------------------------------
 -- People

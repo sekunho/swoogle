@@ -1,4 +1,4 @@
-{-# language DataKinds #-}
+{-# LANGUAGE DataKinds #-}
 
 module SwapiClient.Url
   ( Resource
@@ -20,23 +20,15 @@ module SwapiClient.Url
   , swapiBin
   ) where
 
-import Data.List (foldl')
-import Data.Text (Text)
-import Data.Text qualified as Text
-  ( append
-  , split
-  , stripPrefix
-  , splitOn
-  , take
-  , drop
-  , dropWhileEnd
-  , null
-  , cons
-  )
-import Data.Text.Read qualified as Text.Read (decimal)
-import Data.Map.Strict (Map)
-import Data.Map.Strict qualified as Map (fromList, foldlWithKey', null)
-import Network.HTTP.Req (Url, Scheme (Https), (/:))
+import Data.List        (foldl')
+import Data.Map.Strict  (Map)
+import Data.Map.Strict  qualified as Map (foldlWithKey', fromList, null)
+import Data.Text        (Text)
+import Data.Text        qualified as Text (append, cons, drop, dropWhileEnd,
+                                           null, split, splitOn, stripPrefix,
+                                           take)
+import Data.Text.Read   qualified as Text.Read (decimal)
+import Network.HTTP.Req (Scheme (Https), Url, (/:))
 import Network.HTTP.Req qualified as Req (https)
 
 --------------------------------------------------------------------------------
@@ -79,25 +71,25 @@ swapiBin = Req.https swapiDomain /: "api"
 fromResource :: Resource -> Url 'Https
 fromResource = (/:) swapiBin .
   \case
-    RootResource -> ""
-    PeopleResource -> "people"
-    FilmResource -> "films"
+    RootResource     -> ""
+    PeopleResource   -> "people"
+    FilmResource     -> "films"
     StarshipResource -> "starships"
-    VehicleResource -> "vehicles"
-    SpeciesResource -> "species"
-    PlanetResource -> "planets"
+    VehicleResource  -> "vehicles"
+    SpeciesResource  -> "species"
+    PlanetResource   -> "planets"
 
 resourceUrl :: Resource -> Text
 resourceUrl resource =
   Text.append baseUrl $
     case resource of
-      RootResource -> ""
-      PeopleResource -> "people/"
-      FilmResource -> "films/"
+      RootResource     -> ""
+      PeopleResource   -> "people/"
+      FilmResource     -> "films/"
       StarshipResource -> "starships/"
-      VehicleResource -> "vehicles/"
-      SpeciesResource -> "species/"
-      PlanetResource -> "planets/"
+      VehicleResource  -> "vehicles/"
+      SpeciesResource  -> "species/"
+      PlanetResource   -> "planets/"
 
 -- TODO: Maybe make a sum type for all the ID newtypes?
 -- | Gets the ID of the resource URL
@@ -125,8 +117,8 @@ getId url = do
 decimalMaybe :: Integral a => Text -> Maybe a
 decimalMaybe t = case Text.Read.decimal t of
   Right (intId, "") -> Just intId
-  Right (_, _) -> Nothing
-  Left _ -> Nothing
+  Right (_, _)      -> Nothing
+  Left _            -> Nothing
 
 -- I do not like this. I'm sure there's a URL library out there but this'll do.
 urlToUrlData :: Text -> Maybe UrlData

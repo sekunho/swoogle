@@ -44,29 +44,22 @@ module SwapiClient.Vehicle
 
 --------------------------------------------------------------------------------
 
-import Data.Aeson (parseJSON, (.:))
-import Data.Aeson.Types (FromJSON, ToJSON, Parser, Value)
-import Data.Aeson qualified as Aeson (withText, withObject)
-import Data.Kind (Type)
-import Data.Text (Text)
-import Data.Text qualified as Text (toLower, stripEnd)
-import Data.Text.Read qualified as Text.Read (double)
-import Data.Time (UTCTime)
+import Data.Aeson           (parseJSON, (.:))
+import Data.Aeson           qualified as Aeson (withObject, withText)
+import Data.Aeson.Types     (FromJSON, Parser, ToJSON, Value)
+import Data.Kind            (Type)
+import Data.Text            (Text)
+import Data.Text            qualified as Text (stripEnd, toLower)
+import Data.Text.Read       qualified as Text.Read (double)
+import Data.Time            (UTCTime)
 
 --------------------------------------------------------------------------------
 
-import SwapiClient.Id (PersonId, FilmId, VehicleId)
-import SwapiClient.Page (Index (Index))
-import SwapiClient.Starship
-  ( CargoCapacity
-  , Consumable
-  , Cost
-  , Manufacturer
-  , MaxAtmospheringSpeed
-  , PassengerLimit
-  , RequiredCrew
-  , Wrapped (Wrapped)
-  )
+import SwapiClient.Id       (FilmId, PersonId, VehicleId)
+import SwapiClient.Page     (Index (Index))
+import SwapiClient.Starship (CargoCapacity, Consumable, Cost, Manufacturer,
+                             MaxAtmospheringSpeed, PassengerLimit, RequiredCrew,
+                             Wrapped (Wrapped))
 
 --------------------------------------------------------------------------------
 -- Data types
@@ -106,22 +99,22 @@ data VehicleClass
   deriving stock (Eq, Show)
 
 data Vehicle = Vehicle
-  { vName :: VehicleName
-  , vModel :: VehicleModel
-  , vManufacturer :: Manufacturer
-  , vCost :: Cost
-  , vLength :: VehicleLength
+  { vName                 :: VehicleName
+  , vModel                :: VehicleModel
+  , vManufacturer         :: Manufacturer
+  , vCost                 :: Cost
+  , vLength               :: VehicleLength
   , vMaxAtmospheringSpeed :: MaxAtmospheringSpeed
-  , vRequiredCrew :: RequiredCrew
-  , vPassengerLimit :: PassengerLimit
-  , vCargoCapacity :: CargoCapacity
-  , vConsumables :: Consumable
-  , vVehicleClass :: VehicleClass
-  , vPilots :: [PersonId]
-  , vFilms :: [FilmId]
-  , vCreatedAt :: UTCTime
-  , vEditedAt :: UTCTime
-  , vId :: VehicleId
+  , vRequiredCrew         :: RequiredCrew
+  , vPassengerLimit       :: PassengerLimit
+  , vCargoCapacity        :: CargoCapacity
+  , vConsumables          :: Consumable
+  , vVehicleClass         :: VehicleClass
+  , vPilots               :: [PersonId]
+  , vFilms                :: [FilmId]
+  , vCreatedAt            :: UTCTime
+  , vEditedAt             :: UTCTime
+  , vId                   :: VehicleId
   }
   deriving stock (Eq, Show)
 
