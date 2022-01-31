@@ -4,7 +4,12 @@ module SwapiClient.Planet (
 --------------------------------------------------------------------------------
 
 import Data.Text (Text)
+import Data.Time (UTCTime)
 import TextShow  (TextShow)
+
+--------------------------------------------------------------------------------
+
+import SwapiClient.Id (PersonId, FilmId, HomeworldId)
 
 --------------------------------------------------------------------------------
 -- Data types
@@ -99,5 +104,32 @@ data Terrain
   | AcidPool
   | RockyCanyon
 
+data SurfaceWaterPercent
+  = Percentage Double
+  | UnknownPercentage
+  deriving (Eq, Show)
+
+data Population
+  = Population Word
+  | UnknownPopulation
+  deriving (Eq, Show)
+
 --------------------------------------------------------------------------------
 -- Instances
+
+data Planet = Planet
+  { plName :: PlanetName
+  , plRotationPeriod :: RotationPeriod
+  , plOrbitalPeriod :: OrbitalPeriod
+  , plDiameter :: Diameter
+  , plClimate :: Climate
+  , plGravity :: Gravity
+  , plTerrain :: Terrain
+  , plSurfaceWaterPercent :: SurfaceWaterPercent
+  , plPopulation :: Population
+  , plResidents :: [PersonId]
+  , plFilms :: [FilmId]
+  , plCreatedAt :: UTCTime
+  , plEditedAt :: UTCTime
+  , plId :: HomeworldId
+  }
