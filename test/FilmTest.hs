@@ -16,27 +16,8 @@ import Test.Tasty.Golden qualified as Golden (goldenVsFile)
 
 --------------------------------------------------------------------------------
 
-import SwapiClient.Film
-  ( Film
-    ( fTitle
-    , fEpisodeId
-    , fOpeningCrawl
-    , fDirector
-    , fProducers
-    , fReleaseDate
-    , fCharacters
-    , fPlanets
-    , fStarships
-    , fVehicles
-    , fSpecies
-    , fCreatedAt
-    , fEditedAt
-    , fId
-    )
-  )
-
-import SwapiClient.Page (Index (Index))
-
+import SwapiClient.Film (Film)
+import SwapiClient.Page (Index)
 
 --------------------------------------------------------------------------------
 
