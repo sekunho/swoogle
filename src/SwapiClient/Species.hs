@@ -1,10 +1,70 @@
-module SwapiClient.Species where
+module SwapiClient.Species
+  ( SpeciesName (SpeciesName)
+  , Designation (SentientDesignation, ReptilianDesignation)
+  , Classification
+    ( MammalClass
+    , ArtificialClass
+    , SentientClass
+    , GastropodClass
+    , ReptileClass
+    , AmphibianClass
+    )
+  , AverageHeight (Height, HeightNotApplicable)
+  , AverageLifespan (Lifespan, Indefinite, UnknownLifespan)
+  , Language
+    ( GalacticBasic
+    , Shyriiwook
+    , Huttese
+    , Dosh
+    , MonCalamarian
+    , Ewokese
+    , Sullutese
+    , NoLanguage
+    )
+  , SpeciesType (HasOrigin, NoOrigin)
+  , Species
+    ( MkSpecies
+    , spName
+    , spClassification
+    , spDesignation
+    , spAverageHeight
+    , spSkinColors
+    , spHairColors
+    , spEyeColors
+    , spAverageLifespan
+    , spHomeworld
+    , spLanguage
+    , spPeople
+    , spFilms
+    , spCreatedAt
+    , spEditedAt
+    , spId
+    )
+  , OriginlessSpecies
+    ( MkOriginlessSpecies
+    , hSpName
+    , hSpClassification
+    , hSpDesignation
+    , hSpAverageHeight
+    , hSpSkinColors
+    , hSpHairColors
+    , hSpEyeColors
+    , hSpAverageLifespan
+    , hSpLanguage
+    , hSpPeople
+    , hSpFilms
+    , hSpCreatedAt
+    , hSpEditedAt
+    , hSpId
+    )
+  ) where
 
 --------------------------------------------------------------------------------
 
 import Data.Aeson ((.:))
 import Data.Aeson qualified as Aeson (withText, withObject)
-import Data.Aeson.Types (FromJSON, Value, Parser, parseJSON)
+import qualified Data.Aeson.KeyMap as Keymap
+import Data.Aeson.Types (FromJSON, Value (String, Null, Object), Parser, parseJSON)
 import Data.Kind (Type)
 import Data.Text (Text)
 import Data.Text qualified as Text (toLower, unpack)
@@ -59,7 +119,12 @@ data Language
   | NoLanguage
   deriving (Eq, Show)
 
-data Species = Species
+data SpeciesType
+  = HasOrigin Species
+  | NoOrigin OriginlessSpecies
+  deriving (Eq, Show)
+
+data Species = MkSpecies
   { spName :: SpeciesName
   , spClassification :: Classification
   , spDesignation :: Designation
@@ -68,13 +133,31 @@ data Species = Species
   , spHairColors :: [HairColor]
   , spEyeColors :: [EyeColor]
   , spAverageLifespan :: AverageLifespan
-  , spHomeworld :: Maybe HomeworldId
+  , spHomeworld :: HomeworldId
   , spLanguage :: Language
   , spPeople :: [PersonId]
   , spFilms :: [FilmId]
   , spCreatedAt :: UTCTime
   , spEditedAt :: UTCTime
   , spId :: SpeciesId
+  }
+  deriving (Eq, Show)
+
+data OriginlessSpecies = MkOriginlessSpecies
+  { hSpName :: SpeciesName
+  , hSpClassification :: Classification
+  , hSpDesignation :: Designation
+  , hSpAverageHeight :: AverageHeight
+  , hSpSkinColors :: [SkinColor]
+  , hSpHairColors :: [HairColor]
+  , hSpEyeColors :: [EyeColor]
+  , hSpAverageLifespan :: AverageLifespan
+  , hSpLanguage :: Language
+  , hSpPeople :: [PersonId]
+  , hSpFilms :: [FilmId]
+  , hSpCreatedAt :: UTCTime
+  , hSpEditedAt :: UTCTime
+  , hSpId :: SpeciesId
   }
   deriving (Eq, Show)
 
@@ -158,7 +241,7 @@ instance FromJSON (Species :: Type) where
   parseJSON =
     Aeson.withObject "Species" $
       \val ->
-        Species
+        MkSpecies
           <$> val .: "name"
           <*> val .: "classification"
           <*> val .: "designation"
@@ -175,8 +258,42 @@ instance FromJSON (Species :: Type) where
           <*> val .: "edited"
           <*> val .: "url"
 
-instance FromJSON (Index Species :: Type) where
-  parseJSON :: Value -> Parser (Index Species)
+instance FromJSON (OriginlessSpecies :: Type) where
+  parseJSON :: Value -> Parser OriginlessSpecies
+  parseJSON =
+    Aeson.withObject "OriginlessSpecies" $
+      \val ->
+        MkOriginlessSpecies
+          <$> val .: "name"
+          <*> val .: "classification"
+          <*> val .: "designation"
+          <*> val .: "average_height"
+          <*> val .: "skin_colors"
+          <*> val .: "hair_colors"
+          <*> val .: "eye_colors"
+          <*> val .: "average_lifespan"
+          <*> val .: "language"
+          <*> val .: "people"
+          <*> val .: "films"
+          <*> val .: "created"
+          <*> val .: "edited"
+          <*> val .: "url"
+
+instance FromJSON (SpeciesType :: Type) where
+  parseJSON :: Value -> Parser SpeciesType
+  parseJSON =
+    Aeson.withObject "SpeciesType" $
+      \val ->
+        case Keymap.lookup "homeworld" val of
+          Nothing -> fail "Species is supposed to contain a homeworld field."
+          Just val' -> case val' of
+            String _ -> HasOrigin <$> parseJSON @Species (Object val)
+            Null -> NoOrigin <$> parseJSON @OriginlessSpecies (Object val)
+            _ ->
+              fail "Species' homeworld field is supposed to be null or a string."
+
+instance FromJSON (Index SpeciesType :: Type) where
+  parseJSON :: Value -> Parser (Index SpeciesType)
   parseJSON =
     Aeson.withObject "Index Species" $
       \val ->
