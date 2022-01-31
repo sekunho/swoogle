@@ -52,6 +52,197 @@ Dates are formatted in DD-MM-YYYY.
 
 ## Day 24 - 31/01/2022
 
+### GitHub Actions with `haskell-ci`
+
+I think the project is (almost) done, at least with the querying part since
+there's only one resource that has not been implemented. I don't think I'll be
+doing `Root` because it seems pointless to query that.
+
+So I do have to setup a CI since there are times wherein I forget to run tests
+locally, and I do end up pushing broken code. This happened several times, more
+than I'm willing to admit.
+
+I was going to make comparisons and base my CI file off of some projects, both
+trivial and otherwise. But fortunately, the stars aligned and there was a post
+that asked about setting up `stack` projects. There was a particularly helpful
+[comment](https://old.reddit.com/r/haskell/comments/sfvvoj/a_stack_version_of_how_to_write_a_haskell_program/) 
+that pointed out this 
+[repo](https://github.com/tonyday567/checklist#installing-tools)---a collection of helpful tips to get
+started with your project. Not just in generating the project files, but also
+the CI!
+
+That's how I discovered `haskell-ci`, and how I was spared from dealing with CI
+shenanigans myself.
+
+Or so I thought.
+
+#### Existing dependency bounds are too tight
+
+At the `dump install plan` stage, I ran into these error messages:
+
+```
+Resolving dependencies...
+cabal-3.6.2.0: Could not resolve dependencies:
+[__0] trying: swapi-client-0.1.0.0 (user goal)
+[__1] rejecting: swapi-client:!test (constraint from config file, command line flag, or user target requires opposite flag selection)
+[__1] trying: swapi-client:*test
+[__2] trying: tasty-hspec-1.2 (dependency of swapi-client *test)
+[__3] trying: hspec-core-2.9.4 (dependency of tasty-hspec)
+[__4] trying: setenv-0.1.1.3 (dependency of hspec-core)
+[__5] next goal: unix (dependency of setenv)
+[__5] rejecting: unix-2.7.2.2/installed-2.7.2.2 (conflict: swapi-client => bytestring>=0.11.2 && <0.12, unix => bytestring==0.10.12.0/installed-0.10.12.0)
+[__5] rejecting: unix-2.7.2.2, unix-2.7.2.1, unix-2.7.2.0, unix-2.7.1.0, unix-2.7.0.1, unix-2.7.0.0, unix-2.6.0.1, unix-2.6.0.0, unix-2.5.1.1, unix-2.5.1.0, unix-2.5.0.0, unix-2.4.2.0, unix-2.4.1.0, unix-2.4.0.2, unix-2.4.0.1, unix-2.4.0.0, unix-2.3.2.0, unix-2.3.1.0, unix-2.3.0.0, unix-2.2.0.0, unix-2.0 (constraint from project config /__w/swapi/swapi/cabal.project.local requires installed instance)
+[__5] fail (backjumping, conflict set: setenv, swapi-client, unix)
+After searching the rest of the dependency tree exhaustively, these were the goals I've had most trouble fulfilling: unix, swapi-client, setenv, hspec-core, tasty-hspec, swapi-client:test
+Try running with --minimize-conflict-set to improve the error message.
+```
+
+The useful bit is in this line: `[__5] rejecting: unix-2.7.2.2/installed-2.7.2.2 (conflict: swapi-client => bytestring>=0.11.2 && <0.12, unix => bytestring==0.10.12.0/installed-0.10.12.0)
+`
+Basically, `cabal` couldn't find a resolution for `unix` and `swapi-client` due
+to `bytestring`. `cabal` somehow ended up with `bytestring==-0.10.12.0` which
+is too low for `swapi-client`'s `>=0.11.2 && <0.12` bound. 
+
+So I checked what `unix`'s bounds for `bytestring` and `time` were, and adjusted
+`swapi-client` accordingly. Here are the updated bounds:
+
+```
+bytestring >= 0.9.2 && <0.12
+, time >= 1.2 && <1.13
+```
+
+So, is this it? Will it work now?
+
+#### TIL `cabal check` existed
+
+It's wild how I always preferred using `cabal` over `stack` because I didn't want
+to deal with 2 tools over 1, and also my brain doesn't like it that I had to
+learn another build tool. I mean, `stack` looks great, but when others said that
+`cabal` can do most of what `stack` can do, that's good enough reason for me to
+just stick with `cabal`.
+
+So, found out that `cabal check` existed, which is really nifty. Of course, the
+CI died when it reached this step because God knows I've been dumping stuff in
+there without much clue on what I'm doing. Here's what it had to say:
+
+```
+Warning: These warnings may cause trouble when distributing the package:
+Warning: No 'description' field.
+Warning: The following errors will cause portability problems on other
+environments:
+Warning: The 'license' field is missing or is NONE.
+Warning: 'ghc-options: -O' is not needed. Cabal automatically adds the '-O'
+flag. Setting it yourself interferes with the --disable-optimization flag.
+Warning: 'ghc-options: -Wall -Werror' makes the package very easy to break
+with future GHC versions because new GHC versions often add new warnings. Use
+just 'ghc-options: -Wall' instead. Alternatively, if you want to use this,
+make it conditional based on a Cabal configuration flag (with 'manual: True'
+and 'default: False') and enable that flag during development.
+Warning: 'ghc-options: -Wall -Werror' makes the package very easy to break
+with future GHC versions because new GHC versions often add new warnings. Use
+just 'ghc-options: -Wall' instead. Alternatively, if you want to use this,
+make it conditional based on a Cabal configuration flag (with 'manual: True'
+and 'default: False') and enable that flag during development.
+Warning: Hackage would reject this package.
+```
+
+> Warning: Hackage would reject this package.
+
+It's not like I wanted Hackage's approval or anything... :(
+
+Okay so my package is `BSD3` which seems to be what the
+[docs](https://cabal.readthedocs.io/en/3.6/cabal-package.html?highlight=source-repository#example-a-package-containing-executable-programs)
+have in their example. But I got an error telling me it's incorrect:
+
+```
+Warning: swapi-client.cabal:7:25:
+unexpected Unknown SPDX license identifier: 'BSD3' Do you mean BSD-3-Clause?
+Errors encountered when parsing cabal file ./swapi-client.cabal:
+
+swapi-client.cabal:7:25: error:
+unexpected Unknown SPDX license identifier: 'BSD3' Do you mean BSD-3-Clause?
+
+    7 | license:            BSD3
+      |                         ^
+cabal: parse error
+```
+
+Which is great because I get to open a PR to amend these!
+
+I've also revised it based on the other points but nothing noteworthy enough to
+document.
+
+#### Directory inclusions
+
+No, of course not!
+
+```
+Test suite swapi-client-test: RUNNING...
+swapi-client-test: ./testdata/fixtures/person_index/: getDirectoryContents:openDirStream: does not exist (No such file or directory)
+Test suite swapi-client-test: FAIL
+Test suite logged to: /__w/swapi/swapi/dist-newstyle/build/x86_64-linux/ghc-8.10.7/swapi-client-0.1.0.0/t/swapi-client-test/test/swapi-client-0.1.0.0-swapi-client-test.log
+0 of 1 test suites (0 of 1 test cases) passed.
+cabal-3.6.2.0: Tests failed for test:swapi-client-test from swapi-client-0.1.0.0.
+```
+
+So for testing, because my fiber internet is dead and so I am using LTE
+(which sucks), I decided to download the JSON responses ahead of time, which I
+placed in `./testdata/fixtures/`. So `person_index` contains JSON responses for
+the list of people, etc. If it's without the `_index` then that means I'm testing
+the `view` part. Which in hindsight is pretty useless...
+
+Looks like I'm gonna have to go through the `haskell-ci.yml` file. I am also
+reminded how much I hate reading `yaml`/`yml` files.
+
+Anyway, it tells me that it couldn't find the `testdata` directory. And I thought,
+well, that's very strange. Why not? My first instinct was since `haskell-ci` is
+based off of the `swapi-client.cabal` file, maybe I had to specify that directory
+somehow? That it is related with the project, and not just things like `LICENSE`
+and all that. To the
+[cabal reference](https://cabal.readthedocs.io/en/3.6/buildinfo-fields-reference.html)
+I go!
+
+Some candidates for what I'm looking for:
+
+- [`include_dirs`](https://cabal.readthedocs.io/en/3.6/cabal-package.html#pkg-field-include-dirs)
+- [`data-files`](https://cabal.readthedocs.io/en/3.6/cabal-package.html#pkg-field-data-files)
+- [`extra-files`](https://cabal.readthedocs.io/en/3.6/cabal-package.html#pkg-field-extra-source-files)
+- [`extra-tmp-files`](https://cabal.readthedocs.io/en/3.6/cabal-package.html#pkg-field-extra-tmp-files)
+
+Well, those are confusing. I'm sure I don't need `include_dirs`, `extra-tmp-files`.
+What if I just look at some existing repo that uses fixtures as well? instead 
+
+I found `haskell-ci`'s own 
+[cabal file](https://github.com/haskell-CI/haskell-ci/blob/master/haskell-ci.cabal#L39).
+I noticed `extra-source-files` had entries that are very similar to what I wanted.
+ 
+```
+extra-source-files:
+  fixtures/*.args
+  fixtures/*.bash
+  fixtures/*.github
+  fixtures/*.patch
+  fixtures/*.project
+  fixtures/*.travis
+  fixtures/servant/servant.cabal
+  fixtures/servant-client/servant-client.cabal
+  fixtures/servant-client-core/servant-client-core.cabal
+  fixtures/servant-docs/servant-docs.cabal
+  fixtures/servant-foreign/servant-foreign.cabal
+  fixtures/servant-server/servant-server.cabal
+  fixtures/splitmix/splitmix.cabal
+```
+
+So I just slapped mine on there too and it worked!
+
+```
+extra-source-files:
+  CHANGELOG.md
+  testdata/fixtures/**/*.json
+  testdata/**/*.golden
+  testdata/**/*.data
+```
+
 ### Refining `Species` to deal with null homeworld
 
 The JSON API is a bit strange. This is one of the few times I ran into an actual
