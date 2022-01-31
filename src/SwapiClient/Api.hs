@@ -64,7 +64,7 @@ import SwapiClient.Film
 import SwapiClient.Id
 import SwapiClient.Page (Page (Page, NoPage), Index)
 import SwapiClient.Person (Person)
-import SwapiClient.Species (Species)
+import SwapiClient.Species (SpeciesType)
 import SwapiClient.Starship
 import SwapiClient.Url
 import SwapiClient.Url qualified as Url (fromResource)
@@ -437,7 +437,7 @@ eitherSearchVehicles = eitherSearch VehicleResource
 -- ```
 --
 -- If the page provided is `NoPage`, it gives back `Nothing`.
-listSpecies :: Page -> IO (Maybe (Index Species))
+listSpecies :: Page -> IO (Maybe (Index SpeciesType))
 listSpecies = fetchPage SpeciesResource
 
 -- | Fetches a single species associated with the provided `SpeciesId`.
@@ -445,7 +445,7 @@ listSpecies = fetchPage SpeciesResource
 -- `ghci> getSpecies (SpeciesId 6)`
 --
 -- `Just $ Species { ... }`
-getSpecies :: SpeciesId -> IO (Maybe Species)
+getSpecies :: SpeciesId -> IO (Maybe SpeciesType)
 getSpecies (SpeciesId speciesId) = fetchOne SpeciesResource speciesId
 
 -- | Searches for a species' name; results are paginated.
@@ -462,7 +462,7 @@ getSpecies (SpeciesId speciesId) = fetchOne SpeciesResource speciesId
 -- ```
 --
 -- If the page provided is `NoPage`, it gives back `Nothing`.
-searchSpecies :: Text -> Page -> IO (Maybe (Index Species))
+searchSpecies :: Text -> Page -> IO (Maybe (Index SpeciesType))
 searchSpecies = search SpeciesResource
 
 -- | Fetches a list of speciess given a `Page`.
@@ -479,7 +479,7 @@ searchSpecies = search SpeciesResource
 -- ```
 --
 -- If the page provided is `NoPage`, it gives back `Left "This is an empty page"`.
-eitherListSpecies :: Page -> IO (Either String (Index Species))
+eitherListSpecies :: Page -> IO (Either String (Index SpeciesType))
 eitherListSpecies = eitherFetchPage SpeciesResource
 
 -- | Fetches a single species associated with the provided `SpeciesId`.
@@ -487,7 +487,7 @@ eitherListSpecies = eitherFetchPage SpeciesResource
 -- `ghci> eitherGetSpecies (SpeciesId 6)`
 --
 -- `Right $ Species { ... }`
-eitherGetSpecies :: SpeciesId -> IO (Either String Species)
+eitherGetSpecies :: SpeciesId -> IO (Either String SpeciesType)
 eitherGetSpecies (SpeciesId speciesId) =
   eitherFetchOne SpeciesResource speciesId
 
@@ -505,7 +505,7 @@ eitherGetSpecies (SpeciesId speciesId) =
 -- ```
 --
 -- If the page provided is `NoPage`, it gives back `Left "This is an empty page"`.
-eitherSearchSpecies :: Text -> Page -> IO (Either String (Index Species))
+eitherSearchSpecies :: Text -> Page -> IO (Either String (Index SpeciesType))
 eitherSearchSpecies = eitherSearch SpeciesResource
 
 --------------------------------------------------------------------------------
