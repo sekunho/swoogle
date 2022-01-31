@@ -244,6 +244,40 @@ While `getSpecies (SpeciesId 1)` (has homeworld) results in this output
 I could probably refine this further by creating types for each class but I
 think that might be too much. There's a possibility, however.
 
+### A new `coerce` attempt
+
+So I wondered if I could somehow take advantage of the functor abstraction for
+`Index`.
+
+```haskell
+data Index a = Index
+  { iCount :: Int
+  , iNextPage :: Page
+  , iPreviousPage :: Page
+  , iResults :: [a]
+  }
+  deriving stock Show
+```
+
+Implementing a functor instance is pretty straightforward.
+
+```haskell
+instance Functor (Index :: Type -> Type) where
+  fmap :: (a -> b) -> Index a -> Index b
+  fmap f index = index { iResults = fmap f (iResults index) }
+```
+
+What this allows me to do is map `iResults` to something else. This changes the
+type of `Index`! But...what use does this have exactly? It's not like I can just
+map `Index SpeciesType` to `Index Species`. It's not a guarantee that
+all species in the index have a homeworld.
+
+Initially I thought this was a good idea because I wanted to strip away
+`SpeciesType` into the underlying types. But this sum type glues `Species`
+and `OriginlessSpecies` together in the first place so this was a pointless
+endeavour. Maybe I'll find some uses for this in the future but for now I don't
+know if it's useful.
+
 ## Day 23 - 30/01/2022
 
 Added Vehicle instances for FromJSON. I don't think I'll focus on `ToJSON` for
