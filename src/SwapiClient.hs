@@ -148,6 +148,8 @@ module SwapiClient (
 -- TODO: Streamline text pre-processing
 -- TODO: Extract common behavior when parsing integers and decimal strings
 -- TODO: Use `DerivingVia` for simpler `newtypes`
+-- TODO: Actually use doctests
+-- TODO: Fix doctests
 
 import SwapiClient.Api  as Api
 import SwapiClient.Id   as Id
