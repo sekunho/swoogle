@@ -75,7 +75,7 @@ import Data.Time         (UTCTime)
 --------------------------------------------------------------------------------
 
 import SwapiClient.Color (EyeColor, HairColor, SkinColor)
-import SwapiClient.Id    (FilmId, HomeworldId, PersonId, SpeciesId)
+import SwapiClient.Id    (FilmId, PlanetId, PersonId, SpeciesId)
 import SwapiClient.Page  (Index (Index))
 
 --------------------------------------------------------------------------------
@@ -136,7 +136,7 @@ data Species = MkSpecies
   , spHairColors      :: [HairColor]
   , spEyeColors       :: [EyeColor]
   , spAverageLifespan :: AverageLifespan
-  , spHomeworld       :: HomeworldId
+  , spHomeworld       :: PlanetId
   , spLanguage        :: Language
   , spPeople          :: [PersonId]
   , spFilms           :: [FilmId]

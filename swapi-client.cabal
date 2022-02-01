@@ -54,6 +54,7 @@ library
                       , ScopedTypeVariables
                       , FlexibleInstances
                       , FlexibleContexts
+                      , StandaloneKindSignatures
 
 
     ghc-options:      -Wall
@@ -95,6 +96,7 @@ executable swapi-client
                       , ScopedTypeVariables
                       , FlexibleInstances
                       , FlexibleContexts
+                      , StandaloneKindSignatures
 
 test-suite swapi-client-test
     type:               exitcode-stdio-1.0
@@ -118,6 +120,7 @@ test-suite swapi-client-test
       , ScopedTypeVariables
       , FlexibleInstances
       , FlexibleContexts
+      , StandaloneKindSignatures
 
     other-modules:
         RootTest
@@ -127,6 +130,7 @@ test-suite swapi-client-test
       , StarshipTest
       , VehicleTest
       , SpeciesTest
+      , PlanetTest
       , Util
 
     ghc-options:

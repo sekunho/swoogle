@@ -36,7 +36,7 @@ import TextShow         qualified as Text.Show (showt)
 
 --------------------------------------------------------------------------------
 
-import SwapiClient.Id   (FilmId, HomeworldId, PersonId, SpeciesId, StarshipId,
+import SwapiClient.Id   (FilmId, PlanetId, PersonId, SpeciesId, StarshipId,
                          VehicleId)
 import SwapiClient.Page (Index (Index, iCount, iNextPage, iPreviousPage, iResults))
 
@@ -50,7 +50,7 @@ data Film = Film
   , fProducers    :: [Producer]
   , fReleaseDate  :: Day
   , fCharacters   :: [PersonId]
-  , fPlanets      :: [HomeworldId]
+  , fPlanets      :: [PlanetId]
   , fStarships    :: [StarshipId]
   , fVehicles     :: [VehicleId]
   , fSpecies      :: [SpeciesId]

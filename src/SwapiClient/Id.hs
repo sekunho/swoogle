@@ -1,6 +1,6 @@
 module SwapiClient.Id
   ( FilmId (FilmId)
-  , HomeworldId (HomeworldId)
+  , PlanetId (PlanetId)
   , SpeciesId (SpeciesId)
   , VehicleId (VehicleId)
   , StarshipId (StarshipId)
@@ -31,7 +31,7 @@ newtype FilmId = FilmId Int
   deriving stock (Eq, Show)
   deriving newtype TextShow
 
-newtype HomeworldId = HomeworldId Int
+newtype PlanetId = PlanetId Int
   deriving stock (Eq, Show)
   deriving newtype TextShow
 
@@ -67,19 +67,19 @@ instance ToJSON (FilmId :: Type) where
   toJSON :: FilmId -> Value
   toJSON = String . buildFilmUrl
 
-instance FromJSON (HomeworldId :: Type) where
-  parseJSON :: Value -> Parser HomeworldId
+instance FromJSON (PlanetId :: Type) where
+  parseJSON :: Value -> Parser PlanetId
   parseJSON val =
     case val of
       String homeworldUrl ->
         case Url.getId homeworldUrl of
-          Just resourceId -> pure (HomeworldId resourceId)
+          Just resourceId -> pure (PlanetId resourceId)
           Nothing         -> fail "Unable to get ID from URL"
 
       _ -> fail "Unexpected type for homeworld URL"
 
-instance ToJSON (HomeworldId :: Type) where
-  toJSON :: HomeworldId -> Value
+instance ToJSON (PlanetId :: Type) where
+  toJSON :: PlanetId -> Value
   toJSON = String . buildPlanetUrl
 
 instance FromJSON (SpeciesId :: Type) where
@@ -144,7 +144,7 @@ buildFilmUrl :: FilmId -> Text
 buildFilmUrl filmId =
   mconcat [Url.resourceUrl FilmResource, Text.Show.showt filmId, "/"]
 
-buildPlanetUrl :: HomeworldId -> Text
+buildPlanetUrl :: PlanetId -> Text
 buildPlanetUrl homeworldId =
   mconcat
     [ Url.resourceUrl PlanetResource

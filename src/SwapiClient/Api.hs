@@ -6,31 +6,37 @@ module SwapiClient.Api
   , listStarships
   , listVehicles
   , listSpecies
+  , listPlanets
   , getPerson
   , getFilm
   , getStarship
   , getVehicle
   , getSpecies
+  , getPlanet
   , searchPeople
   , searchFilms
   , searchStarships
   , searchVehicles
   , searchSpecies
+  , searchPlanets
   , eitherListPeople
   , eitherListFilms
   , eitherListStarships
   , eitherListVehicles
   , eitherListSpecies
+  , eitherListPlanets
   , eitherGetPerson
   , eitherGetFilm
   , eitherGetStarship
   , eitherGetVehicle
   , eitherGetSpecies
+  , eitherGetPlanet
   , eitherSearchPeople
   , eitherSearchFilms
   , eitherSearchStarships
   , eitherSearchVehicles
   , eitherSearchSpecies
+  , eitherSearchPlanets
   ) where
 
 --------------------------------------------------------------------------------
@@ -53,6 +59,7 @@ import SwapiClient.Film
 import SwapiClient.Id
 import SwapiClient.Page     (Index, Page (NoPage, Page))
 import SwapiClient.Person   (Person)
+import SwapiClient.Planet   (Planet)
 import SwapiClient.Species  (SpeciesType)
 import SwapiClient.Starship
 import SwapiClient.Url
@@ -496,6 +503,94 @@ eitherGetSpecies (SpeciesId speciesId) =
 -- If the page provided is `NoPage`, it gives back `Left "This is an empty page"`.
 eitherSearchSpecies :: Text -> Page -> IO (Either String (Index SpeciesType))
 eitherSearchSpecies = eitherSearch SpeciesResource
+
+--------------------------------------------------------------------------------
+-- Planet
+
+-- | Fetches a list of planets given a `Page`.
+--
+-- `ghci> listPlanets (Page 1)`
+--
+-- ```haskell
+-- Just $ Index
+--   { iCount = 1
+--   , iNextPage = NoPage
+--   , iPreviousPage = NoPage
+--   , iResults = [ Planet {...} ]
+--   }
+-- ```
+--
+-- If the page provided is `NoPage`, it gives back `Nothing`.
+listPlanets :: Page -> IO (Maybe (Index Planet))
+listPlanets = fetchPage PlanetResource
+
+-- | Fetches a single planet associated with the provided `PlanetId`.
+--
+-- `ghci> getPlanet (PlanetId 6)`
+--
+-- `Just $ Planet { ... }`
+getPlanet :: PlanetId -> IO (Maybe Planet)
+getPlanet (PlanetId planetId) = fetchOne PlanetResource planetId
+
+-- | Searches for a planet's name; results are paginated.
+--
+-- `ghci> searchPlanets "human" (Page 1)`
+--
+-- ```haskell
+-- Right $ Index
+--   { iCount = 1
+--   , iNextPage = NoPage
+--   , iPreviousPage = NoPage
+--   , iResults = [ Planet {...} ]
+--   }
+-- ```
+--
+-- If the page provided is `NoPage`, it gives back `Nothing`.
+searchPlanets :: Text -> Page -> IO (Maybe (Index Planet))
+searchPlanets = search PlanetResource
+
+-- | Fetches a list of planets given a `Page`.
+--
+-- `ghci> eitherListPlanets (Page 1)`
+--
+-- ```haskell
+-- Right $ Index
+--   { iCount = 1
+--   , iNextPage = NoPage
+--   , iPreviousPage = NoPage
+--   , iResults = [ Planet {...} ]
+--   }
+-- ```
+--
+-- If the page provided is `NoPage`, it gives back `Left "This is an empty page"`.
+eitherListPlanets :: Page -> IO (Either String (Index Planet))
+eitherListPlanets = eitherFetchPage PlanetResource
+
+-- | Fetches a single planet associated with the provided `PlanetId`.
+--
+-- `ghci> eitherGetPlanet (PlanetId 6)`
+--
+-- `Right $ Planet { ... }`
+eitherGetPlanet :: PlanetId -> IO (Either String Planet)
+eitherGetPlanet (PlanetId planetId) =
+  eitherFetchOne PlanetResource planetId
+
+-- | Searches for a planet's name; results are paginated.
+--
+-- `ghci> eitherSearchPlanets "human" (Page 1)`
+--
+-- ```haskell
+-- Right $ Index
+--   { iCount = 1
+--   , iNextPage = NoPage
+--   , iPreviousPage = NoPage
+--   , iResults = [ Planet {...} ]
+--   }
+-- ```
+--
+-- If the page provided is `NoPage`, it gives back `Left "This is an empty page"`.
+eitherSearchPlanets :: Text -> Page -> IO (Either String (Index Planet))
+eitherSearchPlanets = eitherSearch PlanetResource
 
 --------------------------------------------------------------------------------
 -- Utils

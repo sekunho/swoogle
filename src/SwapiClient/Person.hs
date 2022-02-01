@@ -42,7 +42,7 @@ import Data.Time         (UTCTime)
 
 import SwapiClient.Color (EyeColor, HairColor, SkinColor)
 
-import SwapiClient.Id    (FilmId, HomeworldId, PersonId, SpeciesId, StarshipId,
+import SwapiClient.Id    (FilmId, PlanetId, PersonId, SpeciesId, StarshipId,
                           VehicleId)
 
 import SwapiClient.Page  (Index (Index, iCount, iNextPage, iPreviousPage, iResults))
@@ -85,7 +85,7 @@ data Person = Person
   , pEyeColor    :: [EyeColor]     -- Uh, eye color.
   , pBirthYear   :: BirthYear      -- Relative to before/after Battle of Yavin
   , pGender      :: Gender         -- Gender according to SWAPI
-  , pHomeworldId :: HomeworldId    -- Homeworld IDs of character
+  , pHomeworldId :: PlanetId    -- Homeworld IDs of character
   , pFilmIds     :: [FilmId]       -- Film IDs of character appearance
   , pSpeciesIds  :: [SpeciesId]
   , pVehicleIds  :: [VehicleId]
