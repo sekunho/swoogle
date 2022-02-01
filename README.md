@@ -66,7 +66,7 @@ when I'm done. Subscribe to stay tuned! :)
 
 ## Queryable resources
 
-- [ ] Root
+- ~~[ ] Root~~ Not gonna bother with this one
 - [x] People
   - [x] Index
   - [x] Search
@@ -87,7 +87,7 @@ when I'm done. Subscribe to stay tuned! :)
   - [x] Index
   - [x] Search
   - [x] View
-- [ ] Planet
+- [x] Planet
 
 ## List of improvements for swapi.dev
 
