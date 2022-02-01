@@ -145,6 +145,10 @@ module SwapiClient (
   module Page,
 ) where
 
+-- TODO: Streamline text pre-processing
+-- TODO: Extract common behavior when parsing integers and decimal strings
+-- TODO: Use `DerivingVia` for simpler `newtypes`
+
 import SwapiClient.Api  as Api
 import SwapiClient.Id   as Id
 import SwapiClient.Page as Page

@@ -26,6 +26,7 @@ import SwapiClient.Url  qualified as Url (getId, resourceUrl)
 
 --------------------------------------------------------------------------------
 -- Data types
+-- TODO: Change IDs with `Int` to `Word`
 
 newtype FilmId = FilmId Int
   deriving stock (Eq, Show)
