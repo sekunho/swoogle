@@ -1,3 +1,4 @@
+-- | Things relevant when dealing with the index page of a resource.
 module SwapiClient.Page
   ( Page (Page, NoPage)
   , Index
@@ -26,24 +27,66 @@ import SwapiClient.Url  qualified as Url (urlDataToUrl, urlToUrlData)
 --------------------------------------------------------------------------------
 -- Data types
 
-{- FIXME: `Index` can have a page of a different resource. e.g `Index`
-has `StarshipPage`, which doesn't make sense. -}
-data Page
-  = Page Int
-  | NoPage
-  deriving stock (Eq, Show)
+{- REVIEW: I'm not sure if this should use the `Maybe` context. I think it should.
+Especially since I could take advantage of `aeson`'s maybe instances and deal
+with `newtype`s.
+-}
+{- |
+`Page`s have two outcomes: `Page`, and `NoPage`. So if ever the page field
+in the index JSON object is `null`, then it decodes it into `NoPage`. Otherwise,
+it just puts the page number in `Page`.
 
+__Examples:__
+
+@
+pageOne :: Page
+pageOne = Page 1
+
+blankpage :: Page
+blankPage = NoPage
+@
+-}
+data Page
+  = Page Int -- ^ Presence of a page
+  | NoPage   -- ^ Absence of a page
+  deriving stock
+    ( Eq    -- ^ Compare `Page`s with each other
+    , Show  -- ^ Encode `Page` as `String` with `show`
+    )
+
+{- |
+Used when decoding the index response of a particular resource. It has `count`,
+`next`, `previous`, and `results`. The index is paginated. `Index` is also used
+to decode search results.
+
+The `next` and `previous` page values are further parsed into a more specific
+type called `Page`.
+
+__Example__:
+
+@
+-- An empty index. You may run into this when you're searching for something that
+-- doesn't exist.
+Index
+  { iCount        = 0
+  , iNextPage     = NoPage
+  , iPreviousPage = NoPage
+  , iResults      = []
+  }
+@
+-}
 data Index a = Index
-  { iCount        :: Int
-  , iNextPage     :: Page
-  , iPreviousPage :: Page
-  , iResults      :: [a]
+  { iCount        :: Int  -- ^ Total number of entries for a resource
+  , iNextPage     :: Page -- ^ Next page
+  , iPreviousPage :: Page -- ^ Previous page
+  , iResults      :: [a]  -- ^ List of resources
   }
   deriving stock Show
 
 --------------------------------------------------------------------------------
 -- Instances
 
+-- | Decodes a JSON value to a `Page`
 instance FromJSON (Page :: Type) where
   parseJSON :: Value -> Parser Page
   parseJSON val =
@@ -64,6 +107,7 @@ instance FromJSON (Page :: Type) where
       Null -> pure NoPage
       _ -> fail "ERROR: This isn't part of the API spec"
 
+-- | Encodes a `Page` to a JSON value
 instance ToJSON (Page :: Type) where
   toJSON :: Page -> Value
   toJSON = String . maybe "null" Url.urlDataToUrl . pageToUrlData
@@ -71,6 +115,7 @@ instance ToJSON (Page :: Type) where
 --------------------------------------------------------------------------------
 -- Functions
 
+-- TODO: Should move this to an internal module
 pageToUrlData :: Page -> Maybe UrlData
 pageToUrlData =
   \case

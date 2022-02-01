@@ -1,6 +1,18 @@
 cabal-version:      3.0
 name:               swapi-client
-description:        A SWAPI client library written
+description:
+  @__swapi-client__@ is a client library for SWAPI (@https://swapi.dev/@).
+  You can query resources from the JSON API which is decoded into easy to
+  use types.
+
+  == Queryable resources
+  * People
+  * Films
+  * Starships
+  * Vehicles
+  * Species
+  * Planets
+
 version:            0.1.0.0
 maintainer:         SEKUN <sekun@hey.com>
 author:             SEKUN <sekun@hey.com>
@@ -14,6 +26,9 @@ extra-source-files:
   testdata/fixtures/**/*.json
   testdata/**/*.golden
   testdata/**/*.data
+
+extra-doc-files:
+  swapi-haskell.svg
 
 tested-with:        GHC == 8.10.7
 

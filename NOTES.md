@@ -3,6 +3,7 @@
 **Table of Contents**
 
 - [Notes](#notes)
+  - [Day 25 - 01/02/2022](#day-25---01022022)
   - [Day 24 - 31/01/2022](#day-24---31012022)
   - [Day 23 - 30/01/2022](#day-23---30012022)
   - [Day 22 - 29/01/2022](#day-22---29012022)
@@ -49,6 +50,25 @@
   - [Day 1 - 25/11/2021](#day-1---25112021)
 
 Dates are formatted in DD-MM-YYYY.
+
+## Day 25 - 01/02/2022
+
+I realized that if I were to revisit the codebase after not working on it for a
+while, I would be screwed. I don't think I'll remember a lot of the things I
+know at the back of my hand right now. So, it's time for me to document as much
+as possible. Plus, it'll be useful to whoever finds this library useful.
+
+I spent almost the entire day checking the Haddock, erm, docs, as well as
+Kowainik's Haddocks Tips. Haddock had some annoying things like where on earth
+is my syntax highlighting? But it's pretty simple to use so I ended up using it
+everywhere. It wasn't too bad and there wasn't that much friction while documenting
+it. I like the flexibility that it gives with the two types of comment positions.
+
+I don't know what else to say but I should've used this sooner because now I'm
+spending a lot of time just documenting stuff.
+
+- [Haddock Documentation](https://haskell-haddock.readthedocs.io/en/latest/index.html)
+- [Kowainik's Haddock Tips](https://kowainik.github.io/posts/haddock-tips)
 
 ## Day 24 - 31/01/2022
 
