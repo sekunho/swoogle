@@ -50,8 +50,8 @@ data Page
   = Page Int -- ^ Presence of a page
   | NoPage   -- ^ Absence of a page
   deriving stock
-    ( Eq    -- ^ compare two `Page`s with each other
-    , Show  -- ^ Convert `Page` to `String`
+    ( Eq    -- ^ Compare `Page`s with each other
+    , Show  -- ^ Encode `Page` as `String` with `show`
     )
 
 {- |
