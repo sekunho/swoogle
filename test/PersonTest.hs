@@ -18,7 +18,7 @@ import Test.Tasty (TestTree)
 
 --------------------------------------------------------------------------------
 
-import SwapiClient.Person (Person)
+import SwapiClient.Resource.Person (Person)
 import SwapiClient.Page (Index)
 import Util qualified (batchGoldenVsFile)
 

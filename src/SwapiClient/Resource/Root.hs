@@ -1,4 +1,4 @@
-module SwapiClient.Root
+module SwapiClient.Resource.Root
   ( Root
     ( Root
     , rFilms

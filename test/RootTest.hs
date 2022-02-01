@@ -13,7 +13,7 @@ import Test.Hspec qualified as Hspec (describe, shouldBe, it)
 
 --------------------------------------------------------------------------------
 
-import SwapiClient.Root
+import SwapiClient.Resource.Root
   ( Root
     ( Root
     , rPeople

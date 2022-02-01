@@ -11,7 +11,7 @@ import Test.Tasty.Golden qualified as Golden (findByExtension)
 --------------------------------------------------------------------------------
 
 import SwapiClient.Page (Index)
-import SwapiClient.Planet (Planet)
+import SwapiClient.Resource.Planet (Planet)
 import Util qualified (batchGoldenVsFile)
 
 --------------------------------------------------------------------------------

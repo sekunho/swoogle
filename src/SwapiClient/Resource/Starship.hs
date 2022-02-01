@@ -1,4 +1,4 @@
-module SwapiClient.Starship
+module SwapiClient.Resource.Starship
   ( Starship ( Starship
     , sName
     , sModel

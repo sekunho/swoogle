@@ -16,7 +16,7 @@ import Test.Tasty.Golden qualified as Golden (goldenVsFile)
 
 --------------------------------------------------------------------------------
 
-import SwapiClient.Film (Film)
+import SwapiClient.Resource.Film (Film)
 import SwapiClient.Page (Index)
 
 --------------------------------------------------------------------------------
