@@ -93,7 +93,8 @@ module SwapiClient.Resource.Person
   , Gender (Male, Female, Hermaphrodite, NoGender)
   , PersonName (PersonName)
   , Person
-      ( pName
+      ( Person
+      , pName
       , pHeight
       , pMass
       , pHairColor
@@ -193,7 +194,6 @@ newtype PersonName = PersonName Text
     )
 
 {- |
-
 Represents a person within the Star Wars universe
 
 __Example__
