@@ -2,9 +2,9 @@ module Util (takeBaseName, batchGoldenVsFile) where
 
 --------------------------------------------------------------------------------
 
-import Data.Text qualified as Text ( unpack, split, pack )
-import Test.Tasty ( TestTree )
-import Test.Tasty.Golden qualified as Golden ( goldenVsFile )
+import Data.Text            qualified as Text (pack, split, unpack)
+import Test.Tasty           (TestTree)
+import Test.Tasty.Golden    qualified as Golden (goldenVsFile)
 import Test.Tasty.Providers (TestName)
 
 --------------------------------------------------------------------------------

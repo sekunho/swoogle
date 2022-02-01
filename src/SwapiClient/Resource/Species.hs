@@ -1,4 +1,4 @@
-module SwapiClient.Species
+module SwapiClient.Resource.Species
   ( SpeciesName (SpeciesName)
   , Designation (SentientDesignation, ReptilianDesignation)
   , Classification

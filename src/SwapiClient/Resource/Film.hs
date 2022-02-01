@@ -1,6 +1,4 @@
-{-# LANGUAGE FlexibleInstances #-}
-
-module SwapiClient.Film
+module SwapiClient.Resource.Film
   ( Film
       ( Film
       , fTitle

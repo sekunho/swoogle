@@ -1,4 +1,4 @@
-module SwapiClient.Planet
+module SwapiClient.Resource.Planet
   ( PlanetName (MkPlanetName)
   , RotationPeriod (RotationPeriod, UnknownRotationPeriod)
   , OrbitalPeriod (OrbitalPeriod, UnknownOrbitalPeriod)

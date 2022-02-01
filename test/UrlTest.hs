@@ -8,32 +8,17 @@ module UrlTest
 --------------------------------------------------------------------------------
 
 import Data.Map.Strict (Map)
-import Data.Map.Strict qualified as Map (fromList, empty)
-import Data.Text (Text)
-import Test.Hspec (Spec)
-import Test.Hspec qualified as Hspec (describe, shouldBe, it)
+import Data.Map.Strict qualified as Map (empty, fromList)
+import Data.Text       (Text)
+import Test.Hspec      (Spec)
+import Test.Hspec      qualified as Hspec (describe, it, shouldBe)
 
 --------------------------------------------------------------------------------
 
-import SwapiClient.Url
-  ( Resource
-      ( RootResource
-      , PeopleResource
-      , FilmResource
-      , StarshipResource
-      , VehicleResource
-      , SpeciesResource
-      , PlanetResource
-      )
-  , UrlData (UrlData, udParams, udSubdir)
-  )
-import SwapiClient.Url qualified as Url
-  ( baseUrl
-  , resourceUrl
-  , getId
-  , urlToUrlData
-  , urlDataToUrl
-  )
+import SwapiClient.Url (Resource (FilmResource, PeopleResource, PlanetResource, RootResource, SpeciesResource, StarshipResource, VehicleResource),
+                        UrlData (UrlData, udParams, udSubdir))
+import SwapiClient.Url qualified as Url (baseUrl, getId, resourceUrl,
+                                         urlDataToUrl, urlToUrlData)
 
 --------------------------------------------------------------------------------
 -- Specs

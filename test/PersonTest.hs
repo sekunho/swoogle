@@ -5,22 +5,20 @@ module PersonTest
 
 --------------------------------------------------------------------------------
 
-import Data.Aeson qualified as Aeson
-  ( eitherDecodeStrict
-  , decodeFileStrict
-  , encodeFile
-  )
-import Data.ByteString (ByteString)
-import Data.ByteString.Char8 qualified as ByteString (readFile)
-import Data.Maybe qualified as Maybe (fromJust)
-import Test.Tasty.Golden qualified as Golden (findByExtension)
-import Test.Tasty (TestTree)
+import Data.Aeson                  qualified as Aeson (decodeFileStrict,
+                                                       eitherDecodeStrict,
+                                                       encodeFile)
+import Data.ByteString             (ByteString)
+import Data.ByteString.Char8       qualified as ByteString (readFile)
+import Data.Maybe                  qualified as Maybe (fromJust)
+import Test.Tasty                  (TestTree)
+import Test.Tasty.Golden           qualified as Golden (findByExtension)
 
 --------------------------------------------------------------------------------
 
-import SwapiClient.Person (Person)
-import SwapiClient.Page (Index)
-import Util qualified (batchGoldenVsFile)
+import SwapiClient.Page            (Index)
+import SwapiClient.Resource.Person (Person)
+import Util                        qualified (batchGoldenVsFile)
 
 --------------------------------------------------------------------------------
 
