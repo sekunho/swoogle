@@ -81,7 +81,7 @@ So you'd have to deal with the @IO@ and @Maybe@ context if you want to do anythi
 with the value.
 
 @
-import SwapiClient.Person
+import SwapiClient.Resource.Person
 -- ^ Brings in `pHomeworldId` to scope
 
 main :: IO ()
