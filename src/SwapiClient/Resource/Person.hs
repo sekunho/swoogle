@@ -1,5 +1,4 @@
 {- |
-
 This module contains:
 
 1. Data types for a person
@@ -278,7 +277,6 @@ data Person = Person
 -- Instances
 
 {- |
-
 Decode a JSON value to a `Height`
 
 A JSON value can be decoded to `Height` but must be one of these formats:
