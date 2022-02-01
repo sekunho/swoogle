@@ -1,6 +1,6 @@
 module Main where
 
-import SwapiClient (getFilm, FilmId (FilmId))
+import SwapiClient (FilmId (FilmId), getFilm)
 
 main :: IO ()
 main = do

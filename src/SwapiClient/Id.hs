@@ -1,6 +1,6 @@
 module SwapiClient.Id
   ( FilmId (FilmId)
-  , HomeworldId (HomeworldId)
+  , PlanetId (PlanetId)
   , SpeciesId (SpeciesId)
   , VehicleId (VehicleId)
   , StarshipId (StarshipId)
@@ -10,32 +10,19 @@ module SwapiClient.Id
 --------------------------------------------------------------------------------
 -- External
 
-import Data.Aeson
-  ( FromJSON (parseJSON)
-  , ToJSON (toJSON)
-  , Value (String)
-  )
-import Data.Aeson qualified as Aeson (withText)
+import Data.Aeson       (FromJSON (parseJSON), ToJSON (toJSON), Value (String))
+import Data.Aeson       qualified as Aeson (withText)
 import Data.Aeson.Types (Parser)
-import Data.Kind (Type)
-import Data.Text (Text)
-import TextShow (TextShow)
-import TextShow qualified as Text.Show (showt)
+import Data.Kind        (Type)
+import Data.Text        (Text)
+import TextShow         (TextShow)
+import TextShow         qualified as Text.Show (showt)
 
 --------------------------------------------------------------------------------
 -- Internal
 
-import SwapiClient.Url
-  ( Resource
-      ( FilmResource
-      , PlanetResource
-      , SpeciesResource
-      , VehicleResource
-      , StarshipResource
-      , PeopleResource
-      )
-  )
-import SwapiClient.Url qualified as Url (resourceUrl, getId)
+import SwapiClient.Url  (Resource (FilmResource, PeopleResource, PlanetResource, SpeciesResource, StarshipResource, VehicleResource))
+import SwapiClient.Url  qualified as Url (getId, resourceUrl)
 
 --------------------------------------------------------------------------------
 -- Data types
@@ -44,7 +31,7 @@ newtype FilmId = FilmId Int
   deriving stock (Eq, Show)
   deriving newtype TextShow
 
-newtype HomeworldId = HomeworldId Int
+newtype PlanetId = PlanetId Int
   deriving stock (Eq, Show)
   deriving newtype TextShow
 
@@ -74,25 +61,25 @@ instance FromJSON (FilmId :: Type) where
       \filmUrl ->
         case Url.getId filmUrl of
           Just resourceId -> pure . FilmId $ resourceId
-          Nothing -> fail "Unable to get ID from URL"
+          Nothing         -> fail "Unable to get ID from URL"
 
 instance ToJSON (FilmId :: Type) where
   toJSON :: FilmId -> Value
   toJSON = String . buildFilmUrl
 
-instance FromJSON (HomeworldId :: Type) where
-  parseJSON :: Value -> Parser HomeworldId
+instance FromJSON (PlanetId :: Type) where
+  parseJSON :: Value -> Parser PlanetId
   parseJSON val =
     case val of
       String homeworldUrl ->
         case Url.getId homeworldUrl of
-          Just resourceId -> pure (HomeworldId resourceId)
-          Nothing -> fail "Unable to get ID from URL"
+          Just resourceId -> pure (PlanetId resourceId)
+          Nothing         -> fail "Unable to get ID from URL"
 
       _ -> fail "Unexpected type for homeworld URL"
 
-instance ToJSON (HomeworldId :: Type) where
-  toJSON :: HomeworldId -> Value
+instance ToJSON (PlanetId :: Type) where
+  toJSON :: PlanetId -> Value
   toJSON = String . buildPlanetUrl
 
 instance FromJSON (SpeciesId :: Type) where
@@ -102,7 +89,7 @@ instance FromJSON (SpeciesId :: Type) where
       \speciesUrl ->
         case Url.getId speciesUrl of
           Just resourceId -> pure . SpeciesId $ resourceId
-          Nothing -> fail "Unable to get ID from URL"
+          Nothing         -> fail "Unable to get ID from URL"
 
 instance ToJSON (SpeciesId :: Type) where
   toJSON :: SpeciesId -> Value
@@ -115,7 +102,7 @@ instance FromJSON (VehicleId :: Type) where
       \vehicleUrl ->
         case Url.getId vehicleUrl of
           Just resourceId -> pure . VehicleId $ resourceId
-          Nothing -> fail "Unable to get ID from URL"
+          Nothing         -> fail "Unable to get ID from URL"
 
 instance ToJSON (VehicleId :: Type) where
   toJSON :: VehicleId -> Value
@@ -128,7 +115,7 @@ instance FromJSON (StarshipId :: Type) where
       \starshipUrl ->
         case Url.getId starshipUrl of
           Just resourceId -> pure . StarshipId $ resourceId
-          Nothing -> fail "Unable to get ID from URL"
+          Nothing         -> fail "Unable to get ID from URL"
 
 instance ToJSON (StarshipId :: Type) where
   toJSON :: StarshipId -> Value
@@ -142,7 +129,7 @@ instance FromJSON (PersonId :: Type) where
       \personUrl ->
         case Url.getId personUrl of
           Just resourceId -> pure . PersonId $ resourceId
-          Nothing -> fail "Unable to get ID from URL"
+          Nothing         -> fail "Unable to get ID from URL"
 
 instance ToJSON (PersonId :: Type) where
   toJSON :: PersonId -> Value
@@ -157,7 +144,7 @@ buildFilmUrl :: FilmId -> Text
 buildFilmUrl filmId =
   mconcat [Url.resourceUrl FilmResource, Text.Show.showt filmId, "/"]
 
-buildPlanetUrl :: HomeworldId -> Text
+buildPlanetUrl :: PlanetId -> Text
 buildPlanetUrl homeworldId =
   mconcat
     [ Url.resourceUrl PlanetResource

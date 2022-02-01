@@ -12,16 +12,11 @@ module SwapiClient.Root
 
 --------------------------------------------------------------------------------
 
-import Data.Aeson ((.:), (.=))
-import Data.Aeson qualified as Aeson (withObject, object)
-import Data.Aeson.Types
-  ( Value
-  , Parser
-  , FromJSON (parseJSON)
-  , ToJSON (toJSON)
-  )
-import Data.Kind (Type)
-import Data.Text (Text)
+import Data.Aeson       ((.:), (.=))
+import Data.Aeson       qualified as Aeson (object, withObject)
+import Data.Aeson.Types (FromJSON (parseJSON), Parser, ToJSON (toJSON), Value)
+import Data.Kind        (Type)
+import Data.Text        (Text)
 
 --------------------------------------------------------------------------------
 -- Data types

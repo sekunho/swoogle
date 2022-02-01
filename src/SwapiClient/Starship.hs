@@ -47,31 +47,23 @@ module SwapiClient.Starship
 
 --------------------------------------------------------------------------------
 
-import Data.Aeson (FromJSON, parseJSON, ToJSON, toJSON, (.=), (.:))
-import Data.Aeson qualified as Aeson
+import Data.Aeson       (FromJSON, ToJSON, parseJSON, toJSON, (.:), (.=))
+import Data.Aeson       qualified as Aeson
 import Data.Aeson.Types (Parser, Value (String))
-import Data.Coerce (Coercible, coerce)
+import Data.Coerce      (Coercible, coerce)
 -- import Data.Coerce qualified as Coerce (coerce)
-import Data.Kind (Type)
-import Data.Text (Text)
-import Data.Text qualified as Text (split, toLower, filter)
-import Data.Text.Read qualified as Text.Read (decimal, double)
-import Data.Time (UTCTime)
-import TextShow (TextShow)
-import TextShow qualified as Text.Show (showt)
+import Data.Kind        (Type)
+import Data.Text        (Text)
+import Data.Text        qualified as Text (filter, split, toLower)
+import Data.Text.Read   qualified as Text.Read (decimal, double)
+import Data.Time        (UTCTime)
+import TextShow         (TextShow)
+import TextShow         qualified as Text.Show (showt)
 
 --------------------------------------------------------------------------------
 
-import SwapiClient.Page
-  ( Index
-    (Index
-    , iCount
-    , iNextPage
-    , iPreviousPage
-    , iResults
-    )
-  )
-import SwapiClient.Id (StarshipId, PersonId, FilmId)
+import SwapiClient.Id   (FilmId, PersonId, StarshipId)
+import SwapiClient.Page (Index (Index, iCount, iNextPage, iPreviousPage, iResults))
 
 --------------------------------------------------------------------------------
 -- Data types
@@ -229,7 +221,7 @@ instance ToJSON (Cost :: Type) where
   toJSON = String .
     \case
       Credits amount -> Text.Show.showt amount
-      UnknownCost -> "unknown"
+      UnknownCost    -> "unknown"
 
 instance FromJSON (StarshipLength :: Type) where
   parseJSON :: Value -> Parser StarshipLength
@@ -269,8 +261,8 @@ instance ToJSON (MaxAtmospheringSpeed :: Type) where
   toJSON = String .
     \case
       MaxSpeed maxSpeed -> Text.Show.showt maxSpeed
-      MASNotApplicable -> "n/a"
-      UnknownSpeed -> "unknown"
+      MASNotApplicable  -> "n/a"
+      UnknownSpeed      -> "unknown"
 
 instance FromJSON (RequiredCrew :: Type) where
   parseJSON :: Value -> Parser RequiredCrew
@@ -282,9 +274,9 @@ instance FromJSON (RequiredCrew :: Type) where
         val ->
           case parseAmount val of
             Right [minCrew, maxCrew] -> pure (CrewRange (minCrew, maxCrew))
-            Right [crewAmount] -> pure (CrewAmount crewAmount)
-            Right _ -> fail "Unexpected format for `crew`"
-            Left e -> fail e
+            Right [crewAmount]       -> pure (CrewAmount crewAmount)
+            Right _                  -> fail "Unexpected format for `crew`"
+            Left e                   -> fail e
     where
       parseAmount :: Text -> Either String [Word]
       parseAmount =
@@ -358,8 +350,8 @@ instance ToJSON (CargoCapacity :: Type) where
   toJSON = String .
     \case
       Capacity capacity -> Text.Show.showt capacity
-      UnknownCapacity -> "unknown"
-      NoCapacity -> "none"
+      UnknownCapacity   -> "unknown"
+      NoCapacity        -> "none"
 
 instance FromJSON (Consumable :: Type) where
   parseJSON :: Value -> Parser Consumable
@@ -485,7 +477,7 @@ instance ToJSON (MaxMegalight :: Type) where
   toJSON :: MaxMegalight -> Value
   toJSON = String .
     \case
-      UnknownMegalight -> "unknown"
+      UnknownMegalight       -> "unknown"
       MaxMegalight megalight -> Text.Show.showt megalight
 
 instance FromJSON (StarshipClass :: Type) where
@@ -523,29 +515,29 @@ instance ToJSON (StarshipClass :: Type) where
   toJSON :: StarshipClass -> Value
   toJSON = String .
     \case
-      SCCorvette -> "Corvette"
-      SCStarDestroyer -> "Star Destroyer"
-      SCLandingCraft -> "Landing Craft"
+      SCCorvette                     -> "Corvette"
+      SCStarDestroyer                -> "Star Destroyer"
+      SCLandingCraft                 -> "Landing Craft"
       SCDeepSpaceMobileBattlestation -> "Deep Space Mobile Battlestation"
-      SCLightFreighter -> "Light Freighter"
-      SCAssaultStarfighter -> "Assault Starfighter"
-      SCStarfighter -> "Starfighter"
-      SCStarDreadnought -> "Star Dreadnought"
-      SCMediumTransport -> "Medium Transport"
-      SCTransport -> "Transport"
-      SCSpaceTransport -> "Space Transport"
-      SCEscortShip -> "Escort Ship"
-      SCStarCruiser -> "Star Cruiser"
-      SCSpaceCruiser -> "Space Cruiser"
-      SCDroidControlShip -> "Droid Control Ship"
-      SCYacht -> "Yacht"
-      SCDiplomaticBarge -> "Diplomatic Barge"
-      SCAssaultShip -> "Assault Ship"
-      SCCapitalShip -> "Capital Ship"
-      SCCruiser -> "Cruiser"
-      SCFreighter -> "Freighter"
-      SCArmedGovernmentTransport -> "Armed Government Transport"
-      SCPatrolCraft -> "Patrol Craft"
+      SCLightFreighter               -> "Light Freighter"
+      SCAssaultStarfighter           -> "Assault Starfighter"
+      SCStarfighter                  -> "Starfighter"
+      SCStarDreadnought              -> "Star Dreadnought"
+      SCMediumTransport              -> "Medium Transport"
+      SCTransport                    -> "Transport"
+      SCSpaceTransport               -> "Space Transport"
+      SCEscortShip                   -> "Escort Ship"
+      SCStarCruiser                  -> "Star Cruiser"
+      SCSpaceCruiser                 -> "Space Cruiser"
+      SCDroidControlShip             -> "Droid Control Ship"
+      SCYacht                        -> "Yacht"
+      SCDiplomaticBarge              -> "Diplomatic Barge"
+      SCAssaultShip                  -> "Assault Ship"
+      SCCapitalShip                  -> "Capital Ship"
+      SCCruiser                      -> "Cruiser"
+      SCFreighter                    -> "Freighter"
+      SCArmedGovernmentTransport     -> "Armed Government Transport"
+      SCPatrolCraft                  -> "Patrol Craft"
 
 instance FromJSON (Starship :: Type) where
   parseJSON :: Value -> Parser Starship

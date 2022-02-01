@@ -57,17 +57,13 @@ module SwapiClient.Color
 
 --------------------------------------------------------------------------------
 
-import Data.Aeson qualified as Aeson (withText)
-import Data.Aeson.Types
-    ( FromJSON(parseJSON)
-    , Value(String)
-    , ToJSON(toJSON)
-    , Parser
-    )
-import Data.Kind (Type)
-import Data.Text (Text)
-import Data.Text qualified as Text (splitOn, intercalate, unpack)
-import TextShow ( Builder, TextShow(showb), showt)
+import Data.Aeson       qualified as Aeson (withText)
+import Data.Aeson.Types (FromJSON (parseJSON), Parser, ToJSON (toJSON),
+                         Value (String))
+import Data.Kind        (Type)
+import Data.Text        (Text)
+import Data.Text        qualified as Text (intercalate, splitOn, unpack)
+import TextShow         (Builder, TextShow (showb), showt)
 
 --------------------------------------------------------------------------------
 -- Data types
@@ -140,45 +136,45 @@ data EyeColor
 instance TextShow (HairColor :: Type) where
   showb :: HairColor -> Builder
   showb = \case
-    AuburnHair -> "auburn"
-    BlackHair -> "black"
-    BlondHair -> "blond"
-    BrownHair -> "brown"
-    GreyHair -> "grey"
+    AuburnHair  -> "auburn"
+    BlackHair   -> "black"
+    BlondHair   -> "blond"
+    BrownHair   -> "brown"
+    GreyHair    -> "grey"
     NoHairColor -> "none"
-    WhiteHair -> "white"
-    RedHair -> "red"
-    BlueHair -> "blue"
+    WhiteHair   -> "white"
+    RedHair     -> "red"
+    BlueHair    -> "blue"
 
 instance TextShow (SkinColor :: Type) where
   showb :: SkinColor -> Builder
   showb = \case
-    BlueSkin -> "blue"
-    BrownSkin -> "brown"
-    BrownMottleSkin -> "brown mottle"
-    DarkSkin -> "dark"
-    FairSkin -> "fair"
-    GoldSkin -> "gold"
-    GreenSkin -> "green"
-    GreenTanSkin -> "green-tan"
-    GreySkin -> "grey"
-    LightSkin -> "light"
-    MagentaSkin -> "magenta"
-    MetalSkin -> "metal"
-    MottledGreenSkin -> "mottled green"
-    OrangeSkin -> "orange"
-    PaleSkin -> "pale"
-    RedSkin -> "red"
-    SilverSkin -> "silver"
-    TanSkin -> "tan"
-    WhiteSkin -> "white"
-    YellowSkin -> "yellow"
-    CaucasianSkin -> "caucasian"
-    BlackSkin -> "black"
-    AsianSkin -> "asian"
-    HispanicSkin -> "hispanic"
+    BlueSkin               -> "blue"
+    BrownSkin              -> "brown"
+    BrownMottleSkin        -> "brown mottle"
+    DarkSkin               -> "dark"
+    FairSkin               -> "fair"
+    GoldSkin               -> "gold"
+    GreenSkin              -> "green"
+    GreenTanSkin           -> "green-tan"
+    GreySkin               -> "grey"
+    LightSkin              -> "light"
+    MagentaSkin            -> "magenta"
+    MetalSkin              -> "metal"
+    MottledGreenSkin       -> "mottled green"
+    OrangeSkin             -> "orange"
+    PaleSkin               -> "pale"
+    RedSkin                -> "red"
+    SilverSkin             -> "silver"
+    TanSkin                -> "tan"
+    WhiteSkin              -> "white"
+    YellowSkin             -> "yellow"
+    CaucasianSkin          -> "caucasian"
+    BlackSkin              -> "black"
+    AsianSkin              -> "asian"
+    HispanicSkin           -> "hispanic"
     SkinColorNotApplicable -> "n/a"
-    UnknownSkinColor -> "unknown"
+    UnknownSkinColor       -> "unknown"
 
 instance TextShow (EyeColor :: Type) where
   showb :: EyeColor -> Builder
@@ -212,7 +208,7 @@ instance {-# OVERLAPS #-} FromJSON ([HairColor] :: Type) where
           in
             case hairColors of
               Right hc -> pure hc
-              Left e -> fail e
+              Left e   -> fail e
 
 instance {-# OVERLAPS #-} ToJSON ([HairColor] :: Type) where
   toJSON :: [HairColor] -> Value
@@ -228,7 +224,7 @@ instance {-# OVERLAPS #-} FromJSON ([SkinColor] :: Type) where
         in
           case textToColors skinColorText of
             Right skinColors -> pure skinColors
-            Left e -> fail e
+            Left e           -> fail e
 
 instance {-# OVERLAPS #-} ToJSON ([SkinColor] :: Type) where
   toJSON :: [SkinColor] -> Value
@@ -241,7 +237,7 @@ instance FromJSON (EyeColor :: Type) where
      \val ->
        case textToEyeColor val of
          Right eyeColor -> pure eyeColor
-         Left e -> fail e
+         Left e         -> fail e
 
 instance ToJSON (EyeColor :: Type) where
   toJSON :: EyeColor -> Value
@@ -258,56 +254,56 @@ instance {-# OVERLAPS #-} FromJSON ([EyeColor] :: Type) where
         in
           case textToColors eyeColorsText of
             Right eyeColors -> pure eyeColors
-            Left e -> fail e
+            Left e          -> fail e
 
 --------------------------------------------------------------------------------
 -- Functions
 
 textToHairColor :: Text -> Either String HairColor
 textToHairColor hct = case hct of
-  "auburn"     -> Right AuburnHair
-  "black"      -> Right BlackHair
-  "blond"      -> Right BlondHair
-  "blonde"     -> Right BlondHair
-  "brown"      -> Right BrownHair
-  "grey"       -> Right GreyHair
-  "white"      -> Right WhiteHair
-  "blue"       -> Right BlueHair
-  "red"        -> Right RedHair
-  "n/a"        -> Right NoHairColor
-  "none"       -> Right NoHairColor
-  _            -> Left "ERROR: Invalid hair color value/format"
+  "auburn" -> Right AuburnHair
+  "black"  -> Right BlackHair
+  "blond"  -> Right BlondHair
+  "blonde" -> Right BlondHair
+  "brown"  -> Right BrownHair
+  "grey"   -> Right GreyHair
+  "white"  -> Right WhiteHair
+  "blue"   -> Right BlueHair
+  "red"    -> Right RedHair
+  "n/a"    -> Right NoHairColor
+  "none"   -> Right NoHairColor
+  _        -> Left "ERROR: Invalid hair color value/format"
 
 textToSkinColor :: Text -> Either String SkinColor
 textToSkinColor sct = case sct of
-  "blue" -> Right BlueSkin
-  "brown" -> Right BrownSkin
-  "brown mottle" -> Right BrownMottleSkin
-  "dark" -> Right DarkSkin
-  "fair" -> Right FairSkin
-  "gold" -> Right GoldSkin
-  "green" -> Right GreenSkin
-  "green-tan" -> Right GreenTanSkin
-  "grey" -> Right GreySkin
-  "gray" -> Right GreySkin
-  "light" -> Right LightSkin
-  "magenta" -> Right MagentaSkin
-  "metal" -> Right MetalSkin
+  "blue"          -> Right BlueSkin
+  "brown"         -> Right BrownSkin
+  "brown mottle"  -> Right BrownMottleSkin
+  "dark"          -> Right DarkSkin
+  "fair"          -> Right FairSkin
+  "gold"          -> Right GoldSkin
+  "green"         -> Right GreenSkin
+  "green-tan"     -> Right GreenTanSkin
+  "grey"          -> Right GreySkin
+  "gray"          -> Right GreySkin
+  "light"         -> Right LightSkin
+  "magenta"       -> Right MagentaSkin
+  "metal"         -> Right MetalSkin
   "mottled green" -> Right MottledGreenSkin
-  "orange" -> Right OrangeSkin
-  "pale" -> Right PaleSkin
-  "red" -> Right RedSkin
-  "silver" -> Right SilverSkin
-  "tan" -> Right TanSkin
-  "white" -> Right WhiteSkin
-  "yellow" -> Right YellowSkin
-  "caucasian"  -> Right CaucasianSkin
-  "black" -> Right BlackSkin
-  "asian" -> Right AsianSkin
-  "hispanic" -> Right HispanicSkin
-  "n/a" -> Right SkinColorNotApplicable
-  "unknown" -> Right UnknownSkinColor
-  s -> Left ("ERROR: Invalid skin color/format " <> Text.unpack s)
+  "orange"        -> Right OrangeSkin
+  "pale"          -> Right PaleSkin
+  "red"           -> Right RedSkin
+  "silver"        -> Right SilverSkin
+  "tan"           -> Right TanSkin
+  "white"         -> Right WhiteSkin
+  "yellow"        -> Right YellowSkin
+  "caucasian"     -> Right CaucasianSkin
+  "black"         -> Right BlackSkin
+  "asian"         -> Right AsianSkin
+  "hispanic"      -> Right HispanicSkin
+  "n/a"           -> Right SkinColorNotApplicable
+  "unknown"       -> Right UnknownSkinColor
+  s               -> Left ("ERROR: Invalid skin color/format " <> Text.unpack s)
 
 textToEyeColor :: Text -> Either String EyeColor
 textToEyeColor ect = case ect of

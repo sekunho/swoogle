@@ -1,4 +1,4 @@
-{-# language FlexibleInstances #-}
+{-# LANGUAGE FlexibleInstances #-}
 
 module SwapiClient.Person
   ( BirthYear (BBY, ABY, UnknownBirthYear)
@@ -28,52 +28,24 @@ module SwapiClient.Person
 
 --------------------------------------------------------------------------------
 
-import Data.Aeson qualified as Aeson
-  ( object
-  , withObject
-  , withText
-  )
-import Data.Aeson.Types
-    ( KeyValue ((.=))
-    , ToJSON (toJSON)
-    , FromJSON (parseJSON)
-    , Value (String)
-    , Parser
-    , (.:)
-    )
+import Data.Aeson        qualified as Aeson (object, withObject, withText)
+import Data.Aeson.Types  (FromJSON (parseJSON), KeyValue ((.=)), Parser,
+                          ToJSON (toJSON), Value (String), (.:))
 
-import Data.Kind (Type)
-import Data.Text (Text)
-import Data.Text qualified as Text (pack, filter)
-import Data.Text.Read qualified as Text.Read (decimal, double)
-import Data.Time (UTCTime)
+import Data.Kind         (Type)
+import Data.Text         (Text)
+import Data.Text         qualified as Text (filter, pack)
+import Data.Text.Read    qualified as Text.Read (decimal, double)
+import Data.Time         (UTCTime)
 
 --------------------------------------------------------------------------------
 
-import SwapiClient.Color
-  ( SkinColor
-  , HairColor
-  , EyeColor
-  )
+import SwapiClient.Color (EyeColor, HairColor, SkinColor)
 
-import SwapiClient.Id
-  ( FilmId
-  , HomeworldId
-  , SpeciesId
-  , VehicleId
-  , StarshipId
-  , PersonId
-  )
+import SwapiClient.Id    (FilmId, PlanetId, PersonId, SpeciesId, StarshipId,
+                          VehicleId)
 
-import SwapiClient.Page
-  ( Index
-    ( Index
-    , iCount
-    , iNextPage
-    , iPreviousPage
-    , iResults
-    )
-  )
+import SwapiClient.Page  (Index (Index, iCount, iNextPage, iPreviousPage, iResults))
 
 --------------------------------------------------------------------------------
 -- Data types
@@ -105,22 +77,22 @@ newtype PersonName = PersonName Text
   deriving stock (Eq, Show)
 
 data Person = Person
-  { pName             :: PersonName     -- Name of person
-  , pHeight           :: Height         -- Height of person can be Nothing
-  , pMass             :: Mass           -- Mass of person can be Nothing
-  , pHairColor        :: [HairColor]
-  , pSkinColor        :: [SkinColor]
-  , pEyeColor         :: [EyeColor]     -- Uh, eye color.
-  , pBirthYear        :: BirthYear      -- Relative to before/after Battle of Yavin
-  , pGender           :: Gender         -- Gender according to SWAPI
-  , pHomeworldId      :: HomeworldId    -- Homeworld IDs of character
-  , pFilmIds          :: [FilmId]       -- Film IDs of character appearance
-  , pSpeciesIds       :: [SpeciesId]
-  , pVehicleIds       :: [VehicleId]
-  , pStarshipIds      :: [StarshipId]
-  , pCreatedAt        :: UTCTime
-  , pEditedAt         :: UTCTime
-  , pId               :: PersonId
+  { pName        :: PersonName     -- Name of person
+  , pHeight      :: Height         -- Height of person can be Nothing
+  , pMass        :: Mass           -- Mass of person can be Nothing
+  , pHairColor   :: [HairColor]
+  , pSkinColor   :: [SkinColor]
+  , pEyeColor    :: [EyeColor]     -- Uh, eye color.
+  , pBirthYear   :: BirthYear      -- Relative to before/after Battle of Yavin
+  , pGender      :: Gender         -- Gender according to SWAPI
+  , pHomeworldId :: PlanetId    -- Homeworld IDs of character
+  , pFilmIds     :: [FilmId]       -- Film IDs of character appearance
+  , pSpeciesIds  :: [SpeciesId]
+  , pVehicleIds  :: [VehicleId]
+  , pStarshipIds :: [StarshipId]
+  , pCreatedAt   :: UTCTime
+  , pEditedAt    :: UTCTime
+  , pId          :: PersonId
   }
   deriving stock (Eq, Show)
 
@@ -136,8 +108,8 @@ instance FromJSON (Height :: Type) where
         strHeight ->
           case Text.Read.decimal strHeight of
             Right (numHeight, "") -> pure (Height numHeight)
-            Left e -> fail e
-            _ -> fail "Unexpected format for height"
+            Left e                -> fail e
+            _                     -> fail "Unexpected format for height"
 
 instance ToJSON (Height :: Type) where
   toJSON :: Height -> Value
@@ -145,7 +117,7 @@ instance ToJSON (Height :: Type) where
     case height of
       -- There's no `Integral a => a -> Text` apparently. So this is a hack for
       -- now. Relevant issue: https://github.com/haskell/text/issues/218
-      Height n -> String . Text.pack . show $ n
+      Height n      -> String . Text.pack . show $ n
       UnknownHeight -> String "unknown"
 
 instance FromJSON (Mass :: Type) where
@@ -158,15 +130,15 @@ instance FromJSON (Mass :: Type) where
        mass' ->
          case Text.Read.double $ Text.filter (/= ',') mass' of
            Right (numMass, "") -> pure . Mass $ numMass
-           Right (_, _) -> fail "ERROR: Unexpected format"
-           Left e -> fail e
+           Right (_, _)        -> fail "ERROR: Unexpected format"
+           Left e              -> fail e
 
 instance ToJSON (Mass :: Type) where
   toJSON :: Mass -> Value
   toJSON mass =
     case mass of
       Mass numMass -> String . Text.pack . show $ numMass
-      UnknownMass -> String "unknown"
+      UnknownMass  -> String "unknown"
 
 instance FromJSON (BirthYear :: Type) where
   parseJSON :: Value -> Parser BirthYear
@@ -185,8 +157,8 @@ instance FromJSON (BirthYear :: Type) where
 instance ToJSON (BirthYear :: Type) where
   toJSON :: BirthYear -> Value
   -- FIXME(sekun): Maybe use `showt` rather than `Text.pack . show`?
-  toJSON (BBY years) = String $ Text.pack $ mconcat [show years, "BBY"]
-  toJSON (ABY years) = String $ Text.pack $ mconcat [show years, "ABY"]
+  toJSON (BBY years)      = String $ Text.pack $ mconcat [show years, "BBY"]
+  toJSON (ABY years)      = String $ Text.pack $ mconcat [show years, "ABY"]
   toJSON UnknownBirthYear = String "unknown"
 
 instance FromJSON (Gender :: Type) where
@@ -194,21 +166,21 @@ instance FromJSON (Gender :: Type) where
   parseJSON =
    Aeson.withText "Gender" $
       \case
-        "male" -> pure Male
-        "female" -> pure Female
+        "male"          -> pure Male
+        "female"        -> pure Female
         "hermaphrodite" -> pure Hermaphrodite
-        "none" -> pure NoGender
-        "n/a" -> pure NoGender
-        _ -> fail "ERROR: Unexpected value for gender"
+        "none"          -> pure NoGender
+        "n/a"           -> pure NoGender
+        _               -> fail "ERROR: Unexpected value for gender"
 
 instance ToJSON (Gender :: Type) where
   toJSON :: Gender -> Value
   toJSON gender =
     case gender of
-      Male -> String "male"
-      Female -> String "female"
+      Male          -> String "male"
+      Female        -> String "female"
       Hermaphrodite -> String "hermaphrodite"
-      NoGender -> String "n/a"
+      NoGender      -> String "n/a"
 
 instance FromJSON (PersonName :: Type) where
   parseJSON :: Value -> Parser PersonName

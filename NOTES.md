@@ -52,6 +52,14 @@ Dates are formatted in DD-MM-YYYY.
 
 ## Day 24 - 31/01/2022
 
+### Code formatter
+
+I had `fourmolu` rotting in the nix file since I created this project, but never
+used it. Unfortunately, I discovered that it doesn't pick up the extensions
+in the `cabal` file, which is a deal breaker for me. I saw that this feature
+was merged for `ormolu`, so I'll just have to wait until they downstream those
+changes, or I could just pick up another formatter.
+
 ### GitHub Actions with `haskell-ci`
 
 I think the project is (almost) done, at least with the querying part since
@@ -112,65 +120,6 @@ bytestring >= 0.9.2 && <0.12
 ```
 
 So, is this it? Will it work now?
-
-#### TIL `cabal check` existed
-
-It's wild how I always preferred using `cabal` over `stack` because I didn't want
-to deal with 2 tools over 1, and also my brain doesn't like it that I had to
-learn another build tool. I mean, `stack` looks great, but when others said that
-`cabal` can do most of what `stack` can do, that's good enough reason for me to
-just stick with `cabal`.
-
-So, found out that `cabal check` existed, which is really nifty. Of course, the
-CI died when it reached this step because God knows I've been dumping stuff in
-there without much clue on what I'm doing. Here's what it had to say:
-
-```
-Warning: These warnings may cause trouble when distributing the package:
-Warning: No 'description' field.
-Warning: The following errors will cause portability problems on other
-environments:
-Warning: The 'license' field is missing or is NONE.
-Warning: 'ghc-options: -O' is not needed. Cabal automatically adds the '-O'
-flag. Setting it yourself interferes with the --disable-optimization flag.
-Warning: 'ghc-options: -Wall -Werror' makes the package very easy to break
-with future GHC versions because new GHC versions often add new warnings. Use
-just 'ghc-options: -Wall' instead. Alternatively, if you want to use this,
-make it conditional based on a Cabal configuration flag (with 'manual: True'
-and 'default: False') and enable that flag during development.
-Warning: 'ghc-options: -Wall -Werror' makes the package very easy to break
-with future GHC versions because new GHC versions often add new warnings. Use
-just 'ghc-options: -Wall' instead. Alternatively, if you want to use this,
-make it conditional based on a Cabal configuration flag (with 'manual: True'
-and 'default: False') and enable that flag during development.
-Warning: Hackage would reject this package.
-```
-
-> Warning: Hackage would reject this package.
-
-It's not like I wanted Hackage's approval or anything... :(
-
-Okay so my package is `BSD3` which seems to be what the
-[docs](https://cabal.readthedocs.io/en/3.6/cabal-package.html?highlight=source-repository#example-a-package-containing-executable-programs)
-have in their example. But I got an error telling me it's incorrect:
-
-```
-Warning: swapi-client.cabal:7:25:
-unexpected Unknown SPDX license identifier: 'BSD3' Do you mean BSD-3-Clause?
-Errors encountered when parsing cabal file ./swapi-client.cabal:
-
-swapi-client.cabal:7:25: error:
-unexpected Unknown SPDX license identifier: 'BSD3' Do you mean BSD-3-Clause?
-
-    7 | license:            BSD3
-      |                         ^
-cabal: parse error
-```
-
-Which is great because I get to open a PR to amend these!
-
-I've also revised it based on the other points but nothing noteworthy enough to
-document.
 
 #### Directory inclusions
 
@@ -242,6 +191,65 @@ extra-source-files:
   testdata/**/*.golden
   testdata/**/*.data
 ```
+
+#### TIL `cabal check` existed
+
+It's wild how I always preferred using `cabal` over `stack` because I didn't want
+to deal with 2 tools over 1, and also my brain doesn't like it that I had to
+learn another build tool. I mean, `stack` looks great, but when others said that
+`cabal` can do most of what `stack` can do, that's good enough reason for me to
+just stick with `cabal`.
+
+So, found out that `cabal check` existed, which is really nifty. Of course, the
+CI died when it reached this step because God knows I've been dumping stuff in
+there without much clue on what I'm doing. Here's what it had to say:
+
+```
+Warning: These warnings may cause trouble when distributing the package:
+Warning: No 'description' field.
+Warning: The following errors will cause portability problems on other
+environments:
+Warning: The 'license' field is missing or is NONE.
+Warning: 'ghc-options: -O' is not needed. Cabal automatically adds the '-O'
+flag. Setting it yourself interferes with the --disable-optimization flag.
+Warning: 'ghc-options: -Wall -Werror' makes the package very easy to break
+with future GHC versions because new GHC versions often add new warnings. Use
+just 'ghc-options: -Wall' instead. Alternatively, if you want to use this,
+make it conditional based on a Cabal configuration flag (with 'manual: True'
+and 'default: False') and enable that flag during development.
+Warning: 'ghc-options: -Wall -Werror' makes the package very easy to break
+with future GHC versions because new GHC versions often add new warnings. Use
+just 'ghc-options: -Wall' instead. Alternatively, if you want to use this,
+make it conditional based on a Cabal configuration flag (with 'manual: True'
+and 'default: False') and enable that flag during development.
+Warning: Hackage would reject this package.
+```
+
+> Warning: Hackage would reject this package.
+
+It's not like I wanted Hackage's approval or anything... :(
+
+Okay so my package is `BSD3` which seems to be what the
+[docs](https://cabal.readthedocs.io/en/3.6/cabal-package.html?highlight=source-repository#example-a-package-containing-executable-programs)
+have in their example. But I got an error telling me it's incorrect:
+
+```
+Warning: swapi-client.cabal:7:25:
+unexpected Unknown SPDX license identifier: 'BSD3' Do you mean BSD-3-Clause?
+Errors encountered when parsing cabal file ./swapi-client.cabal:
+
+swapi-client.cabal:7:25: error:
+unexpected Unknown SPDX license identifier: 'BSD3' Do you mean BSD-3-Clause?
+
+    7 | license:            BSD3
+      |                         ^
+cabal: parse error
+```
+
+Which is great because I get to open a PR to amend these!
+
+I've also revised it based on the other points but nothing noteworthy enough to
+document.
 
 ### Refining `Species` to deal with null homeworld
 

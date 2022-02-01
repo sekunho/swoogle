@@ -95,14 +95,14 @@ Although this is somewhat unrelated to the library itself, there are some change
 I would like to make, should I get the free time to build a JSON api.
 
 - A collection of things is sometimes encoded as a comma delimited string instead
-of using an array
+  of using an array
 
 - Numbers are encoded as strings just because the field could be an actual string
-like `"n/a"`, or `"none"`
+  like `"n/a"`, or `"none"`
 
 - Inconsistent usage of units. e.g In `Starship`, it has a field called
-`max_atmosphering_speed` with the kilometer unit, and without. Both of which are
-numbers, just encoded as strings. What's the unitless number supposed to be?
+  `max_atmosphering_speed` with the kilometer unit, and without. Both of which are
+  numbers, just encoded as strings. What's the unitless number supposed to be?
 
 - `api/<resource>/schema/` does not work
 
@@ -121,6 +121,11 @@ numbers, just encoded as strings. What's the unitless number supposed to be?
   space in between.
 
 - `Species`: `language`'s `"Galactic basic"` and `"Galatic Basic"`
+
+- `Planet`: `gravity` has a capitalized `"N/A"` rather than the usual lowercase
+
+- `Planet`: `gravity` is both denoted with `standard` and without. Might have
+  to ask for clarifications.
 
 These changes won't be implemented here, unless the swapi.dev maintainer decides
 to do the same as well. `swapi` is just meant to be compatible with swapi.dev.

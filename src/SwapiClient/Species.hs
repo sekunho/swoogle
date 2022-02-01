@@ -61,21 +61,22 @@ module SwapiClient.Species
 
 --------------------------------------------------------------------------------
 
-import Data.Aeson ((.:))
-import Data.Aeson qualified as Aeson (withText, withObject)
-import qualified Data.Aeson.KeyMap as Keymap
-import Data.Aeson.Types (FromJSON, Value (String, Null, Object), Parser, parseJSON)
-import Data.Kind (Type)
-import Data.Text (Text)
-import Data.Text qualified as Text (toLower, unpack)
-import Data.Text.Read qualified as Text.Read (decimal)
-import Data.Time (UTCTime)
+import Data.Aeson        ((.:))
+import Data.Aeson        qualified as Aeson (withObject, withText)
+import Data.Aeson.KeyMap qualified as Keymap
+import Data.Aeson.Types  (FromJSON, Parser, Value (Null, Object, String),
+                          parseJSON)
+import Data.Kind         (Type)
+import Data.Text         (Text)
+import Data.Text         qualified as Text (toLower, unpack)
+import Data.Text.Read    qualified as Text.Read (decimal)
+import Data.Time         (UTCTime)
 
 --------------------------------------------------------------------------------
 
-import SwapiClient.Color (SkinColor, HairColor, EyeColor)
-import SwapiClient.Id (HomeworldId, PersonId, FilmId, SpeciesId)
-import SwapiClient.Page (Index (Index))
+import SwapiClient.Color (EyeColor, HairColor, SkinColor)
+import SwapiClient.Id    (FilmId, PlanetId, PersonId, SpeciesId)
+import SwapiClient.Page  (Index (Index))
 
 --------------------------------------------------------------------------------
 -- Data types
@@ -127,39 +128,39 @@ data SpeciesType
   deriving (Eq, Show)
 
 data Species = MkSpecies
-  { spName :: SpeciesName
-  , spClassification :: Classification
-  , spDesignation :: Designation
-  , spAverageHeight :: AverageHeight
-  , spSkinColors :: [SkinColor]
-  , spHairColors :: [HairColor]
-  , spEyeColors :: [EyeColor]
+  { spName            :: SpeciesName
+  , spClassification  :: Classification
+  , spDesignation     :: Designation
+  , spAverageHeight   :: AverageHeight
+  , spSkinColors      :: [SkinColor]
+  , spHairColors      :: [HairColor]
+  , spEyeColors       :: [EyeColor]
   , spAverageLifespan :: AverageLifespan
-  , spHomeworld :: HomeworldId
-  , spLanguage :: Language
-  , spPeople :: [PersonId]
-  , spFilms :: [FilmId]
-  , spCreatedAt :: UTCTime
-  , spEditedAt :: UTCTime
-  , spId :: SpeciesId
+  , spHomeworld       :: PlanetId
+  , spLanguage        :: Language
+  , spPeople          :: [PersonId]
+  , spFilms           :: [FilmId]
+  , spCreatedAt       :: UTCTime
+  , spEditedAt        :: UTCTime
+  , spId              :: SpeciesId
   }
   deriving (Eq, Show)
 
 data OriginlessSpecies = MkOriginlessSpecies
-  { hSpName :: SpeciesName
-  , hSpClassification :: Classification
-  , hSpDesignation :: Designation
-  , hSpAverageHeight :: AverageHeight
-  , hSpSkinColors :: [SkinColor]
-  , hSpHairColors :: [HairColor]
-  , hSpEyeColors :: [EyeColor]
+  { hSpName            :: SpeciesName
+  , hSpClassification  :: Classification
+  , hSpDesignation     :: Designation
+  , hSpAverageHeight   :: AverageHeight
+  , hSpSkinColors      :: [SkinColor]
+  , hSpHairColors      :: [HairColor]
+  , hSpEyeColors       :: [EyeColor]
   , hSpAverageLifespan :: AverageLifespan
-  , hSpLanguage :: Language
-  , hSpPeople :: [PersonId]
-  , hSpFilms :: [FilmId]
-  , hSpCreatedAt :: UTCTime
-  , hSpEditedAt :: UTCTime
-  , hSpId :: SpeciesId
+  , hSpLanguage        :: Language
+  , hSpPeople          :: [PersonId]
+  , hSpFilms           :: [FilmId]
+  , hSpCreatedAt       :: UTCTime
+  , hSpEditedAt        :: UTCTime
+  , hSpId              :: SpeciesId
   }
   deriving (Eq, Show)
 
@@ -175,9 +176,9 @@ instance FromJSON (Designation :: Type) where
   parseJSON =
     Aeson.withText "Designation" $
       \case
-        "sentient" -> pure SentientDesignation
+        "sentient"  -> pure SentientDesignation
         "reptilian" -> pure ReptilianDesignation
-        _ -> fail "Unexpected value for species' designation"
+        _           -> fail "Unexpected value for species' designation"
 
 instance FromJSON (Classification :: Type) where
   parseJSON :: Value -> Parser Classification
