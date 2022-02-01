@@ -418,13 +418,25 @@ instance ToJSON (Producer :: Type) where
   toJSON = String . Text.Show.showt
 
 {- |
-Decodes a comma-delimited string JSON value to a @[Producer]@.
+Decodes a comma-delimited string JSON value to a @[Producer]@. Overrides the
+default @[a]@ instance that `aeson` implements.
 
-__Why?__
+__Why override/overlap the default instance?__
 
-Overrides the default @[a]@ instance that `aeson` implements. This is necessary
-because @swapi.dev@ encodes a collection of producers as a comma-delimited string,
-not a standard string. So this is just a way for me to decode it as @[Producer]@.
+@swapi.dev@ encodes some collection of things as a comma-delimited string. This
+is one of them. Because `aeson` is expecting something sane, not this, the decode
+will fail.
+
+If we stick with the default, and existing @FromJSON a => FromJSON [a]@ instance,
+or if we monomorphize it it's @FromJSON [Producer]@, `parseJSON` will expect a
+JSON `Value` of `Array`, not `String`. This is great if it actually was an array,
+but in this scenario, this won't do at all.
+
+So this is necessary because we have to decode it with some extra steps, which is
+to split the string on @", "@, and decode them individually as `Producer`.
+
+/If you look at the actual implementation though, I'm not using
+`FromJSON Producer`, but I should. In the future this will change./
 -}
 instance {-# OVERLAPS #-} FromJSON ([Producer] :: Type) where
   parseJSON :: Value -> Parser [Producer]
@@ -435,12 +447,19 @@ instance {-# OVERLAPS #-} FromJSON ([Producer] :: Type) where
 {- |
 Encodes a @[Producer]@ as a comma-delimited string JSON value.
 
-__Why?__
+__Why override/overlap the default instance?__
 
-Overrides the default @[a]@ instance that `aeson` implements. This is necessary
-because @swapi.dev@ encodes a collection of producers as a comma-delimited string,
-not a standard string. So this is just a way for me to encode it as a comma-delimited
-string.
+@swapi.dev@ encodes some collection of things as a comma-delimited string. This
+is one of them. I want to make this as compatible as possible with the current
+JSON API, so we should encode it the way they do.
+
+If we stick with the default, and existing @ToJSON a => ToJSON [a]@ instance,
+or if we monomorphize it it's @ToJSON [Producer]@, `toJSON` will expect a list,
+specifically @[Producer]@, which is fine because we do have a list, but it'll
+encode it to a JSON `Value` of `Array`! Not a comma-delimited string.
+
+So this is necessary because we have to decode it with some extra steps, which is
+to split the string on @", "@, and decode them individually as `Producer`.
 -}
 instance {-# OVERLAPS #-} ToJSON ([Producer] :: Type) where
   toJSON :: [Producer] -> Value
