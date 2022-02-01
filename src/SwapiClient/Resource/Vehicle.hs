@@ -1,4 +1,4 @@
-module SwapiClient.Vehicle
+module SwapiClient.Resource.Vehicle
   ( VehicleName (VehicleName)
   , VehicleModel (VehicleModel)
   , VehicleLength (VehicleLength)
@@ -44,22 +44,23 @@ module SwapiClient.Vehicle
 
 --------------------------------------------------------------------------------
 
-import Data.Aeson           (parseJSON, (.:))
-import Data.Aeson           qualified as Aeson (withObject, withText)
-import Data.Aeson.Types     (FromJSON, Parser, ToJSON, Value)
-import Data.Kind            (Type)
-import Data.Text            (Text)
-import Data.Text            qualified as Text (stripEnd, toLower)
-import Data.Text.Read       qualified as Text.Read (double)
-import Data.Time            (UTCTime)
+import Data.Aeson                    (parseJSON, (.:))
+import Data.Aeson                    qualified as Aeson (withObject, withText)
+import Data.Aeson.Types              (FromJSON, Parser, ToJSON, Value)
+import Data.Kind                     (Type)
+import Data.Text                     (Text)
+import Data.Text                     qualified as Text (stripEnd, toLower)
+import Data.Text.Read                qualified as Text.Read (double)
+import Data.Time                     (UTCTime)
 
 --------------------------------------------------------------------------------
 
-import SwapiClient.Id       (FilmId, PersonId, VehicleId)
-import SwapiClient.Page     (Index (Index))
-import SwapiClient.Starship (CargoCapacity, Consumable, Cost, Manufacturer,
-                             MaxAtmospheringSpeed, PassengerLimit, RequiredCrew,
-                             Wrapped (Wrapped))
+import SwapiClient.Id                (FilmId, PersonId, VehicleId)
+import SwapiClient.Page              (Index (Index))
+import SwapiClient.Resource.Starship (CargoCapacity, Consumable, Cost,
+                                      Manufacturer, MaxAtmospheringSpeed,
+                                      PassengerLimit, RequiredCrew,
+                                      Wrapped (Wrapped))
 
 --------------------------------------------------------------------------------
 -- Data types

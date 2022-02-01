@@ -41,30 +41,31 @@ module SwapiClient.Api
 
 --------------------------------------------------------------------------------
 
-import Data.Aeson           (FromJSON)
-import Data.Aeson           qualified as Aeson (decodeStrict,
-                                                eitherDecodeStrict)
-import Data.ByteString      (ByteString)
-import Data.Functor         ((<&>))
-import Data.Text            (Text)
-import Network.HTTP.Req     (GET (GET), NoReqBody (NoReqBody), Option, Req, Url,
-                             (/:), (=:))
-import Network.HTTP.Req     qualified as Req (bsResponse, defaultHttpConfig,
-                                              req, responseBody, runReq)
-import TextShow             qualified as Text.Show (showt)
+import Data.Aeson                    (FromJSON)
+import Data.Aeson                    qualified as Aeson (decodeStrict,
+                                                         eitherDecodeStrict)
+import Data.ByteString               (ByteString)
+import Data.Functor                  ((<&>))
+import Data.Text                     (Text)
+import Network.HTTP.Req              (GET (GET), NoReqBody (NoReqBody), Option,
+                                      Req, Url, (/:), (=:))
+import Network.HTTP.Req              qualified as Req (bsResponse,
+                                                       defaultHttpConfig, req,
+                                                       responseBody, runReq)
+import TextShow                      qualified as Text.Show (showt)
 
 --------------------------------------------------------------------------------
 
-import SwapiClient.Film
 import SwapiClient.Id
-import SwapiClient.Page     (Index, Page (NoPage, Page))
-import SwapiClient.Person   (Person)
-import SwapiClient.Planet   (Planet)
-import SwapiClient.Species  (SpeciesType)
-import SwapiClient.Starship
+import SwapiClient.Page              (Index, Page (NoPage, Page))
+import SwapiClient.Resource.Film
+import SwapiClient.Resource.Person   (Person)
+import SwapiClient.Resource.Planet   (Planet)
+import SwapiClient.Resource.Species  (SpeciesType)
+import SwapiClient.Resource.Starship
+import SwapiClient.Resource.Vehicle  (Vehicle)
 import SwapiClient.Url
-import SwapiClient.Url      qualified as Url (fromResource)
-import SwapiClient.Vehicle  (Vehicle)
+import SwapiClient.Url               qualified as Url (fromResource)
 
 --------------------------------------------------------------------------------
 -- People
