@@ -2,17 +2,17 @@ module SpeciesTest where
 
 --------------------------------------------------------------------------------
 
-import Data.Aeson qualified as Aeson (eitherDecodeStrict)
-import Data.ByteString (ByteString)
-import Data.ByteString qualified as ByteString (readFile)
-import Test.Tasty (TestTree)
-import Test.Tasty.Golden qualified as Golden (findByExtension)
+import Data.Aeson                   qualified as Aeson (eitherDecodeStrict)
+import Data.ByteString              (ByteString)
+import Data.ByteString              qualified as ByteString (readFile)
+import Test.Tasty                   (TestTree)
+import Test.Tasty.Golden            qualified as Golden (findByExtension)
 
 --------------------------------------------------------------------------------
 
-import SwapiClient.Page (Index)
+import SwapiClient.Page             (Index)
 import SwapiClient.Resource.Species (SpeciesType)
-import Util qualified (batchGoldenVsFile)
+import Util                         qualified (batchGoldenVsFile)
 
 --------------------------------------------------------------------------------
 

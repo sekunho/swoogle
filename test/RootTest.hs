@@ -5,25 +5,16 @@ module RootTest
 
 --------------------------------------------------------------------------------
 
-import Data.Aeson qualified as Aeson (encodeFile, decodeFileStrict')
-import Test.Tasty.Golden qualified as Tasty.Golden (goldenVsFile)
-import Test.Tasty (TestTree)
-import Test.Hspec (Spec)
-import Test.Hspec qualified as Hspec (describe, shouldBe, it)
+import Data.Aeson                qualified as Aeson (decodeFileStrict',
+                                                     encodeFile)
+import Test.Hspec                (Spec)
+import Test.Hspec                qualified as Hspec (describe, it, shouldBe)
+import Test.Tasty                (TestTree)
+import Test.Tasty.Golden         qualified as Tasty.Golden (goldenVsFile)
 
 --------------------------------------------------------------------------------
 
-import SwapiClient.Resource.Root
-  ( Root
-    ( Root
-    , rPeople
-    , rPlanets
-    , rFilms
-    , rSpecies
-    , rVehicles
-    , rStarships
-    )
-  )
+import SwapiClient.Resource.Root (Root (Root, rFilms, rPeople, rPlanets, rSpecies, rStarships, rVehicles))
 
 --------------------------------------------------------------------------------
 
