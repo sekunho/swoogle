@@ -75,7 +75,7 @@ import Data.Time         (UTCTime)
 --------------------------------------------------------------------------------
 
 import SwapiClient.Color (EyeColor, HairColor, SkinColor)
-import SwapiClient.Id    (FilmId, PlanetId, PersonId, SpeciesId)
+import SwapiClient.Id    (FilmId, PersonId, PlanetId, SpeciesId)
 import SwapiClient.Page  (Index (Index))
 
 --------------------------------------------------------------------------------

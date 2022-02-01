@@ -105,18 +105,19 @@ module SwapiClient.Planet
 --------------------------------------------------------------------------------
 
 import Data.Aeson       (parseJSON, (.:))
-import Data.Aeson       qualified as Aeson (withText, withObject)
+import Data.Aeson       qualified as Aeson (withObject, withText)
 import Data.Aeson.Types (FromJSON, Parser, Value (String))
 import Data.Kind        (Type)
 import Data.Text        (Text)
-import Data.Text        qualified as Text (toLower, unpack, splitOn, split, strip)
+import Data.Text        qualified as Text (split, splitOn, strip, toLower,
+                                           unpack)
 import Data.Text.Read   qualified as Text.Read (decimal, double)
 import Data.Time        (UTCTime)
 import TextShow         (TextShow)
 
 --------------------------------------------------------------------------------
 
-import SwapiClient.Id   (FilmId, PlanetId, PersonId)
+import SwapiClient.Id   (FilmId, PersonId, PlanetId)
 import SwapiClient.Page (Index (Index))
 
 --------------------------------------------------------------------------------
@@ -359,7 +360,7 @@ instance FromJSON (Gravity :: Type) where
               (gravity:_) ->
                 case decodeGravity gravity of
                   Right g -> pure g
-                  Left e -> fail e
+                  Left e  -> fail e
 
               [] -> fail "Unexpected value for gravity"
     where
