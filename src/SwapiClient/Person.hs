@@ -1,5 +1,93 @@
 {-# LANGUAGE FlexibleInstances #-}
 
+{- |
+
+This module contains:
+
+1. Data types for a person
+2. `aeson` instances for dealing with person JSON objects
+
+You can decode/encode any data type in this module from and to JSON values.
+
+__Decoding person JSON objects__
+
+Let's say you have this JSON response from
+@https://swapi.dev/api/people/1/?format=json@:
+
+@
+{ "name":"Luke Skywalker"
+, "height":"172"
+, "mass":"77"
+, "hair_color":"blond"
+, "skin_color":"fair"
+, "eye_color":"blue"
+, "birth_year":"19BBY"
+, "gender":"male"
+, "homeworld":"https://swapi.dev/api/planets/1/"
+, "films":
+    [ "https://swapi.dev/api/films/1/"
+    , "https://swapi.dev/api/films/2/"
+    , "https://swapi.dev/api/films/3/"
+    , "https://swapi.dev/api/films/6/"
+    ]
+, "species":[]
+, "vehicles":
+    [ "https://swapi.dev/api/vehicles/14/"
+    , "https://swapi.dev/api/vehicles/30/"
+    ]
+, "starships":
+  [ "https://swapi.dev/api/starships/12/"
+  ,"https://swapi.dev/api/starships/22/"
+  ]
+, "created":"2014-12-09T13:50:51.644000Z"
+, "edited":"2014-12-20T21:17:56.891000Z"
+, "url":"https://swapi.dev/api/people/1/"
+}
+@
+
+And bound it to `sampleJSON`. Let's try decoding it!
+
+>>> import Data.Aeson
+>>> import SwapiClient.Person
+>>> decode @Person sampleJSON
+Person
+{ pName = PersonName "Luke Skywalker"
+, pHeight = Height 172
+, pMass = Mass 77.0
+, pHairColor = [BlondHair]
+, pSkinColor = [FairSkin]
+, pEyeColor = [BlueEye]
+, pBirthYear = BBY 19.0
+, pGender = Male
+, pHomeworldId = PlanetId 1
+, pFilmIds = [FilmId 1,FilmId 2,FilmId 3,FilmId 6]
+, pSpeciesIds = []
+, pVehicleIds = [VehicleId 14,VehicleId 30]
+, pStarshipIds = [StarshipId 12,StarshipId 22]
+, pCreatedAt = 2014-12-09 13:50:51.644 UTC
+, pEditedAt = 2014-12-20 21:17:56.891 UTC
+, pId = PersonId 1
+}
+
+1. Some values were further parsed into more specific types. Like `HairColor`,
+   `SkinColor`, etc.
+2. The JSON object's `url` field was parsed into a `PersonId`, since we won't
+   deal with the URL itself to communicate with the API. Less error-prone this
+   way. See `SwapiClient.Api` on how to communicate with @https://swapi.dev@.
+3. Similar to the previous point, all IDs were parsed into their own ID types.
+
+__Encoding `Person` to a JSON object__
+
+You could also do the other way around, say you want to encode a `Person` as a
+JSON object. Using the above `Person` record, let's assume we bound it to
+`personA`.
+
+>>> import Data.Aeson
+>>> import SwapiClient.Person
+>>> encode personA
+"{\"birth_year\":\"19.0BBY\",\"created\":\"2014-12-09T13:50:51.644Z\",\"edited\":\"2014-12-20T21:17:56.891Z\",\"eye_color\":[\"blue\"],\"films\":[\"https://swapi.dev/api/films/1/\",\"https://swapi.dev/api/films/2/\",\"https://swapi.dev/api/films/3/\",\"https://swapi.dev/api/films/6/\"],\"gender\":\"male\",\"hair_color\":\"blond\",\"height\":\"172\",\"homeworld\":\"https://swapi.dev/api/planets/1/\",\"mass\":\"77.0\",\"name\":\"Luke Skywalker\",\"skin_color\":\"fair\",\"species\":[],\"starships\":[\"https://swapi.dev/api/starships/12/\",\"https://swapi.dev/api/starships/22/\"],\"url\":\"https://swapi.dev/api/people/1/\",\"vehicles\":[\"https://swapi.dev/api/vehicles/14/\",\"https://swapi.dev/api/vehicles/30/\"]}"
+
+-}
 module SwapiClient.Person
   ( BirthYear (BBY, ABY, UnknownBirthYear)
   , Height (Height, UnknownHeight)
@@ -50,55 +138,151 @@ import SwapiClient.Page  (Index (Index, iCount, iNextPage, iPreviousPage, iResul
 --------------------------------------------------------------------------------
 -- Data types
 
+{- |
+There are two categories of `BirthYear`s:
+
+1. BBY (Before Battle of Yavin); and
+2. ABY (After Battle of Yavin)
+
+`Double` represents how long before and after, respectively.
+
+Battle of Yavin: https://starwars.fandom.com/wiki/Battle_of_Yavin
+-}
 data BirthYear
-  = BBY Double
-  | ABY Double
-  | UnknownBirthYear
-  deriving stock (Eq, Show)
+  = BBY Double         -- ^ How long before the Battle of Yavin
+  | ABY Double         -- ^ How long after the Battle of Yavin
+  | UnknownBirthYear   -- ^ Birth year is not known or discoverd
+  deriving stock
+    ( Eq   -- ^ Compare `BirthYear`s with each other
+    , Show -- ^ Encode `BirthYear` as `String` through `show`
+    )
 
+-- | Height of something
 data Height
-  = Height Int
-  | UnknownHeight
-  deriving stock (Eq, Show)
+  = Height Int    -- ^ Height of something in meters
+  | UnknownHeight -- ^ Height is not known or discovered
+  deriving stock
+    ( Eq   -- ^ Compare `Height`s with each other
+    , Show -- ^ Encode `Height` as `String` through `show`
+    )
 
+-- | Mass of something
 data Mass
-  = Mass Double
-  | UnknownMass
-  deriving stock (Eq, Show)
+  = Mass Double -- ^ Mass of something in kilograms
+  | UnknownMass -- ^ Mass is not known or discovered
+  deriving stock
+    ( Eq   -- ^ Compare `Gender`s with each other
+    , Show -- ^ Encode `Mass` as a `String` through `show`
+    )
 
+-- TODO: Deal with "none"/"unknown"/"n/a" rather than lump it in `NoGender`
+-- | Genders in the Star Wars universe
 data Gender
   = Male
   | Female
   | Hermaphrodite
-  | NoGender
-  deriving stock (Eq, Show)
+  | NoGender      -- ^ Does not have a gender
+  deriving stock
+    ( Eq   -- ^ Compare `Gender`s with each other
+    , Show -- ^ Encode `Gender` as `String` through `show`
+    )
 
+-- | A person's name
 newtype PersonName = PersonName Text
-  deriving stock (Eq, Show)
+  deriving stock
+    ( Eq   -- ^ Compare `PersonName`s with each other
+    , Show -- ^ Encode `Page` as `String` through `show`
+    )
 
-data Person = Person
-  { pName        :: PersonName     -- Name of person
-  , pHeight      :: Height         -- Height of person can be Nothing
-  , pMass        :: Mass           -- Mass of person can be Nothing
-  , pHairColor   :: [HairColor]
-  , pSkinColor   :: [SkinColor]
-  , pEyeColor    :: [EyeColor]     -- Uh, eye color.
-  , pBirthYear   :: BirthYear      -- Relative to before/after Battle of Yavin
-  , pGender      :: Gender         -- Gender according to SWAPI
-  , pHomeworldId :: PlanetId    -- Homeworld IDs of character
-  , pFilmIds     :: [FilmId]       -- Film IDs of character appearance
-  , pSpeciesIds  :: [SpeciesId]
-  , pVehicleIds  :: [VehicleId]
-  , pStarshipIds :: [StarshipId]
-  , pCreatedAt   :: UTCTime
-  , pEditedAt    :: UTCTime
-  , pId          :: PersonId
+{- |
+
+Represents a person within the Star Wars universe
+
+__Example__
+
+@
+Person
+  { pName = PersonName "Luke Skywalker"
+  , pHeight = Height 172
+  , pMass = Mass 77.0
+  , pHairColor = [BlondHair]
+  , pSkinColor = [FairSkin]
+  , pEyeColor = [BlueEye]
+  , pBirthYear = BBY 19.0
+  , pGender = Male
+  , pHomeworldId = PlanetId 1
+  , pFilmIds = [FilmId 1,FilmId 2,FilmId 3,FilmId 6]
+  , pSpeciesIds = []
+  , pVehicleIds = [VehicleId 14,VehicleId 30]
+  , pStarshipIds = [StarshipId 12,StarshipId 22]
+  , pCreatedAt = 2014-12-09 13:50:51.644 UTC
+  , pEditedAt = 2014-12-20 21:17:56.891 UTC
+  , pId = PersonId 1
   }
-  deriving stock (Eq, Show)
+@
+-}
+data Person = Person
+  { pName        :: PersonName     -- ^ Name of person
+  , pHeight      :: Height         -- ^ Height of a person. Not known sometimes.
+  , pMass        :: Mass           -- ^ A person's mass
+  , pHairColor   :: [HairColor]    -- ^ Hair color combinations
+  , pSkinColor   :: [SkinColor]    -- ^ Skin color combinations
+  , pEyeColor    :: [EyeColor]     -- ^ Eye color combinations
+  , pBirthYear   :: BirthYear      -- ^ Relative to before/after Battle of Yavin
+  , pGender      :: Gender         -- ^ Genders in SW universe
+  , pHomeworldId :: PlanetId       -- ^ Planet origin of person
+  , pFilmIds     :: [FilmId]       -- ^ Person's appearance in films
+  , pSpeciesIds  :: [SpeciesId]    -- ^ Species combinations
+  , pVehicleIds  :: [VehicleId]    -- ^ Vehicles that this person piloted
+  , pStarshipIds :: [StarshipId]   -- ^ Starships that this person piloted
+  , pCreatedAt   :: UTCTime        -- ^ When this entry was created
+  , pEditedAt    :: UTCTime        -- ^ Last time this entry was edited
+  , pId          :: PersonId       -- ^ Person's ID in the database
+  }
+  deriving stock
+    ( Eq   -- ^ Compare `Person`s with each other
+    , Show -- ^ Encode `Person` as `String` through `show`
+    )
 
 --------------------------------------------------------------------------------
 -- Instances
 
+{- |
+
+Decode a JSON value to a `Height`
+
+A JSON value can be decoded to `Height` but must be one of these formats:
+
+1. @"unknown"@
+2. An integer literal encoded as a string. Cannot contain anything else, including
+   whitespaces.
+
+__Examples for #2__
+
+__Good__
+
+@
+"123"
+"69"
+"42"
+@
+
+__Bad__
+
+@
+"1,234"
+"1234.00"
+"123m"
+"12 "
+" 19"
+"1 5"
+"bruh this isn't a number"
+@
+
+So, Sek Un, why is a number a string and not just a number literal? I don't know.
+Ask the @swapi.dev@ maintainer. :)
+
+-}
 instance FromJSON (Height :: Type) where
   parseJSON :: Value -> Parser Height
   parseJSON =
@@ -109,8 +293,10 @@ instance FromJSON (Height :: Type) where
           case Text.Read.decimal strHeight of
             Right (numHeight, "") -> pure (Height numHeight)
             Left e                -> fail e
+            -- TODO: Add result of `Right` that fails in error message
             _                     -> fail "Unexpected format for height"
 
+-- | Encodes a `Height` to a string JSON value, either "unknown" or a number string.
 instance ToJSON (Height :: Type) where
   toJSON :: Height -> Value
   toJSON height =
@@ -120,6 +306,39 @@ instance ToJSON (Height :: Type) where
       Height n      -> String . Text.pack . show $ n
       UnknownHeight -> String "unknown"
 
+{- |
+
+Decode a JSON value to a `Mass`
+
+A JSON value can be decoded to `Mass` but must be one of these formats:
+
+1. @"unknown"@
+2. An integer literal encoded as a string. Cannot contain anything else, including
+   whitespaces.
+
+__Examples for #2__
+
+__Good__
+
+@
+"123"
+"69"
+"42"
+@
+
+__Bad__
+
+@
+"1,234"
+"1234.00"
+"123kg"
+"12 "
+" 19"
+"1 5"
+"bruh this isn't a number"
+@
+
+-}
 instance FromJSON (Mass :: Type) where
   parseJSON :: Value -> Parser Mass
   parseJSON =
@@ -133,6 +352,7 @@ instance FromJSON (Mass :: Type) where
            Right (_, _)        -> fail "ERROR: Unexpected format"
            Left e              -> fail e
 
+-- | Encodes a `Mass` to a string JSON value, either "unknown" or a number string.
 instance ToJSON (Mass :: Type) where
   toJSON :: Mass -> Value
   toJSON mass =
@@ -140,6 +360,37 @@ instance ToJSON (Mass :: Type) where
       Mass numMass -> String . Text.pack . show $ numMass
       UnknownMass  -> String "unknown"
 
+{- |
+
+Decode a JSON value to a `BirthYear`
+
+A JSON value can be decoded to `BirthYear` but must be one of these formats:
+
+1. @"unknown"@
+2. An integer/double literal encoded as a string, then appended with @"BBY"@ or
+   @"ABY".
+
+__Examples for #2__
+
+__Good__
+
+@
+"20BBY"
+"32ABY"
+"unknown"
+@
+
+__Bad__
+
+@
+"20 ABY"
+" 32ABY"
+"19ABY "
+"42"
+"69 years"
+@
+
+-}
 instance FromJSON (BirthYear :: Type) where
   parseJSON :: Value -> Parser BirthYear
   parseJSON =
@@ -154,6 +405,8 @@ instance FromJSON (BirthYear :: Type) where
               Right (_, _) -> fail "ERROR: Unexpected format for birth year"
               Left _ -> fail "ERROR: Unexpected type for birth year"
 
+-- | Encodes a `BirthYear` to a string JSON value, either "unknown" or a number
+-- string with a string @"ABY"@/@"BBY"@ suffix.
 instance ToJSON (BirthYear :: Type) where
   toJSON :: BirthYear -> Value
   -- FIXME(sekun): Maybe use `showt` rather than `Text.pack . show`?
@@ -161,6 +414,18 @@ instance ToJSON (BirthYear :: Type) where
   toJSON (ABY years)      = String $ Text.pack $ mconcat [show years, "ABY"]
   toJSON UnknownBirthYear = String "unknown"
 
+{- |
+
+Decode a JSON value to a `Gender`
+
+A JSON value can be decoded to `Gender` but must be one of these formats:
+
+1. @"none"@
+2. @"male"@
+3. @"female"@
+4. @"hermaphrodite"@
+
+-}
 instance FromJSON (Gender :: Type) where
   parseJSON :: Value -> Parser Gender
   parseJSON =
@@ -173,6 +438,7 @@ instance FromJSON (Gender :: Type) where
         "n/a"           -> pure NoGender
         _               -> fail "ERROR: Unexpected value for gender"
 
+-- | Encodes a `Gender` to a string JSON value
 instance ToJSON (Gender :: Type) where
   toJSON :: Gender -> Value
   toJSON gender =
@@ -182,6 +448,8 @@ instance ToJSON (Gender :: Type) where
       Hermaphrodite -> String "hermaphrodite"
       NoGender      -> String "n/a"
 
+-- | Decode a JSON value to a `PersonName`. Anything goes as long as it's a
+-- string.
 instance FromJSON (PersonName :: Type) where
   parseJSON :: Value -> Parser PersonName
   parseJSON =
@@ -189,10 +457,13 @@ instance FromJSON (PersonName :: Type) where
       $ \name ->
           pure $ PersonName name
 
+-- | Encodes a `PersonName` to a string JSON value
 instance ToJSON (PersonName :: Type) where
   toJSON :: PersonName -> Value
   toJSON (PersonName name) = String name
 
+-- | Decodes a JSON object to a `Person`. As long as you meet the criteria for
+-- each field then it should succeed.
 instance FromJSON (Person :: Type) where
   parseJSON :: Value -> Parser Person
   parseJSON =
@@ -216,6 +487,7 @@ instance FromJSON (Person :: Type) where
           <*> objPerson .: "edited"
           <*> objPerson .: "url"
 
+-- | Encodes a `Person` to a JSON object
 instance ToJSON (Person :: Type) where
   toJSON :: Person -> Value
   toJSON person =
@@ -238,6 +510,9 @@ instance ToJSON (Person :: Type) where
       , "url"        .= pId person
       ]
 
+-- | Decodes the "index" of the `Person` resource
+--
+-- See: `Index`
 instance FromJSON (Index Person :: Type) where
   parseJSON :: Value -> Parser (Index Person)
   parseJSON =
@@ -249,6 +524,9 @@ instance FromJSON (Index Person :: Type) where
           <*> indexObject .: "previous"
           <*> indexObject .: "results"
 
+-- | Encodes the "index" of a `Person` resource
+--
+-- See: `Index`
 instance ToJSON (Index Person :: Type) where
   toJSON :: Index Person -> Value
   toJSON indexObject =
