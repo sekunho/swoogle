@@ -57,15 +57,15 @@ import TextShow                      qualified as Text.Show (showt)
 --------------------------------------------------------------------------------
 
 import SwapiClient.Id
-import SwapiClient.Page              (Index, Page (NoPage, Page))
+import SwapiClient.Internal.Page     (Index, Page (NoPage, Page))
+import SwapiClient.Internal.Resource (Resource (FilmResource, PeopleResource, PlanetResource, SpeciesResource, StarshipResource, VehicleResource))
+import SwapiClient.Internal.Resource qualified as Resource (resourceToUrl)
 import SwapiClient.Resource.Film
 import SwapiClient.Resource.Person   (Person)
 import SwapiClient.Resource.Planet   (Planet)
 import SwapiClient.Resource.Species  (SpeciesType)
 import SwapiClient.Resource.Starship
 import SwapiClient.Resource.Vehicle  (Vehicle)
-import SwapiClient.Url
-import SwapiClient.Url               qualified as Url (fromResource)
 
 --------------------------------------------------------------------------------
 -- People
@@ -528,11 +528,11 @@ get params url =
 fetchOne
   :: FromJSON a
   => Resource
-  -> Int           -- Page number, should probably be `Word` instead though.
+  -> Word -- Page number, should probably be `Word` instead though.
   -> IO (Maybe a)
 fetchOne resource resourceId =
   Aeson.decodeStrict <$>
-    get mempty (Url.fromResource resource /: Text.Show.showt resourceId)
+    get mempty (Resource.resourceToUrl resource /: Text.Show.showt resourceId)
 
 fetchPage
   :: FromJSON (Index a)
@@ -543,7 +543,7 @@ fetchPage resource =
   \case
     Page page ->
       Aeson.decodeStrict <$>
-        get ("page" =: Text.Show.showt page) (Url.fromResource resource)
+        get ("page" =: Text.Show.showt page) (Resource.resourceToUrl resource)
 
     NoPage -> pure Nothing
 
@@ -559,18 +559,18 @@ search resource query =
       Aeson.decodeStrict <$>
         get
           ("page" =: Text.Show.showt page <> "search" =: query)
-          (Url.fromResource resource)
+          (Resource.resourceToUrl resource)
 
     NoPage -> pure Nothing
 
 eitherFetchOne
  :: FromJSON a
  => Resource -- Resource to fetch one of
- -> Int      -- Resource ID number
+ -> Word -- Resource ID number
  -> IO (Either String a)
 eitherFetchOne resource resourceId =
   Aeson.eitherDecodeStrict <$>
-    get mempty (Url.fromResource resource /: Text.Show.showt resourceId)
+    get mempty (Resource.resourceToUrl resource /: Text.Show.showt resourceId)
 
 eitherFetchPage
   :: FromJSON a
@@ -581,7 +581,7 @@ eitherFetchPage resource =
   \case
     Page page ->
       Aeson.eitherDecodeStrict <$>
-        get ("page" =: Text.Show.showt page) (Url.fromResource resource)
+        get ("page" =: Text.Show.showt page) (Resource.resourceToUrl resource)
 
     NoPage -> pure (Left "You can't fetch results from an empty page.")
 
@@ -598,6 +598,6 @@ eitherSearch resource query =
       Aeson.eitherDecodeStrict <$>
         get
           ("page" =: Text.Show.showt page <> "search" =: query)
-          (Url.fromResource resource)
+          (Resource.resourceToUrl resource)
 
     NoPage -> pure (Left "You can't fetch search results from an empty page.")

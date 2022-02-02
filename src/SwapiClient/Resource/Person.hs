@@ -146,24 +146,25 @@ module SwapiClient.Resource.Person
 
 --------------------------------------------------------------------------------
 
-import Data.Aeson        qualified as Aeson (object, withObject, withText)
-import Data.Aeson.Types  (FromJSON (parseJSON), KeyValue ((.=)), Parser,
-                          ToJSON (toJSON), Value (String), (.:))
+import Data.Aeson                qualified as Aeson (object, withObject,
+                                                     withText)
+import Data.Aeson.Types          (FromJSON (parseJSON), KeyValue ((.=)), Parser,
+                                  ToJSON (toJSON), Value (String), (.:))
 
-import Data.Kind         (Type)
-import Data.Text         (Text)
-import Data.Text         qualified as Text (filter, pack)
-import Data.Text.Read    qualified as Text.Read (decimal, double)
-import Data.Time         (UTCTime)
+import Data.Kind                 (Type)
+import Data.Text                 (Text)
+import Data.Text                 qualified as Text (filter, pack)
+import Data.Text.Read            qualified as Text.Read (decimal, double)
+import Data.Time                 (UTCTime)
 
 --------------------------------------------------------------------------------
 
-import SwapiClient.Color (EyeColor, HairColor, SkinColor)
+import SwapiClient.Color         (EyeColor, HairColor, SkinColor)
 
-import SwapiClient.Id    (FilmId, PersonId, PlanetId, SpeciesId, StarshipId,
-                          VehicleId)
+import SwapiClient.Id            (FilmId, PersonId, PlanetId, SpeciesId,
+                                  StarshipId, VehicleId)
 
-import SwapiClient.Page  (Index (Index, iCount, iNextPage, iPreviousPage, iResults))
+import SwapiClient.Internal.Page (Index (Index, iCount, iNextPage, iPreviousPage, iResults))
 
 --------------------------------------------------------------------------------
 -- Data types

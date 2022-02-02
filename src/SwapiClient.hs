@@ -150,7 +150,8 @@ module SwapiClient (
 -- TODO: Use `DerivingVia` for simpler `newtypes`
 -- TODO: Actually use doctests
 -- TODO: Fix doctests
+-- TODO: Move internal modules to `Internal.*`
 
-import SwapiClient.Api  as Api
-import SwapiClient.Id   as Id
-import SwapiClient.Page as Page
+import SwapiClient.Api           as Api
+import SwapiClient.Id            as Id
+import SwapiClient.Internal.Page as Page

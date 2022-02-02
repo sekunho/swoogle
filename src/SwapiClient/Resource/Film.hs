@@ -228,21 +228,23 @@ module SwapiClient.Resource.Film
 
 --------------------------------------------------------------------------------
 
-import Data.Aeson       (FromJSON, ToJSON, parseJSON, toJSON, (.:), (.=))
-import Data.Aeson       qualified as Aeson (object, withObject, withText)
-import Data.Aeson.Types (Parser, Value (String))
-import Data.Kind        (Type)
-import Data.Text        (Text)
-import Data.Text        qualified as Text (intercalate, splitOn)
-import Data.Time        (Day, UTCTime)
-import TextShow         (TextShow)
-import TextShow         qualified as Text.Show (showt)
+import Data.Aeson                (FromJSON, ToJSON, parseJSON, toJSON, (.:),
+                                  (.=))
+import Data.Aeson                qualified as Aeson (object, withObject,
+                                                     withText)
+import Data.Aeson.Types          (Parser, Value (String))
+import Data.Kind                 (Type)
+import Data.Text                 (Text)
+import Data.Text                 qualified as Text (intercalate, splitOn)
+import Data.Time                 (Day, UTCTime)
+import TextShow                  (TextShow)
+import TextShow                  qualified as Text.Show (showt)
 
 --------------------------------------------------------------------------------
 
-import SwapiClient.Id   (FilmId, PersonId, PlanetId, SpeciesId, StarshipId,
-                         VehicleId)
-import SwapiClient.Page (Index (Index, iCount, iNextPage, iPreviousPage, iResults))
+import SwapiClient.Id            (FilmId, PersonId, PlanetId, SpeciesId,
+                                  StarshipId, VehicleId)
+import SwapiClient.Internal.Page (Index (Index, iCount, iNextPage, iPreviousPage, iResults))
 
 --------------------------------------------------------------------------------
 

@@ -144,22 +144,22 @@ module SwapiClient.Resource.Species
 
 --------------------------------------------------------------------------------
 
-import Data.Aeson        ((.:))
-import Data.Aeson        qualified as Aeson (withObject, withText)
-import Data.Aeson.KeyMap qualified as Keymap
-import Data.Aeson.Types  (FromJSON, Parser, Value (Null, Object, String),
-                          parseJSON)
-import Data.Kind         (Type)
-import Data.Text         (Text)
-import Data.Text         qualified as Text (toLower, unpack)
-import Data.Text.Read    qualified as Text.Read (decimal)
-import Data.Time         (UTCTime)
+import Data.Aeson                ((.:))
+import Data.Aeson                qualified as Aeson (withObject, withText)
+import Data.Aeson.KeyMap         qualified as Keymap
+import Data.Aeson.Types          (FromJSON, Parser,
+                                  Value (Null, Object, String), parseJSON)
+import Data.Kind                 (Type)
+import Data.Text                 (Text)
+import Data.Text                 qualified as Text (toLower, unpack)
+import Data.Text.Read            qualified as Text.Read (decimal)
+import Data.Time                 (UTCTime)
 
 --------------------------------------------------------------------------------
 
-import SwapiClient.Color (EyeColor, HairColor, SkinColor)
-import SwapiClient.Id    (FilmId, PersonId, PlanetId, SpeciesId)
-import SwapiClient.Page  (Index (Index))
+import SwapiClient.Color         (EyeColor, HairColor, SkinColor)
+import SwapiClient.Id            (FilmId, PersonId, PlanetId, SpeciesId)
+import SwapiClient.Internal.Page (Index (Index))
 
 --------------------------------------------------------------------------------
 -- Data types

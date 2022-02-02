@@ -56,7 +56,7 @@ import Data.Time                     (UTCTime)
 --------------------------------------------------------------------------------
 
 import SwapiClient.Id                (FilmId, PersonId, VehicleId)
-import SwapiClient.Page              (Index (Index))
+import SwapiClient.Internal.Page     (Index (Index))
 import SwapiClient.Resource.Starship (CargoCapacity, Consumable, Cost,
                                       Manufacturer, MaxAtmospheringSpeed,
                                       PassengerLimit, RequiredCrew,
