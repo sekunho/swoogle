@@ -96,7 +96,7 @@ getPerson (PersonId personId) =
   fetchOne PeopleResource personId >>=
     \case
       Just person -> pure person
-      Nothing -> throwIO (userError "TODO: Make this error message better")
+      Nothing     -> throwIO (userError "TODO: Make this error message better")
 
 -- | Searches for a person's name; results are paginated.
 --
@@ -177,7 +177,7 @@ getFilm (FilmId filmId) =
   fetchOne FilmResource filmId >>=
     \case
       Just film -> pure film
-      Nothing -> throwIO (userError "TODO: Make this error message better")
+      Nothing   -> throwIO (userError "TODO: Make this error message better")
 
 -- | Searches for a film's name; results are paginated.
 --
@@ -356,7 +356,7 @@ searchVehicles query page =
   search VehicleResource query page >>=
     \case
       Just vehicleIndex -> pure vehicleIndex
-      Nothing -> throwIO (userError "Bruh")
+      Nothing           -> throwIO (userError "Bruh")
 
 -- | Fetches a list of vehicles given a `Page`.
 --
@@ -411,7 +411,7 @@ listSpecies page =
   fetchPage SpeciesResource page >>=
     \case
       Just species -> pure species
-      Nothing -> throwIO (userError "TODO: Make this error message better")
+      Nothing      -> throwIO (userError "TODO: Make this error message better")
 
 -- | Fetches a single species associated with the provided `SpeciesId`.
 --
@@ -422,7 +422,7 @@ getSpecies (SpeciesId speciesId) =
   fetchOne SpeciesResource speciesId >>=
     \case
       Just species -> pure species
-      Nothing -> throwIO (userError "TODO: Make this error message better")
+      Nothing      -> throwIO (userError "TODO: Make this error message better")
 
 -- | Searches for a species' name; results are paginated.
 --
@@ -438,7 +438,7 @@ searchSpecies query page =
   search SpeciesResource query page >>=
     \case
       Just species -> pure species
-      Nothing -> throwIO (userError "TODO: Make this error message better")
+      Nothing      -> throwIO (userError "TODO: Make this error message better")
 
 -- | Fetches a list of speciess given a `Page`.
 --
@@ -504,7 +504,7 @@ getPlanet (PlanetId planetId) =
   fetchOne PlanetResource planetId >>=
     \case
       Just planet -> pure planet
-      Nothing -> throwIO (userError "TODO: Make this error message better")
+      Nothing     -> throwIO (userError "TODO: Make this error message better")
 
 -- | Searches for a planet's name; results are paginated.
 --

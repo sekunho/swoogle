@@ -31,7 +31,9 @@ import SwapiClient
 @
 main :: IO ()
 main = do
+  -- @people@ has a type @Index People@
   people <- listPeople (Page 1)
+            -- ^ Evaluates to @IO (Index People)@
 
   print people
 @
@@ -76,43 +78,30 @@ main = do
       In an equation for ‘it’: it = getPerson (FilmId 1)
 @
 
-These functions evaluate to @IO (Maybe a)@ by default, @a@ being the resource.
-So you'd have to deal with the @IO@ and @Maybe@ context if you want to do anything
-with the value.
-
 @
+import SwapiClient
 import SwapiClient.Resource.Person
 -- ^ Brings in `pHomeworldId` to scope
 
+-- | Prints the homeworld data of a character
 main :: IO ()
 main =
-  -- 1. Fetch a person with ID of 1
-  getPerson (PersonId 1) >>=
-    \case
-      Just person ->
-        -- 2. Fetch the person's homeworld
-        getPlanet (pHomeworldId person) >>= print
-      Nothing -> putStrLn "Wait, there's nothing?"
+  getPerson (PersonId 2)
+  -- ^ Fetches info about a character with an ID 2
+    >>= \person -> getPlanet (pHomeworldId person)
+    -- ^ Gets information about a character's homeworld
+    >>= print
 @
 
-/Mutters/ something monad transformers... /mutters/.
+You could also do it with do-notation
 
->>> main
-IO $
-  Just $
-    Planet
-      { plName = MkPlanetName "Tatooine"
-      , plRotationPeriod = RotationPeriod 23
-      , plOrbitalPeriod = OrbitalPeriod 304
-      , plDiameter = Diameter 10465
-      , plClimate = [Arid], plGravity = Standard 1.0, plTerrain = [Desert]
-      , plSurfaceWaterPercent = Percentage 1.0
-      , plPopulation = Population 200000
-      , plResidents = [PersonId 1,PersonId 2,PersonId 4,PersonId 6,PersonId 7,PersonId 8,PersonId 9,PersonId 11,PersonId 43,PersonId 62]
-      , plFilms = [FilmId 1,FilmId 3,FilmId 4,FilmId 5,FilmId 6]
-      , plCreatedAt = 2014-12-09 13:50:49.641 UTC
-      , plEditedAt = 2014-12-20 20:58:18.411 UTC, plId = PlanetId 1
-      }
+@
+main = do
+  person <- getPerson (PersonId 2)
+  planet <- getPlanet (pHomeworldId person)
+
+  print planet
+@
 
 === Either
 
