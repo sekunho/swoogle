@@ -3,6 +3,7 @@
 **Table of Contents**
 
 - [Notes](#notes)
+  - [Day 26 - 02/02/2022](#day-26---02022022)
   - [Day 25 - 01/02/2022](#day-25---01022022)
   - [Day 24 - 31/01/2022](#day-24---31012022)
   - [Day 23 - 30/01/2022](#day-23---30012022)
@@ -50,6 +51,202 @@
   - [Day 1 - 25/11/2021](#day-1---25112021)
 
 Dates are formatted in DD-MM-YYYY.
+
+## Day 26 - 02/02/2022
+
+### Fixing double triggers of GitHub Actions in `haskell-ci`
+
+I had to update the CI cause it was triggering both events in one PR. This means
+both `push` and `pull_request` events trigger in a PR, which wastes build minutes.
+So what I need is just for `main` to trigger the `push` event when I merge a PR,
+and for any PR to trigger the `pull_request` only, and only once.
+
+The fix is simple; all I had to do was specify exactly when the `push` event
+would trigger, like so:
+
+```diff
+name: Haskell-CI
+on:
+- - push
+- - pull_request
++ push:
++   branches:
++     - main
+
++ pull_request:
+
+jobs:
+```
+
+`push` only triggers in the `main` branch!
+
+I haven't looked through the current issues/PRs of `haskell-ci` so I'm not sure
+if this behavior is intentional or not, but I'll give it a look one of these days.
+
+### Removing the overhead of `Maybe` context
+
+I was re-reading Alexis King's blog post[1] called "Parse, Don't Validate",
+where it points out the overhead of validations. What I was doing was pushing the
+burden of validations to the user of the library, rather than dealing with it myself.
+
+This is the case in the `Api` module. Here's an example query:
+
+```haskell
+getPerson :: PersonId -> IO (Maybe Person)
+getPerson (PersonId personId) = fetchOne PeopleResource personId
+```
+
+And how it's used:
+
+```haskell
+main :: IO ()
+main =
+  getPerson (PersonId 2)
+    >>= \personM ->
+      case personM of
+        Just person ->
+          getPlanet (pHomeworldId person) >>= print
+
+        Nothing -> putStrLn "Ain't anything here chief"
+```
+
+_What an eyesore._
+
+What this does is it fetches a character based on the `PersonId` provided. Well,
+where did the `Maybe` come from?
+
+```haskell
+fetchOne
+  :: FromJSON a
+  => Resource
+  -> Word -- Page number, should probably be `Word` instead though.
+  -> IO (Maybe a)
+fetchOne resource resourceId =
+  Aeson.decodeStrict <$>
+    get mempty (Resource.resourceToUrl resource /: Text.Show.showt resourceId)
+```
+
+Ah! So the `ByteString` response gets parsed by `aeson`, which is why we're
+dealing with `Maybe`. But why not deal with the `Maybe` context very early on by
+removing the need for it? I mean, it should be straightforward enough to prove
+that everything went fine, right? It's a matter of pattern matching the `Maybe`
+data constructors, and then we're set.
+
+But _should_ I deal with the `Nothing` case?
+
+Reading further down her post, she included an example (see, this is why examples
+are great!):
+
+```haskell
+getConfigurationDirectories = do
+  configDirsString <- getEnv "CONFIG_DIRS"
+  let configDirsList = split ',' configDirsString
+  case nonEmpty configDirsList of
+    Just nonEmptyConfigDirsList -> pure nonEmptyConfigDirsList
+    Nothing -> throwIO $ userError "CONFIG_DIRS cannot be empty"
+```
+
+This looks like something I'd want. I wouldn't want to burden the users with
+validating if they actually got a resource from the API. But, I personally never
+used `throwIO`, so this is a first, Also, what does `userError` even do? Time to
+consult with [`hoogle`](https://hoogle.haskell.org).
+
+> A variant of throw that can only be used within the IO monad. Although throwIO
+> has a type that is an instance of the type of throw, the two functions are subtly
+> different:
+>
+> throw e   `seq` x  ===> throw e
+> throwIO e `seq` x  ===> x
+>
+> The first example will cause the exception e to be raised, whereas the second one
+> won't. In fact, throwIO will only cause an exception to be raised when it is used
+> within the IO monad. The throwIO variant should be used in preference to throw
+> to raise an exception within the IO monad because it guarantees ordering with
+> respect to other IO operations, whereas throw does not.
+
+And its type signature is: `throwIO :: Exception e => e -> IO a` [2]
+
+To compare the type signatures of the two:
+
+```haskell
+throw   :: Exception e => e ->    a
+throwIO :: Exception e => e -> IO a
+```
+
+I _could_ use `throw` if really wanted to, since I could monomorphize `a` to
+`IO Person` anyway, but the docs points out this part [1]:
+
+> The throwIO variant should be used in preference to throw to raise an exception
+> within the IO monad because it guarantees ordering with respect to other IO
+> operations, whereas throw does not.
+
+I'm not entirely sure how the runtime works since I haven't found the time to dig
+in, but if it's just using `getPerson`, for example, then it shouldn't be a problem.
+The problem is when there's a sequence of IO operations, and I'm guessing
+`throw`-ing outside the IO monad breaks the ordering of it? I tested it with
+simpler examples like such:
+
+```haskell
+
+getPerson (PersonId personId)
+  | personId == 2 = throw (userError "Failed at 2")
+  | otherwise = -- Fetch person data
+
+main :: IO ()
+main =
+  sequence [getPersonId 1, getPersonId 2, getPersonId 3]
+```
+
+This seems to run just fine. Executes `1`, fails at `2`, and stops there. Which
+is why my assumption is only if you use `throw` in supposedly pure code, not
+in `IO`. I'm not sure though. I'm pretty sure this is a flawed assumption. Maybe
+GHC is clever enough for this?
+
+In any case, it throws an exception if ever it comes across `Nothing`, with a
+rather terrible error message:
+
+```haskell
+import Control.Exception
+
+getPerson :: PersonId -> IO Person
+getPerson (PersonId personId) =
+  fetchOne PersonResource personId >>=
+    \case
+      Just person -> pure person
+      Nothing     -> throwIO (userError "TODO: Make a better error message")
+```
+
+Now it's better for the user because one can just deal with `Person` directly,
+and wouldn't have to dance around the `Maybe` context.
+
+```haskell
+main :: IO ()
+main =
+  getPerson (PersonId 2)
+    >>= \person -> getPlanet (pHomeworldId person)
+    >>= print
+```
+
+Next would be to actually deal with `data Page = Page Int | NoPage` because when
+fetching list of/searching resources runs into `NoPage`, it'll spit out
+`Nothing`, which just seems unnecessary in the first place. So I will refactor
+`Page` in the future.
+
+Another quote from Alexis' post:
+
+> Push the burden of proof upward as far as possible, but no further. Get your
+> data into the most precise representation you need as quickly as you can.
+> Ideally, this should happen at the boundary of your system, before any of the
+> data is acted upon.3
+
+It seems like the furthest that's reasonable is right as I'm decoding the
+bytestring response. And likely, this library _is_ at the boundary of things if
+ever it does get integrated to some program. So exceptions are forgivable, I
+think?
+
+- [1](https://lexi-lambda.github.io/blog/2019/11/05/parse-don-t-validate/)
+- [2](https://hackage.haskell.org/package/base-4.16.0.0/docs/GHC-IO.html#v:throwIO)
+- [Edward Yang's GHC runtime system presentation](https://www.scs.stanford.edu/14sp-cs240h/slides/ghc-rts.pdf)
 
 ## Day 25 - 01/02/2022
 
