@@ -104,21 +104,21 @@ module SwapiClient.Resource.Planet
 
 --------------------------------------------------------------------------------
 
-import Data.Aeson       (parseJSON, (.:))
-import Data.Aeson       qualified as Aeson (withObject, withText)
-import Data.Aeson.Types (FromJSON, Parser, Value (String))
-import Data.Kind        (Type)
-import Data.Text        (Text)
-import Data.Text        qualified as Text (split, splitOn, strip, toLower,
-                                           unpack)
-import Data.Text.Read   qualified as Text.Read (decimal, double)
-import Data.Time        (UTCTime)
-import TextShow         (TextShow)
+import Data.Aeson                (parseJSON, (.:))
+import Data.Aeson                qualified as Aeson (withObject, withText)
+import Data.Aeson.Types          (FromJSON, Parser, Value (String))
+import Data.Kind                 (Type)
+import Data.Text                 (Text)
+import Data.Text                 qualified as Text (split, splitOn, strip,
+                                                    toLower, unpack)
+import Data.Text.Read            qualified as Text.Read (decimal, double)
+import Data.Time                 (UTCTime)
+import TextShow                  (TextShow)
 
 --------------------------------------------------------------------------------
 
-import SwapiClient.Id   (FilmId, PersonId, PlanetId)
-import SwapiClient.Page (Index (Index))
+import SwapiClient.Id            (FilmId, PersonId, PlanetId)
+import SwapiClient.Internal.Page (Index (Index))
 
 --------------------------------------------------------------------------------
 -- Data types

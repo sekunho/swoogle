@@ -39,6 +39,13 @@ source-repository head
 library
     exposed-modules:
         SwapiClient
+      , SwapiClient.Internal.Url
+      , SwapiClient.Internal.UrlData
+      , SwapiClient.Internal.Page
+      , SwapiClient.Internal.Resource
+      , SwapiClient.Internal.UrlData.Types
+      , SwapiClient.Internal.Page.Types
+      , SwapiClient.Internal.Id.Types
       , SwapiClient.Api
       , SwapiClient.Id
       , SwapiClient.Color
