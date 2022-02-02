@@ -41,6 +41,7 @@ module SwapiClient.Api
 
 --------------------------------------------------------------------------------
 
+import Control.Exception             (throwIO)
 import Data.Aeson                    (FromJSON)
 import Data.Aeson                    qualified as Aeson (decodeStrict,
                                                          eitherDecodeStrict)
@@ -73,37 +74,45 @@ import SwapiClient.Resource.Vehicle  (Vehicle)
 -- | Fetches a list of people given a `Page`.
 --
 -- >>> listPeople (Page 1)
--- Just $ Index
+-- Index
 --   { iCount = 1
 --   , iNextPage = NoPage
 --   , iPreviousPage = NoPage
 --   , iResults = [ Person {...} ]
 --   }
---
--- If the page provided is `NoPage`, it gives back `Nothing`.
-listPeople :: Page -> IO (Maybe (Index Person))
-listPeople = fetchPage PeopleResource
+listPeople :: Page -> IO (Index Person)
+listPeople page =
+  fetchPage PeopleResource page >>=
+    \case
+      Just peopleIndex -> pure peopleIndex
+      Nothing -> throwIO (userError "TODO: Make this error message better")
 
 -- | Fetches a single person associated with the provided `PersonId`.
 --
 -- >>> getPerson (PersonId 1)
--- Just (Person { ... })
-getPerson :: PersonId -> IO (Maybe Person)
-getPerson (PersonId personId) = fetchOne PeopleResource personId
+-- Person { ... }
+getPerson :: PersonId -> IO Person
+getPerson (PersonId personId) =
+  fetchOne PeopleResource personId >>=
+    \case
+      Just person -> pure person
+      Nothing -> throwIO (userError "TODO: Make this error message better")
 
 -- | Searches for a person's name; results are paginated.
 --
 -- >>> searchPeople "r2d2" (Page 1)
--- Right $ Index
+-- Index
 --   { iCount = 1
 --   , iNextPage = NoPage
 --   , iPreviousPage = NoPage
 --   , iResults = [ Person {...} ]
 --   }
---
--- If the page provided is `NoPage`, it gives back `Nothing`.
-searchPeople :: Text -> Page -> IO (Maybe (Index Person))
-searchPeople = search PeopleResource
+searchPeople :: Text -> Page -> IO (Index Person)
+searchPeople query page =
+  search PeopleResource query page >>=
+    \case
+      Just personIndex -> pure personIndex
+      Nothing -> throwIO (userError "TODO: Make this error message better")
 
 -- | Fetches a list of people given a `Page`.
 --
@@ -146,37 +155,45 @@ eitherSearchPeople = eitherSearch PeopleResource
 -- | Fetches a list of films given a `Page`.
 --
 -- >>> listFilms (Page 1)
--- Just $ Index
+-- Index
 --   { iCount = 1
 --   , iNextPage = NoPage
 --   , iPreviousPage = NoPage
 --   , iResults = [ Film {...} ]
 --   }
---
--- If the page provided is `NoPage`, it gives back `Nothing`.
-listFilms :: Page -> IO (Maybe (Index Film))
-listFilms = fetchPage FilmResource
+listFilms :: Page -> IO (Index Film)
+listFilms page =
+  fetchPage FilmResource page >>=
+    \case
+      Just filmIndex -> pure filmIndex
+      Nothing -> throwIO (userError "TODO: Make this error message better")
 
 -- | Fetches a single film associated with the provided `FilmId`.
 --
 -- >>> getFilm (FilmId 1)
--- Just $ Film { ... }
-getFilm :: FilmId -> IO (Maybe Film)
-getFilm (FilmId filmId) = fetchOne FilmResource filmId
+-- Film { ... }
+getFilm :: FilmId -> IO Film
+getFilm (FilmId filmId) =
+  fetchOne FilmResource filmId >>=
+    \case
+      Just film -> pure film
+      Nothing -> throwIO (userError "TODO: Make this error message better")
 
 -- | Searches for a film's name; results are paginated.
 --
 -- >>> searchFilms "empire" (Page 1)
--- Right $ Index
+-- Index
 --   { iCount = 1
 --   , iNextPage = NoPage
 --   , iPreviousPage = NoPage
 --   , iResults = [ Person {...} ]
 --   }
---
--- If the page provided is `NoPage`, it gives back `Nothing`.
-searchFilms :: Text -> Page -> IO (Maybe (Index Film))
-searchFilms = search FilmResource
+searchFilms :: Text -> Page -> IO (Index Film)
+searchFilms query page =
+  search FilmResource query page >>=
+    \case
+      Just filmIndex -> pure filmIndex
+      Nothing -> throwIO (userError "TODO: Make this error message better")
 
 -- | Fetches a list of films given a `Page`.
 --
@@ -219,37 +236,45 @@ eitherSearchFilms = eitherSearch FilmResource
 -- | Fetches a list of starships given a `Page`.
 --
 -- >>> listStarships (Page 1)
--- Just $ Index
+-- Index
 --   { iCount = 1
 --   , iNextPage = NoPage
 --   , iPreviousPage = NoPage
 --   , iResults = [ Starship {...} ]
 --   }
---
--- If the page provided is `NoPage`, it gives back `Nothing`.
-listStarships :: Page -> IO (Maybe (Index Starship))
-listStarships = fetchPage StarshipResource
+listStarships :: Page -> IO (Index Starship)
+listStarships page =
+  fetchPage StarshipResource page >>=
+    \case
+      Just starshipIndex -> pure starshipIndex
+      Nothing -> throwIO (userError "TODO: Make this error message better")
 
 -- | Fetches a single starship associated with the provided `StarshipId`.
 --
 -- >>> getStarship (StarshipId 1)
--- Just $ Starship { ... }
-getStarship :: StarshipId -> IO (Maybe Starship)
-getStarship (StarshipId starshipId) = fetchOne StarshipResource starshipId
+-- Starship { ... }
+getStarship :: StarshipId -> IO Starship
+getStarship (StarshipId starshipId) =
+  fetchOne StarshipResource starshipId >>=
+    \case
+      Just starship -> pure starship
+      Nothing -> throwIO (userError "TODO: Make this error message better")
 
 -- | Searches for a starship's name; results are paginated.
 --
 -- >>> searchStarships "millennium falcon" (Page 1)
--- Right $ Index
+-- Index
 --   { iCount = 1
 --   , iNextPage = NoPage
 --   , iPreviousPage = NoPage
 --   , iResults = [ Starship {...} ]
 --   }
---
--- If the page provided is `NoPage`, it gives back `Nothing`.
-searchStarships :: Text -> Page -> IO (Maybe (Index Starship))
-searchStarships = search StarshipResource
+searchStarships :: Text -> Page -> IO (Index Starship)
+searchStarships query page =
+  search StarshipResource query page >>=
+    \case
+      Just starshipIndex -> pure starshipIndex
+      Nothing -> throwIO (userError "TODO: Make this error message better")
 
 -- | Fetches a list of starships given a `Page`.
 --
@@ -293,37 +318,45 @@ eitherSearchStarships = eitherSearch StarshipResource
 -- | Fetches a list of vehicles given a `Page`.
 --
 -- >>> listVehicles (Page 1)
--- Just $ Index
+-- Index
 --   { iCount = 1
 --   , iNextPage = NoPage
 --   , iPreviousPage = NoPage
 --   , iResults = [ Vehicle {...} ]
 --   }
---
--- If the page provided is `NoPage`, it gives back `Nothing`.
-listVehicles :: Page -> IO (Maybe (Index Vehicle))
-listVehicles = fetchPage VehicleResource
+listVehicles :: Page -> IO (Index Vehicle)
+listVehicles page =
+  fetchPage VehicleResource page >>=
+    \case
+      Just vehicleIndex -> pure vehicleIndex
+      Nothing -> throwIO (userError "TODO: Make this error message better")
 
 -- | Fetches a single vehicle associated with the provided `VehicleId`.
 --
 -- >>> getVehicle (VehicleId 6)
--- Just $ Vehicle { ... }
-getVehicle :: VehicleId -> IO (Maybe Vehicle)
-getVehicle (VehicleId vehicleId) = fetchOne VehicleResource vehicleId
+-- Vehicle { ... }
+getVehicle :: VehicleId -> IO Vehicle
+getVehicle (VehicleId vehicleId) =
+  fetchOne VehicleResource vehicleId >>=
+      \case
+      Just vehicleIndex -> pure vehicleIndex
+      Nothing -> throwIO (userError "TODO: Make this error message better")
 
 -- | Searches for a vehicle's name; results are paginated.
 --
--- >>> searchVehicles "emergency" (Page 1)
--- Right $ Index
+-- >>> searchVehicles "tie/ln" (Page 1)
+-- Index
 --   { iCount = 1
 --   , iNextPage = NoPage
 --   , iPreviousPage = NoPage
 --   , iResults = [ Vehicle {...} ]
 --   }
---
--- If the page provided is `NoPage`, it gives back `Nothing`.
-searchVehicles :: Text -> Page -> IO (Maybe (Index Vehicle))
-searchVehicles = search VehicleResource
+searchVehicles :: Text -> Page -> IO (Index Vehicle)
+searchVehicles query page =
+  search VehicleResource query page >>=
+    \case
+      Just vehicleIndex -> pure vehicleIndex
+      Nothing -> throwIO (userError "Bruh")
 
 -- | Fetches a list of vehicles given a `Page`.
 --
@@ -367,37 +400,45 @@ eitherSearchVehicles = eitherSearch VehicleResource
 -- | Fetches a list of speciess given a `Page`.
 --
 -- >>> listSpecies (Page 1)
--- Just $ Index
+-- Index
 --   { iCount = 1
 --   , iNextPage = NoPage
 --   , iPreviousPage = NoPage
 --   , iResults = [ Species {...} ]
 --   }
---
--- If the page provided is `NoPage`, it gives back `Nothing`.
-listSpecies :: Page -> IO (Maybe (Index SpeciesType))
-listSpecies = fetchPage SpeciesResource
+listSpecies :: Page -> IO (Index SpeciesType)
+listSpecies page =
+  fetchPage SpeciesResource page >>=
+    \case
+      Just species -> pure species
+      Nothing -> throwIO (userError "TODO: Make this error message better")
 
 -- | Fetches a single species associated with the provided `SpeciesId`.
 --
 -- >>> getSpecies (SpeciesId 6)
--- Just $ Species { ... }
-getSpecies :: SpeciesId -> IO (Maybe SpeciesType)
-getSpecies (SpeciesId speciesId) = fetchOne SpeciesResource speciesId
+-- Species { ... }
+getSpecies :: SpeciesId -> IO SpeciesType
+getSpecies (SpeciesId speciesId) =
+  fetchOne SpeciesResource speciesId >>=
+    \case
+      Just species -> pure species
+      Nothing -> throwIO (userError "TODO: Make this error message better")
 
 -- | Searches for a species' name; results are paginated.
 --
 -- >>> searchSpecies "human" (Page 1)
--- Right $ Index
+-- Index
 --   { iCount = 1
 --   , iNextPage = NoPage
 --   , iPreviousPage = NoPage
 --   , iResults = [ Species {...} ]
 --   }
---
--- If the page provided is `NoPage`, it gives back `Nothing`.
-searchSpecies :: Text -> Page -> IO (Maybe (Index SpeciesType))
-searchSpecies = search SpeciesResource
+searchSpecies :: Text -> Page -> IO (Index SpeciesType)
+searchSpecies query page =
+  search SpeciesResource query page >>=
+    \case
+      Just species -> pure species
+      Nothing -> throwIO (userError "TODO: Make this error message better")
 
 -- | Fetches a list of speciess given a `Page`.
 --
@@ -441,37 +482,45 @@ eitherSearchSpecies = eitherSearch SpeciesResource
 -- | Fetches a list of planets given a `Page`.
 --
 -- >>> listPlanets (Page 1)`
--- Just $ Index
+-- Index
 --   { iCount = 1
 --   , iNextPage = NoPage
 --   , iPreviousPage = NoPage
 --   , iResults = [ Planet {...} ]
 --   }
---
--- If the page provided is `NoPage`, it gives back `Nothing`.
-listPlanets :: Page -> IO (Maybe (Index Planet))
-listPlanets = fetchPage PlanetResource
+listPlanets :: Page -> IO (Index Planet)
+listPlanets page =
+  fetchPage PlanetResource page >>=
+    \case
+      Just planetIndex -> pure planetIndex
+      Nothing -> throwIO (userError "TODO: Make this error message better")
 
 -- | Fetches a single planet associated with the provided `PlanetId`.
 --
 -- >>> getPlanet (PlanetId 6)`
--- `Just $ Planet { ... }`
-getPlanet :: PlanetId -> IO (Maybe Planet)
-getPlanet (PlanetId planetId) = fetchOne PlanetResource planetId
+-- Planet { ... }
+getPlanet :: PlanetId -> IO Planet
+getPlanet (PlanetId planetId) =
+  fetchOne PlanetResource planetId >>=
+    \case
+      Just planet -> pure planet
+      Nothing -> throwIO (userError "TODO: Make this error message better")
 
 -- | Searches for a planet's name; results are paginated.
 --
 -- >>> searchPlanets "human" (Page 1)`
--- Right $ Index
+-- Index
 --   { iCount = 1
 --   , iNextPage = NoPage
 --   , iPreviousPage = NoPage
 --   , iResults = [ Planet {...} ]
 --   }
---
--- If the page provided is `NoPage`, it gives back `Nothing`.
-searchPlanets :: Text -> Page -> IO (Maybe (Index Planet))
-searchPlanets = search PlanetResource
+searchPlanets :: Text -> Page -> IO (Index Planet)
+searchPlanets query page =
+  search PlanetResource query page >>=
+    \case
+      Just planetIndex -> pure planetIndex
+      Nothing -> throwIO (userError "TODO: Make this error message better")
 
 -- | Fetches a list of planets given a `Page`.
 --
