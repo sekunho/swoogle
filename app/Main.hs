@@ -1,9 +1,10 @@
 module Main where
 
-import SwapiClient (FilmId (FilmId), getFilm)
+import SwapiClient
+import SwapiClient.Resource.Person
 
 main :: IO ()
-main = do
-  film <- getFilm (FilmId 1)
-
-  print film
+main =
+  getPerson (PersonId 2)
+    >>= \person -> getPlanet (pHomeworldId person)
+    >>= print
