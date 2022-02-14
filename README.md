@@ -13,6 +13,18 @@
 - [ ] Web client `swapi-web` (WIP)
 - [ ] TUI `swapi-tui` (WIP)
 
+### `swapi-web`
+
+`swapi-web` is a web client that uses the Star Wars API.
+
+``` sh
+# Restart web server on change
+watchexec --restart --exts css,hs,html -- cabal run swapi:exe:swapi-web
+
+# Have tailwind automatically parse and purge classes
+tailwindcss --input swapi-web/assets/app.css --output swapi-web/priv/static/assets/app.css --watch
+```
+
 ### `swapi-lib`
 
 `swapi-lib` is a client library (without much bells and whistles) to interact

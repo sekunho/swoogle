@@ -24,7 +24,12 @@
             pkgs.haskellPackages.stylish-haskell # Code formatter
             pkgs.haskell-ci                      # Github Actions generator
             pkgs.zlib                            # I forgot why this was here lmao
+
+            # Front-end
             unstable.nodePackages.tailwindcss
+
+            # Misc.
+            pkgs.watchexec
           ];
 
           LD_LIBRARY_PATH = lib.makeLibraryPath buildInputs;
