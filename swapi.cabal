@@ -116,9 +116,14 @@ executable swapi-web
        base ^>= 4.14.3.0
      , swapi-lib == 0.1.0.0
      , scotty == 0.12
+     , lucid >= 2.11.0 && < 2.12.0
 
     main-is: Main.hs
     hs-source-dirs: swapi-web
+
+    other-modules:
+       SwapiWeb.Views.Layout
+
     ghc-options: -Wall
     default-language: Haskell2010
 
