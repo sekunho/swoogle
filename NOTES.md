@@ -3,6 +3,7 @@
 **Table of Contents**
 
 - [Notes](#notes)
+  - [Day 27 - 02/14/2022](#day-27---02142022)
   - [Day 26 - 02/02/2022](#day-26---02022022)
   - [Day 25 - 01/02/2022](#day-25---01022022)
   - [Day 24 - 31/01/2022](#day-24---31012022)
@@ -51,6 +52,55 @@
   - [Day 1 - 25/11/2021](#day-1---25112021)
 
 Dates are formatted in DD-MM-YYYY.
+
+## Day 27 - 02/14/2022
+
+I have electricity again! But I still have no internet since they haven't fixed
+the broken cabinets yet. RIP. Although I did get the fiber cable fixed, so I just
+have to wait on them to fix it before I get the sweet, stable internet again.
+
+### Using public libraries
+
+So it turns out that `cabal` used to restrict each project to one library, meaning
+you can't have `library foo1` and `library foo2` stanzas, just `library`. But
+that changed, quite some time ago apparently, and so I get to use it if ever I
+want to expand this package more!
+
+I did a bunch of reorganizing in the project.
+
+- Renamed the package to `swapi` instead of `swapi-client`
+- Renamed the client library to `swapi-lib`
+- Renamed `app` to `swapi-tui`
+- Added a `swapi-web` for a web client
+
+I'm going to work on `swapi-web` first since it seems to be the easiest. I
+apparently have to deal with lenses cause of the `brick` package, and learning
+lenses is not in my radar at the moment. Perhaps once I've completed `swapi-web`.
+
+Although I do have the book _Optics_ by Chris Penner with me. I will crack it
+open when I begin working with `brick`.
+
+### `common` stanza
+
+Currently, the `swapi.cabal` file has lots of repeating fields, especially
+the `default-extensions` field. Well, these extensions are quite useful when
+making anything useful in GHC, so I did end up using them across the package.
+That's where `common` saves me the pain from repeating all this!
+
+```cabal
+common default-extensions
+  default-extensions:
+    -- .. List of extensions I want here
+
+library foo
+  import: default-extensions
+
+library bar
+  import: default-extensions
+```
+
+Really nifty. Although I did make the mistake of using cabal's formatter since
+apparently it expands inlines all common stanzas. I'll avoid that for now.
 
 ## Day 26 - 02/02/2022
 
