@@ -15,4 +15,9 @@ root content = doctypehtml_ $ do
     , makeAttribute "content" "width=device-width"
     , makeAttribute "initial-scale" "1.0"
     ]
+  link_
+    [ makeAttribute "rel" "stylesheet"
+    , makeAttribute "href" "/assets/app.css"
+    ]
+  title_ "Star Wars Wiki"
   content

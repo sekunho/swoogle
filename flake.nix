@@ -1,5 +1,7 @@
 {
-  description = "SWAPI";
+  description = ''
+  Clients & client libraries for the Star Wars API.
+  '';
 
   inputs = {
     nixpkgs.url      = "github:NixOS/nixpkgs";

@@ -122,6 +122,7 @@ executable swapi-web
     hs-source-dirs: swapi-web
 
     other-modules:
+       SwapiWeb.Views.Home
        SwapiWeb.Views.Layout
 
     ghc-options: -Wall

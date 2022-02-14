@@ -30,3 +30,5 @@ cabal.sandbox.config
 # nix & direnv related
 .direnv/
 result
+
+./swapi-web/priv/static/assets/*

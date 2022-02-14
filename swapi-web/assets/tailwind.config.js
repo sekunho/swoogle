@@ -2,7 +2,7 @@
 // https://tailwindcss.com/docs/configuration
 module.exports = {
   content: [
-    '../SwapiWeb/**/*.hs',
+    './swapi-web/SwapiWeb/Views/**/*.hs'
   ],
   theme: {
     extend: {
@@ -26,8 +26,8 @@ module.exports = {
     },
   },
   plugins: [
-    require('@tailwindcss/forms'),
-    require('@tailwindcss/aspect-ratio')
+//    require('@tailwindcss/forms'),
+//    require('@tailwindcss/aspect-ratio')
   ]
 }
 
