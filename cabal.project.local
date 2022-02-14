@@ -1,2 +1,8 @@
-package swapi-client
+package swapi-lib
+  tests: true
+
+package swapi-web
+  tests: true
+
+package swapi-tui
   tests: true

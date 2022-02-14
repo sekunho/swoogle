@@ -13,8 +13,8 @@ import Test.Tasty.Golden             qualified as Golden (findByExtension)
 
 --------------------------------------------------------------------------------
 
-import SwapiClient.Page              (Index)
-import SwapiClient.Resource.Starship (Starship)
+import SwapiLib.Page              (Index)
+import SwapiLib.Resource.Starship (Starship)
 import Util                          qualified (batchGoldenVsFile)
 
 --------------------------------------------------------------------------------

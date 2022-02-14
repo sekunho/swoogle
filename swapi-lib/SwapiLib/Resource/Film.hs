@@ -77,7 +77,7 @@ Let's say you have this JSON response from
 And bind it to `sampleJSON`. Let's try decoding it!
 
 >>> import Data.Aeson
->>> import SwapiClient.Resource.Film
+>>> import SwapiLib.Resource.Film
 >>> decode @Film sampleJSON
 Film
   { fTitle = "A New Hope"
@@ -128,7 +128,7 @@ Film
    about any @Text@, @Int@, etc..
 2. The JSON object's `url` field was parsed into a `FilmId`, since we won't
    deal with the URL itself to communicate with the API. Less error-prone this
-   way. See `SwapiClient.Api` on how to communicate with @https://swapi.dev@.
+   way. See `SwapiLib.Api` on how to communicate with @https://swapi.dev@.
 3. Similar to the previous point, all IDs were parsed into their own ID types.
 
 __Encoding `Film` to a JSON object__
@@ -138,7 +138,7 @@ JSON object. Using the above `Film` record, let's assume we bound it to
 `filmA`.
 
 >>> import Data.Aeson
->>> import SwapiClient.Resource.Film
+>>> import SwapiLib.Resource.Film
 >>> encode filmA
 {
   "characters": [
@@ -203,7 +203,7 @@ JSON object. Using the above `Film` record, let's assume we bound it to
 The result from this is of course filled with @\@ to escape a lot of symbols. I
 removed it to make it more readable, but do keep this in mind.
 -}
-module SwapiClient.Resource.Film
+module SwapiLib.Resource.Film
   ( Film
       ( Film
       , fTitle
@@ -242,9 +242,9 @@ import TextShow                  qualified as Text.Show (showt)
 
 --------------------------------------------------------------------------------
 
-import SwapiClient.Id            (FilmId, PersonId, PlanetId, SpeciesId,
+import SwapiLib.Id            (FilmId, PersonId, PlanetId, SpeciesId,
                                   StarshipId, VehicleId)
-import SwapiClient.Internal.Page (Index (Index, iCount, iNextPage, iPreviousPage, iResults))
+import SwapiLib.Internal.Page (Index (Index, iCount, iNextPage, iPreviousPage, iResults))
 
 --------------------------------------------------------------------------------
 
@@ -337,7 +337,7 @@ newtype Producer = Producer Text
   __Example__
 
   >>> import TextShow
-  >>> import SwapiClient.Resource.Film
+  >>> import SwapiLib.Resource.Film
   >>> showt (Producer "George Lucas")
   "Georce Lucas"
   -}
@@ -359,7 +359,7 @@ newtype Director = Director Text
   __Example__
 
   >>> import TextShow
-  >>> import SwapiClient.Resource.Film
+  >>> import SwapiLib.Resource.Film
   >>> showt (Director "George Lucas")
   "Georce Lucas"
   -}
@@ -381,7 +381,7 @@ newtype OpeningCrawl = OpeningCrawl Text
   __Example__
 
   >>> import TextShow
-  >>> import SwapiClient.Resource.Film
+  >>> import SwapiLib.Resource.Film
   >>> showt (OpeningCrawl "Yeah, nah, not gonna put the full crawl here lol.")
   "Yeah, nah, not gonna put the full crawl here lol."
   -}

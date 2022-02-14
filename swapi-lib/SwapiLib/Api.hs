@@ -1,6 +1,6 @@
 {-# LANGUAGE DataKinds #-}
 
-module SwapiClient.Api
+module SwapiLib.Api
   ( listPeople
   , listFilms
   , listStarships
@@ -57,16 +57,16 @@ import TextShow                      qualified as Text.Show (showt)
 
 --------------------------------------------------------------------------------
 
-import SwapiClient.Id
-import SwapiClient.Internal.Page     (Index, Page (NoPage, Page))
-import SwapiClient.Internal.Resource (Resource (FilmResource, PeopleResource, PlanetResource, SpeciesResource, StarshipResource, VehicleResource))
-import SwapiClient.Internal.Resource qualified as Resource (resourceToUrl)
-import SwapiClient.Resource.Film
-import SwapiClient.Resource.Person   (Person)
-import SwapiClient.Resource.Planet   (Planet)
-import SwapiClient.Resource.Species  (SpeciesType)
-import SwapiClient.Resource.Starship
-import SwapiClient.Resource.Vehicle  (Vehicle)
+import SwapiLib.Id
+import SwapiLib.Internal.Page     (Index, Page (NoPage, Page))
+import SwapiLib.Internal.Resource (Resource (FilmResource, PeopleResource, PlanetResource, SpeciesResource, StarshipResource, VehicleResource))
+import SwapiLib.Internal.Resource qualified as Resource (resourceToUrl)
+import SwapiLib.Resource.Film
+import SwapiLib.Resource.Person   (Person)
+import SwapiLib.Resource.Planet   (Planet)
+import SwapiLib.Resource.Species  (SpeciesType)
+import SwapiLib.Resource.Starship
+import SwapiLib.Resource.Vehicle  (Vehicle)
 
 --------------------------------------------------------------------------------
 -- People

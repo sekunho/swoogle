@@ -14,7 +14,7 @@ import Test.Tasty.Golden         qualified as Tasty.Golden (goldenVsFile)
 
 --------------------------------------------------------------------------------
 
-import SwapiClient.Resource.Root (Root (Root, rFilms, rPeople, rPlanets, rSpecies, rStarships, rVehicles))
+import SwapiLib.Resource.Root (Root (Root, rFilms, rPeople, rPlanets, rSpecies, rStarships, rVehicles))
 
 --------------------------------------------------------------------------------
 

@@ -1,4 +1,4 @@
-module SwapiClient.Resource.Vehicle
+module SwapiLib.Resource.Vehicle
   ( VehicleName (VehicleName)
   , VehicleModel (VehicleModel)
   , VehicleLength (VehicleLength)
@@ -55,9 +55,9 @@ import Data.Time                     (UTCTime)
 
 --------------------------------------------------------------------------------
 
-import SwapiClient.Id                (FilmId, PersonId, VehicleId)
-import SwapiClient.Internal.Page     (Index (Index))
-import SwapiClient.Resource.Starship (CargoCapacity, Consumable, Cost,
+import SwapiLib.Id                (FilmId, PersonId, VehicleId)
+import SwapiLib.Internal.Page     (Index (Index))
+import SwapiLib.Resource.Starship (CargoCapacity, Consumable, Cost,
                                       Manufacturer, MaxAtmospheringSpeed,
                                       PassengerLimit, RequiredCrew,
                                       Wrapped (Wrapped))

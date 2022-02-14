@@ -11,8 +11,8 @@
 with SWAPI ([Star Wars API](https://swapi.dev)).
 
 ``` haskell
-import qualified SwapiClient.Api as Api (getFilm)
-import SwapiClient.Id (FilmId (FilmId))
+import qualified SwapiLib.Api as Api (getFilm)
+import SwapiLib.Id (FilmId (FilmId))
 
 main :: IO ()
 main = do
@@ -88,6 +88,12 @@ when I'm done. Subscribe to stay tuned! :)
   - [x] Search
   - [x] View
 - [x] Planet
+
+## Features
+
+- [x] Client library
+- [ ] TUI
+- [ ] Web client
 
 ## List of improvements for swapi.dev
 

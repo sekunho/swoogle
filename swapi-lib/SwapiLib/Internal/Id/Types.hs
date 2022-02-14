@@ -1,4 +1,4 @@
-module SwapiClient.Internal.Id.Types where
+module SwapiLib.Internal.Id.Types where
 
 --------------------------------------------------------------------------------
 -- External
@@ -16,9 +16,9 @@ import TextShow                           qualified as Text.Show (showt)
 --------------------------------------------------------------------------------
 -- Internal
 
-import SwapiClient.Internal.UrlData       qualified as UrlData (getId,
+import SwapiLib.Internal.UrlData       qualified as UrlData (getId,
                                                                 toUrlText)
-import SwapiClient.Internal.UrlData.Types (UrlData (UrlData))
+import SwapiLib.Internal.UrlData.Types (UrlData (UrlData))
 
 --------------------------------------------------------------------------------
 -- Data types

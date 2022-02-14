@@ -1,6 +1,6 @@
 {-# LANGUAGE DataKinds #-}
 
-module SwapiClient.Internal.Url
+module SwapiLib.Internal.Url
   ( baseUrl
   , swapiBin
   , swapiDomain

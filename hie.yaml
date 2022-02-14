@@ -1,10 +1,13 @@
 cradle:
   cabal:
     - path: "src"
-      component: "lib:swapi-client"
+      component: "lib:swapi-lib"
 
-    - path: "app/Main.hs"
-      component: "swapi-client:exe:swapi-client"
+    - path: "swapi-tui/Main.hs"
+      component: "swapi:exe:swapi-tui"
+
+    - path: "swapi-web/Main.hs"
+     component: "swapi:exe:swapi-web"
 
     - path: "test"
-      component: "swapi-client:test:swapi-client-test"
+      component: "swapi:test:swapi-lib-test"

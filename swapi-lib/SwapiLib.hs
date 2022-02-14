@@ -11,7 +11,7 @@ Maintainer: Sek Un <sekun@hey.com>
 
 You can also tinker around with it in GHCI.
 
->>> :module + SwapiClient
+>>> :module + SwapiLib
 >>> eitherSearchPeople "sekun" (Page 1)
 Right (Index {iCount = 0, iNextPage = NoPage, iPreviousPage = NoPage, iResults = []})
 
@@ -19,10 +19,10 @@ Right (Index {iCount = 0, iNextPage = NoPage, iPreviousPage = NoPage, iResults =
 
 == Usage
 
-The following examples assume you've imported `SwapiClient` like so:
+The following examples assume you've imported `SwapiLib` like so:
 
 @
-import SwapiClient
+import SwapiLib
 -- ^ Imports the query functions, and common data types needed to perform a query.
 @
 
@@ -79,8 +79,8 @@ main = do
 @
 
 @
-import SwapiClient
-import SwapiClient.Resource.Person
+import SwapiLib
+import SwapiLib.Resource.Person
 -- ^ Brings in `pHomeworldId` to scope
 
 -- | Prints the homeworld data of a character
@@ -128,7 +128,7 @@ to use the API calls. If you need something more specific like a resource data
 constructor, or some of its fields, then you'd have to import the module directly.
 
 -}
-module SwapiClient (
+module SwapiLib (
   module Id,
   module Api,
   module Page,
@@ -141,6 +141,6 @@ module SwapiClient (
 -- TODO: Fix doctests
 -- TODO: Move internal modules to `Internal.*`
 
-import SwapiClient.Api           as Api
-import SwapiClient.Id            as Id
-import SwapiClient.Internal.Page as Page
+import SwapiLib.Api           as Api
+import SwapiLib.Id            as Id
+import SwapiLib.Internal.Page as Page

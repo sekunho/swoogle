@@ -1,6 +1,6 @@
 {-# LANGUAGE DataKinds #-}
 
-module SwapiClient.Internal.Resource where
+module SwapiLib.Internal.Resource where
 
 --------------------------------------------------------------------------------
 
@@ -11,7 +11,7 @@ import Network.HTTP.Req         (Scheme (Https), Url, (/:))
 
 --------------------------------------------------------------------------------
 
-import SwapiClient.Internal.Url qualified as Url (baseUrl, swapiBin)
+import SwapiLib.Internal.Url qualified as Url (baseUrl, swapiBin)
 
 --------------------------------------------------------------------------------
 

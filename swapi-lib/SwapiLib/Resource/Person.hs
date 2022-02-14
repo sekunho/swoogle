@@ -45,7 +45,7 @@ Let's say you have this JSON response from
 And bind it to `sampleJSON`. Let's try decoding it!
 
 >>> import Data.Aeson
->>> import SwapiClient.Resource.Person
+>>> import SwapiLib.Resource.Person
 >>> decode @Person sampleJSON
 Person
 { pName = PersonName "Luke Skywalker"
@@ -70,7 +70,7 @@ Person
    `SkinColor`, etc.
 2. The JSON object's `url` field was parsed into a `PersonId`, since we won't
    deal with the URL itself to communicate with the API. Less error-prone this
-   way. See `SwapiClient.Api` on how to communicate with @https://swapi.dev@.
+   way. See `SwapiLib.Api` on how to communicate with @https://swapi.dev@.
 3. Similar to the previous point, all IDs were parsed into their own ID types.
 
 __Encoding `Person` to a JSON object__
@@ -80,7 +80,7 @@ JSON object. Using the above `Person` record, let's assume we bound it to
 `personA`.
 
 >>> import Data.Aeson
->>> import SwapiClient.Resource.Person
+>>> import SwapiLib.Resource.Person
 >>> encode personA
 {
   "birth_year": "19.0BBY",
@@ -117,7 +117,7 @@ JSON object. Using the above `Person` record, let's assume we bound it to
 The result from this is of course filled with @\@ to escape a lot of symbols. I
 removed it to make it more readable, but do keep this in mind.
 -}
-module SwapiClient.Resource.Person
+module SwapiLib.Resource.Person
   ( BirthYear (BBY, ABY, UnknownBirthYear)
   , Height (Height, UnknownHeight)
   , Mass (Mass, UnknownMass)
@@ -159,12 +159,12 @@ import Data.Time                 (UTCTime)
 
 --------------------------------------------------------------------------------
 
-import SwapiClient.Color         (EyeColor, HairColor, SkinColor)
+import SwapiLib.Color         (EyeColor, HairColor, SkinColor)
 
-import SwapiClient.Id            (FilmId, PersonId, PlanetId, SpeciesId,
+import SwapiLib.Id            (FilmId, PersonId, PlanetId, SpeciesId,
                                   StarshipId, VehicleId)
 
-import SwapiClient.Internal.Page (Index (Index, iCount, iNextPage, iPreviousPage, iResults))
+import SwapiLib.Internal.Page (Index (Index, iCount, iNextPage, iPreviousPage, iResults))
 
 --------------------------------------------------------------------------------
 -- Data types
