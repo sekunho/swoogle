@@ -2,12 +2,20 @@
   <img src="swapi-haskell.svg" />
 </p>
 
-# SWAPI Client
+# swapi
 
 [![Haskell-CI](https://github.com/sekunho/swapi/actions/workflows/haskell-ci.yml/badge.svg?branch=main)](https://github.com/sekunho/swapi/actions/workflows/haskell-ci.yml)
 [![License: MIT](https://img.shields.io/badge/license-BSD--3--Clause-yellow)](https://opensource.org/licenses/BSD-3-Clause)
 
-`swapi-client` is a client library (without much bells and whistles) to interact
+## In this package
+
+- [x] Client library `swapi-lib`
+- [ ] Web client `swapi-web` (WIP)
+- [ ] TUI `swapi-tui` (WIP)
+
+### `swapi-lib`
+
+`swapi-lib` is a client library (without much bells and whistles) to interact
 with SWAPI ([Star Wars API](https://swapi.dev)).
 
 ``` haskell
@@ -89,11 +97,6 @@ when I'm done. Subscribe to stay tuned! :)
   - [x] View
 - [x] Planet
 
-## Features
-
-- [x] Client library
-- [ ] TUI
-- [ ] Web client
 
 ## List of improvements for swapi.dev
 
