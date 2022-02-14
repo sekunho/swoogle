@@ -36,7 +36,29 @@ source-repository head
   type: git
   location: https://github.com/sekunho/swapi.git
 
+-- Some day GHC2021 will come. Or better yet, Haskell 202x Language Report.
+-- One can dream...
+common default-extensions
+  default-extensions:
+     OverloadedStrings
+   , InstanceSigs
+   , TypeApplications
+   , StrictData
+   , LambdaCase
+   , KindSignatures
+   , NoStarIsType
+   , ImportQualifiedPost
+   , ExplicitForAll
+   , DerivingStrategies
+   , GeneralizedNewtypeDeriving
+   , DerivingVia
+   , ScopedTypeVariables
+   , FlexibleInstances
+   , FlexibleContexts
+   , StandaloneKindSignatures
+
 library swapi-lib
+    import: default-extensions
     exposed-modules:
         SwapiLib
       , SwapiLib.Internal.Url
@@ -61,23 +83,6 @@ library swapi-lib
 
     hs-source-dirs:     swapi-lib
     default-language:   Haskell2010
-    default-extensions: OverloadedStrings
-                      , InstanceSigs
-                      , TypeApplications
-                      , StrictData
-                      , LambdaCase
-                      , KindSignatures
-                      , NoStarIsType
-                      , ImportQualifiedPost
-                      , ExplicitForAll
-                      , DerivingStrategies
-                      , GeneralizedNewtypeDeriving
-                      , DerivingVia
-                      , ScopedTypeVariables
-                      , FlexibleInstances
-                      , FlexibleContexts
-                      , StandaloneKindSignatures
-
 
     ghc-options:      -Wall
 
@@ -94,6 +99,7 @@ library swapi-lib
       , containers >= 0.6.5 && <0.6.6
 
 executable swapi-tui
+    import: default-extensions
     build-depends:
         base ^>=4.14.3.0
       , swapi-lib >= 0.1 && <0.2
@@ -104,24 +110,8 @@ executable swapi-tui
     ghc-options:      -Wall
     default-language: Haskell2010
 
-    default-extensions: OverloadedStrings
-                      , InstanceSigs
-                      , TypeApplications
-                      , StrictData
-                      , LambdaCase
-                      , KindSignatures
-                      , NoStarIsType
-                      , ImportQualifiedPost
-                      , ExplicitForAll
-                      , DerivingStrategies
-                      , GeneralizedNewtypeDeriving
-                      , DerivingVia
-                      , ScopedTypeVariables
-                      , FlexibleInstances
-                      , FlexibleContexts
-                      , StandaloneKindSignatures
-
 executable swapi-web
+    import: default-extensions
     build-depends:
        base ^>= 4.14.3.0
      , swapi-lib == 0.1.0.0
@@ -133,28 +123,11 @@ executable swapi-web
     default-language: Haskell2010
 
 test-suite swapi-lib-test
+    import: default-extensions
     type:               exitcode-stdio-1.0
     main-is:            Driver.hs
     hs-source-dirs:     test
     default-language:   Haskell2010
-
-    default-extensions:
-        OverloadedStrings
-      , InstanceSigs
-      , TypeApplications
-      , StrictData
-      , LambdaCase
-      , KindSignatures
-      , NoStarIsType
-      , ImportQualifiedPost
-      , ExplicitForAll
-      , DerivingStrategies
-      , GeneralizedNewtypeDeriving
-      , DerivingVia
-      , ScopedTypeVariables
-      , FlexibleInstances
-      , FlexibleContexts
-      , StandaloneKindSignatures
 
     other-modules:
         RootTest
