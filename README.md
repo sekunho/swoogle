@@ -22,7 +22,10 @@
 watchexec --restart --exts css,hs,html -- cabal run swapi:exe:swapi-web
 
 # Have tailwind automatically parse and purge classes
-tailwindcss --input swapi-web/assets/app.css --output swapi-web/priv/static/assets/app.css --watch
+tailwindcss --input swapi-web/assets/app.css \
+  --output swapi-web/priv/static/assets/app.css \
+  --config swapi-web/assets/tailwind.config.js \
+  --watch
 ```
 
 ### `swapi-lib`
