@@ -19,7 +19,7 @@ root content = doctypehtml_ $ do
     [ makeAttribute "rel" "stylesheet"
     , makeAttribute "href" "/assets/app.css"
     ]
-  title_ "SWOOGLE"
+  title_ "swoogle: A Star Wars search engine"
   body_
     [class_ "bg-gray-50 dark:bg-su-dark-bg"]
     (main_
