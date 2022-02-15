@@ -3,8 +3,8 @@ cradle:
     - path: "swapi-lib"
       component: "swapi:lib:swapi-lib"
 
-    - path: "swoogle-tui/Main.hs"
-      component: "swapi:exe:swoogle-tui"
+#    - path: "swoogle-tui/Main.hs"
+#      component: "swapi:exe:swoogle-tui"
 
     - path: "swoogle/Main.hs"
       component: "swapi:exe:swoogle"
