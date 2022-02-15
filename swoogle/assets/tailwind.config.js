@@ -2,7 +2,7 @@
 // https://tailwindcss.com/docs/configuration
 module.exports = {
   content: [
-    './swapi-web/SwapiWeb/Views/**/*.hs'
+    './swoogle/Swoogle/Views/**/*.hs'
   ],
   theme: {
     extend: {

@@ -1,6 +1,6 @@
 -- | Contains the default layouts. I guess the outer styles or something idk how
 -- to explain this lol.
-module SwapiWeb.Views.Layout where
+module Swoogle.Views.Layout where
 
 -- TODO: Explicit imports
 import Lucid
@@ -19,5 +19,11 @@ root content = doctypehtml_ $ do
     [ makeAttribute "rel" "stylesheet"
     , makeAttribute "href" "/assets/app.css"
     ]
-  title_ "Star Wars Wiki"
-  content
+  title_ "SWOOGLE"
+  body_
+    [class_ "bg-gray-50 dark:bg-su-dark-bg"]
+    (main_
+      [class_ "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"]
+      (div_
+        [class_ "max-w-4xl mx-auto"]
+        content))

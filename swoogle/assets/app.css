@@ -1,0 +1,86 @@
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
+
+@layer base {
+  /* Vollkorn */
+  @font-face {
+    font-family: 'Vollkorn';
+    font-weight: normal;
+    src: local('Vollkorn'), url(/fonts/Vollkorn-Regular.ttf);
+    font-display: swap;
+  }
+
+  @font-face {
+    font-family: 'Vollkorn';
+    font-weight: medium;
+    src: local('Vollkorn'), url(/fonts/Vollkorn-Medium.ttf);
+    font-display: swap;
+  }
+
+  @font-face {
+    font-family: 'Vollkorn';
+    font-weight: semibold;
+    src: local('Vollkorn'), url(/fonts/Vollkorn-SemiBold.ttf);
+    font-display: swap;
+  }
+
+  @font-face {
+    font-family: 'Vollkorn';
+    font-weight: bold;
+    src: local('Vollkorn'), url(/fonts/Vollkorn-Bold.ttf);
+    font-display: swap;
+  }
+
+  /* Inter */
+  @font-face {
+    font-family: 'Inter';
+    font-weight: 200;
+    src: local('Inter'), url(/fonts/Inter-ExtraLight.ttf);
+    font-display: swap;
+  }
+
+  @font-face {
+    font-family: 'Inter';
+    font-weight: 300;
+    src: local('Inter'), url(/fonts/Inter-Light.ttf);
+    font-display: swap;
+  }
+
+  @font-face {
+    font-family: 'Inter';
+    font-weight: 400;
+    src: local('Inter'), url(/fonts/Inter-Regular.ttf);
+    font-display: swap;
+  }
+
+  @font-face {
+    font-family: 'Inter';
+    font-weight: medium;
+    src: local('Inter'), url(/fonts/Inter-Medium.ttf);
+    font-display: swap;
+  }
+
+  @font-face {
+    font-family: 'Inter';
+    font-weight: semibold;
+    src: local('Inter'), url(/fonts/Inter-SemiBold.ttf);
+    font-display: swap;
+  }
+
+  @font-face {
+    font-family: 'Inter';
+    font-weight: bold;
+    src: local('Inter'), url(/fonts/Inter-Bold.ttf);
+    font-display: swap;
+  }
+}
+
+.debug-viewport {
+  @apply
+    bg-red-100/[0.3]
+    sm:bg-blue-100/[0.3]
+    md:bg-green-100/[0.3]
+    lg:bg-yellow-100/[0.3]
+    xl:bg-gray-100/[0.3]
+}
