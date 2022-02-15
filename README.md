@@ -9,17 +9,22 @@
 
 ## In this package
 
-- [x] Client library `swapi-lib`
-- [ ] Web client `swapi-web` (WIP)
-- [ ] TUI `swapi-tui` (WIP)
+- `/swapi-lib`: Contains the necessary functions and data types for querying swapi.dev
+- `/swoogle`: Contains the GUI web search client (WIP)
+- `/swoogle-tui`: Contains the TUI search client (WIP)
 
-### `swapi-web`
+## swoogle
 
-`swapi-web` is a web client that uses the Star Wars API.
+<p align="center">
+  <img src="swoogle.png" />
+</p>
+
+
+`swoogle` is a search client that uses the Star Wars API, specifically `swapi-lib`.
 
 ``` sh
 # Restart web server on change
-watchexec --restart --exts css,hs,html -- cabal run swapi:exe:swapi-web
+watchexec --restart --exts css,hs,html -- cabal run swpai:exe:swoogle
 
 # Have tailwind automatically parse and purge classes
 tailwindcss --input swoogle/assets/app.css \
@@ -28,7 +33,7 @@ tailwindcss --input swoogle/assets/app.css \
   --watch
 ```
 
-### `swapi-lib`
+## `swapi-lib`
 
 `swapi-lib` is a client library (without much bells and whistles) to interact
 with SWAPI ([Star Wars API](https://swapi.dev)).

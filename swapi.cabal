@@ -98,7 +98,7 @@ library swapi-lib
       , time >= 1.2 && <1.13
       , containers >= 0.6.5 && <0.6.6
 
-executable swapi-tui
+executable swoogle-tui
     import: default-extensions
     build-depends:
         base ^>=4.14.3.0
@@ -106,7 +106,7 @@ executable swapi-tui
       , brick == 0.67
 
     main-is:          Main.hs
-    hs-source-dirs:   swapi-tui
+    hs-source-dirs:   swoogle-tui
     ghc-options:      -Wall
     default-language: Haskell2010
 
