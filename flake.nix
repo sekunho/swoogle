@@ -16,9 +16,13 @@
         lib = nixpkgs.lib;
         unstable = unstablepkgs.legacyPackages.${system};
       in {
+        # Loaded automatically into shell by `direnv` + `nix-direnv`. You could
+        # also use `nix develop` if you want.
+        #
+        # `nix-direnv`: https://github.com/nix-community/nix-direnv
         devShell = pkgs.mkShell rec {
           buildInputs = [
-            pkgs.ghc                             # Haskell compiler
+            pkgs.ghc                             # Glorious Glasgow Haskell compiler
 
             # Tooling
             pkgs.cabal-install                   # Build tool
@@ -31,10 +35,13 @@
             # Front-end
             unstable.nodePackages.tailwindcss    # Styling with utility classes
 
+            # Deploy
+            pkgs.flyctl                          # Fly's CLI for deploy
+
             # Misc.
             pkgs.watchexec                       # Watch changes and execute something
-            pkgs.zlib                            # I forgot why this was here lmao
-          ];
+            pkgs.zlib
+            ];
 
           LD_LIBRARY_PATH = lib.makeLibraryPath buildInputs;
         };
