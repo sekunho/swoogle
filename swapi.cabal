@@ -87,23 +87,23 @@ library swapi-lib
     ghc-options:      -Wall
 
     build-depends:
-        base >= 4.14.3.0 && < 5
-      , aeson >=2.0 && <2.1
-      , bytestring >= 0.9.2 && <0.12
-      , req >=3.9 && <3.10
-      , containers >=0.6 && <0.7
-      , text >=1.2 && <1.3
-      , scientific >=0.3.6.2 && <0.4
-      , text-show >= 3.9.3 && <3.10
-      , time >= 1.2 && <1.13
-      , containers >= 0.6.5 && <0.6.6
+        base         >= 4.7 && <5
+      , aeson
+      , bytestring
+      , containers
+      , unordered-containers
+      , text
+      , scientific
+      , time
+      , req
+      , text-show
 
 executable swoogle-tui
     import: default-extensions
     build-depends:
-        base >= 4.14.3.0 && < 5
-      , swapi-lib >= 0.1 && <0.2
-      , brick == 0.67
+        base >= 4.7 && <5
+      , swapi-lib
+      , brick
 
     main-is:          Main.hs
     hs-source-dirs:   swoogle-tui
@@ -113,11 +113,11 @@ executable swoogle-tui
 executable swoogle
     import: default-extensions
     build-depends:
-       base >= 4.14.3.0 && < 5
-     , swapi-lib == 0.1.0.0
-     , scotty == 0.12
-     , lucid >= 2.11.0 && < 2.12.0
-     , text >=1.2 && <1.3
+       base      >= 4.7 && <5
+     , swapi-lib
+     , text
+     , lucid
+     , scotty
 
     main-is: Main.hs
     hs-source-dirs: swoogle
@@ -129,7 +129,8 @@ executable swoogle
 
     -- I got the ghc options from here:
     -- https://gilmi.me/blog/post/2020/12/05/scotty-bulletin-board
-    ghc-options: -static -optl-static -optl-pthread -fPIC -threaded -rtsopts -with-rtsopts=-N
+    -- ghc-options: -static -optl-static -optl-pthread -fPIC -threaded -rtsopts -with-rtsopts=-N
+
     default-language: Haskell2010
 
 test-suite swapi-lib-test
@@ -154,19 +155,19 @@ test-suite swapi-lib-test
       -threaded -rtsopts -with-rtsopts=-N -Wall
 
     build-depends:
-        base >= 4.14.3.0 && < 5
-      , aeson >=2.0 && <2.1
-      , bytestring >=0.9.2 && <0.12
-      , containers >=0.6 && <0.7
-      , text >=1.2 && <1.3
-      , scientific >=0.3.6.2 && <0.4
+        base >= 4.7 && <5
+      , aeson
+      , bytestring
+      , containers
+      , text
+      , scientific
       , swapi-lib
-      , tasty >=1.4 && <1.5
-      , tasty-golden >=2.3 && <2.4
-      , tasty-hunit >=0.10 && <0.11
-      , hspec >=2.9 && <2.10
-      , tasty-hspec >=1.2 && <1.3
-      , tasty-discover >=4.2 && < 4.3
+      , tasty
+      , tasty-golden
+      , tasty-hunit
+      , hspec
+      , tasty-hspec
+      , tasty-discover
 
     build-tool-depends:
       tasty-discover:tasty-discover

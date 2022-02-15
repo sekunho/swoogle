@@ -25,7 +25,12 @@
             pkgs.ghc                             # Glorious Glasgow Haskell compiler
 
             # Tooling
-            pkgs.cabal-install                   # Build tool
+            #
+
+            # I had to wrestle with `cabal`'s resolver and so I decided to switch.
+            # I will look into using `haskell.nix`, but only when I get my fiber
+            # internet back.
+            pkgs.stack                           # Build tool
             pkgs.haskell-language-server         # Haskell LSP
             pkgs.hlint                           # Linter
             pkgs.haskellPackages.implicit-hie    # To deal with HLS + cabal oddities
@@ -40,6 +45,16 @@
 
             # Misc.
             pkgs.watchexec                       # Watch changes and execute something
+
+            # Set `~/.stack/config.yaml` with this:
+            # ```yaml
+            #   nix:
+            #     enable: true
+            #     packages: [zlib.dev, zlib.out]
+            # ```
+            #
+            # Otherwise it'll complain about `zlib` while building.
+            # https://github.com/commercialhaskell/stack/issues/2975
             pkgs.zlib
             ];
 

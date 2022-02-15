@@ -6,3 +6,5 @@ package swapi-web
 
 package swapi-tui
   tests: true
+
+packages: .
