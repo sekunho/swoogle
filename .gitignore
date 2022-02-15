@@ -31,4 +31,4 @@ cabal.sandbox.config
 .direnv/
 result
 
-./swapi-web/priv/static/assets/*
+./swoogle/priv/static/assets/*
