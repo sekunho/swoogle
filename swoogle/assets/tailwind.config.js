@@ -2,7 +2,8 @@
 // https://tailwindcss.com/docs/configuration
 module.exports = {
   content: [
-    './swoogle/Swoogle/Views/**/*.hs'
+    './swoogle/Swoogle/Views/**/*.hs',
+    './swoogle/Swoogle/Components/**/*.hs'
   ],
   theme: {
     extend: {

@@ -572,26 +572,6 @@ Ensure the default browser behavior of the `hidden` attribute.
   --tw-backdrop-sepia:  ;
 }
 
-.absolute {
-  position: absolute;
-}
-
-.relative {
-  position: relative;
-}
-
-.right-0 {
-  right: 0px;
-}
-
-.bottom-1\/2 {
-  bottom: 50%;
-}
-
-.bottom-0 {
-  bottom: 0px;
-}
-
 .mx-auto {
   margin-left: auto;
   margin-right: auto;
@@ -609,10 +589,6 @@ Ensure the default browser behavior of the `hidden` attribute.
   height: 100vh;
 }
 
-.h-64 {
-  height: 16rem;
-}
-
 .h-6 {
   height: 1.5rem;
 }
@@ -623,14 +599,6 @@ Ensure the default browser behavior of the `hidden` attribute.
 
 .w-2\/3 {
   width: 66.666667%;
-}
-
-.w-4\/5 {
-  width: 80%;
-}
-
-.w-1\/5 {
-  width: 20%;
 }
 
 .w-6 {
@@ -661,10 +629,6 @@ Ensure the default browser behavior of the `hidden` attribute.
   gap: 2rem;
 }
 
-.gap-4 {
-  gap: 1rem;
-}
-
 .gap-2 {
   gap: 0.5rem;
 }
@@ -688,8 +652,8 @@ Ensure the default browser behavior of the `hidden` attribute.
   background-color: rgb(255 255 255 / var(--tw-bg-opacity));
 }
 
-.bg-su-fg\/\[0\.5\] {
-  background-color: rgb(27 23 23 / 0.5);
+.bg-inherit {
+  background-color: inherit;
 }
 
 .bg-gray-50 {
@@ -697,12 +661,12 @@ Ensure the default browser behavior of the `hidden` attribute.
   background-color: rgb(249 250 251 / var(--tw-bg-opacity));
 }
 
-.bg-transparent {
-  background-color: transparent;
+.p-2\.5 {
+  padding: 0.625rem;
 }
 
-.bg-inherit {
-  background-color: inherit;
+.p-2 {
+  padding: 0.5rem;
 }
 
 .py-2\.5 {
@@ -730,6 +694,11 @@ Ensure the default browser behavior of the `hidden` attribute.
   padding-right: 1rem;
 }
 
+.py-4 {
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+}
+
 .text-center {
   text-align: center;
 }
@@ -742,9 +711,9 @@ Ensure the default browser behavior of the `hidden` attribute.
   font-family: Inter, Helvetica, Arial, sans-serif;
 }
 
-.text-4xl {
-  font-size: 2.25rem;
-  line-height: 2.5rem;
+.text-7xl {
+  font-size: 4.5rem;
+  line-height: 1;
 }
 
 .text-xl {
@@ -752,17 +721,29 @@ Ensure the default browser behavior of the `hidden` attribute.
   line-height: 1.75rem;
 }
 
-.text-2xl {
-  font-size: 1.5rem;
-  line-height: 2rem;
+.text-4xl {
+  font-size: 2.25rem;
+  line-height: 2.5rem;
 }
 
-.font-extralight {
-  font-weight: 200;
+.text-5xl {
+  font-size: 3rem;
+  line-height: 1;
 }
 
-.font-normal {
-  font-weight: 400;
+.text-base {
+  font-size: 1rem;
+  line-height: 1.5rem;
+}
+
+.text-sm {
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+}
+
+.text-lg {
+  font-size: 1.125rem;
+  line-height: 1.75rem;
 }
 
 .font-light {
@@ -779,25 +760,9 @@ Ensure the default browser behavior of the `hidden` attribute.
   color: rgb(234 179 8 / var(--tw-text-opacity));
 }
 
-.text-su-accent-1 {
-  --tw-text-opacity: 1;
-  color: rgb(206 18 18 / var(--tw-text-opacity));
-}
-
-.text-white {
-  --tw-text-opacity: 1;
-  color: rgb(255 255 255 / var(--tw-text-opacity));
-}
-
 .shadow {
   --tw-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
   --tw-shadow-colored: 0 1px 3px 0 var(--tw-shadow-color), 0 1px 2px -1px var(--tw-shadow-color);
-  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
-}
-
-.shadow-xl {
-  --tw-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
-  --tw-shadow-colored: 0 20px 25px -5px var(--tw-shadow-color), 0 8px 10px -6px var(--tw-shadow-color);
   box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
 }
 
@@ -834,31 +799,19 @@ Ensure the default browser behavior of the `hidden` attribute.
   }
 }
 
-.hover\:bg-white\/\[0\.2\]:hover {
-  background-color: rgb(255 255 255 / 0.2);
-}
-
 .hover\:bg-white\/\[0\.1\]:hover {
   background-color: rgb(255 255 255 / 0.1);
 }
 
-.hover\:bg-su-bg:hover {
-  --tw-bg-opacity: 1;
-  background-color: rgb(238 235 221 / var(--tw-bg-opacity));
-}
-
-.hover\:bg-su-dark-bg\/\[0\.1\]:hover {
-  background-color: rgb(27 23 23 / 0.1);
+.hover\:text-yellow-300:hover {
+  --tw-text-opacity: 1;
+  color: rgb(253 224 71 / var(--tw-text-opacity));
 }
 
 @media (prefers-color-scheme: dark) {
   .dark\:bg-su-dark-bg-alt {
     --tw-bg-opacity: 1;
     background-color: rgb(46 39 39 / var(--tw-bg-opacity));
-  }
-
-  .dark\:bg-su-dark-bg-alt\/\[0\.5\] {
-    background-color: rgb(46 39 39 / 0.5);
   }
 
   .dark\:bg-su-dark-bg {
@@ -878,6 +831,10 @@ Ensure the default browser behavior of the `hidden` attribute.
 }
 
 @media (min-width: 640px) {
+  .sm\:w-2\/3 {
+    width: 66.666667%;
+  }
+
   .sm\:px-6 {
     padding-left: 1.5rem;
     padding-right: 1.5rem;
@@ -887,12 +844,10 @@ Ensure the default browser behavior of the `hidden` attribute.
     font-size: 3.75rem;
     line-height: 1;
   }
-}
 
-@media (min-width: 768px) {
-  .md\:text-7xl {
-    font-size: 4.5rem;
-    line-height: 1;
+  .sm\:text-base {
+    font-size: 1rem;
+    line-height: 1.5rem;
   }
 }
 
