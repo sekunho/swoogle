@@ -27,9 +27,9 @@
 watchexec --restart --exts css,hs,html -- stack exec swoogle
 
 # Have tailwind automatically parse and purge classes
-tailwindcss --input swoogle/assets/app.css \
-  --output swoogle/priv/static/assets/app.css \
-  --config swoogle/assets/tailwind.config.js \
+tailwindcss --input assets/app.css \
+  --output priv/static/assets/app.css \
+  --config assets/tailwind.config.js \
   --watch
 ```
 

@@ -25,4 +25,4 @@ swapiWeb = do
 
   Scotty.get "/people" (Scotty.html (Lucid.renderText (Layout.root ("123 < 456" :: Html ()))))
 
-  where staticPath = "swoogle/priv/static/"
+  where staticPath = "priv/static/"
