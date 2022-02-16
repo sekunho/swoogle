@@ -31,4 +31,4 @@ cabal.sandbox.config
 .direnv/
 result
 
-swoogle/priv/static/assets/*
+priv/static/assets/*
