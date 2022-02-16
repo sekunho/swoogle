@@ -24,9 +24,6 @@
           buildInputs = [
             pkgs.ghc                             # Glorious Glasgow Haskell compiler
 
-            # Tooling
-            #
-
             # I had to wrestle with `cabal`'s resolver and so I decided to switch.
             # I will look into using `haskell.nix`, but only when I get my fiber
             # internet back.

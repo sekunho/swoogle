@@ -1,13 +1,13 @@
-name: Haskell Deploy
+name: Deploy
 on:
   push:
-#    branches:
-#      - main
+    branches:
+      - main
 
-#  workflow_run:
-#    workflows: ["Haskell-CI"]
-#    types:
-#      - completed
+  workflow_run:
+    workflows: ["Haskell-CI"]
+    types:
+      - completed
 
 env:
   TAILWIND_VERSION: 3.0.18
@@ -17,7 +17,7 @@ jobs:
   deploy-swoogle:
     name: Deploy swoogle to Fly.io
     runs-on: ubuntu-latest
-    # if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
 
     steps:
       - name: Checkout repo
