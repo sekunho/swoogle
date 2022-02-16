@@ -1,0 +1,50 @@
+# Reference: https://kodimensional.dev/github-actions
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-test:
+    name: stack ${{ matrix.stack }} / ghc ${{ matrix.ghc }}
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        stack: ["2.7.3"]
+        ghc: ["8.10.7"]
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+
+      - name: Setup GHC ${{ matrix.ghc }} and Stack ${{ matrix.stack }}
+        uses: haskell/actions/setup@v1
+        with:
+          ghc-version: ${{ matrix.ghc }}
+          enable-stack: true
+          stack-version: ${{ matrix.stack }}
+
+      - uses: actions/cache@v2
+        name: Cache ~/.stack
+        with:
+          path: ~/.stack
+          key: ${{ runner.os }}-${{ matrix.ghc }}-stack-${{ matrix.stack }}
+
+      # TODO: Include benchmarks if ever I do end up writing some
+      # --bench --no-run-benchmarks
+      - name: Install dependencies
+        run: |
+          stack build --system-ghc --test --no-run-tests --only-dependencies
+
+      # TODO: Include benchmarks if ever I do end up writing some
+      # --bench --no-run-benchmarks
+      - name: Build
+        run: |
+          stack build --system-ghc --test --no-run-tests
+
+      - name: Test
+        run: |
+          stack test --system-ghc
