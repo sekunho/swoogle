@@ -17,6 +17,11 @@ swapiWeb = do
     (Scotty.setHeader "Content-Type" "text/css; charset=utf-8" >>
       Scotty.file (staticPath <> "assets/app.css"))
 
+  Scotty.get
+    "/assets/app.js"
+    (Scotty.setHeader "Content-Type" "application/javascript" >>
+      Scotty.file (staticPath <> "assets/app.js"))
+
   Scotty.get "/fonts/:file" (Scotty.param "file" >>= Scotty.file . (<>) (staticPath <> "fonts/"))
 
   Scotty.get "/images/:file" (Scotty.param "file" >>= Scotty.file . (<>) (staticPath <> "images/"))
@@ -25,4 +30,4 @@ swapiWeb = do
 
   Scotty.get "/people" (Scotty.html (Lucid.renderText (Layout.root ("123 < 456" :: Html ()))))
 
-  where staticPath = "priv/static/"
+  where staticPath = "./priv/static/"

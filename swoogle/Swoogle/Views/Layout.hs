@@ -19,6 +19,8 @@ root content = doctypehtml_ $ do
     [ makeAttribute "rel" "stylesheet"
     , makeAttribute "href" "/assets/app.css"
     ]
+
+  script_ [src_ "/assets/app.js"] ("" :: Html ())
   title_ "swoogle: A Star Wars search engine"
   body_
     [class_ "bg-gray-50 dark:bg-su-dark-bg"]
