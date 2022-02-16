@@ -22,7 +22,8 @@
         # `nix-direnv`: https://github.com/nix-community/nix-direnv
         devShell = pkgs.mkShell rec {
           buildInputs = [
-            pkgs.ghc                             # Glorious Glasgow Haskell compiler
+            pkgs.ghc
+            # pkgs.haskell.compiler.integer-simple.ghc8107
 
             # I had to wrestle with `cabal`'s resolver and so I decided to switch.
             # I will look into using `haskell.nix`, but only when I get my fiber

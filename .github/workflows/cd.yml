@@ -16,7 +16,8 @@ on:
 env:
   TAILWIND_VERSION: 3.0.18
   FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
-  GHC_OPTIONS: "-static -optl-static -optl-pthread -fPIC -threaded -rtsopts -with-rtsopts=-N"
+  GHC_STATIC_OPTIONS: "-static -optl-static -optl-pthread -fPIC"
+  GHC_OPTIONS: "-threaded -rtsopts -with-rtsopts=-N"
 
 jobs:
   create-release:
@@ -37,6 +38,7 @@ jobs:
           ghc-version: ${{ matrix.ghc }}
           enable-stack: true
           stack-version: ${{ matrix.stack }}
+          stack-setup-ghc: true
 
       - name: Cache ~/.stack
         uses: actions/cache@v2
@@ -46,22 +48,17 @@ jobs:
 
       - name: Install dependencies
         run: |
-          stack build --system-ghc --only-dependencies
+          stack build --only-dependencies
 
-      - name: Build
+      - name: Build swoogle
         run: |
-          stack build \
-            --docker \
-            --docker-image "utdemir/ghc-musl:v22-ghc8107" \
-            --ghc-options ' ${{ env.GHC_OPTIONS }}' \
-            --no-nix \
-            --system-ghc
+          stack build swapi:exe:swoogle --copy-bins
 
       - name: Bundle swoogle
         run: |
           mkdir artifact
           cp ~/.local/bin/swoogle ./artifact/
-          cp ~/swoogle/priv ./artifact/swoogle/priv
+          cp ./swoogle/priv ./artifact/swoogle/priv
           zip -r swoogle-linux.zip artifact
 
       - name: Create artifact
