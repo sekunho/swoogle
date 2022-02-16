@@ -28,6 +28,7 @@ RUN \
 	stack build swapi:exe:swoogle \
       --system-ghc \
       --stack-yaml=stack.yaml \
+      --no-nix \
       --copy-bins
 
 FROM alpine:3.14.0 AS tailwind
