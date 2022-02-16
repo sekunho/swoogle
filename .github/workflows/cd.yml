@@ -32,6 +32,22 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v2
 
+      - name: Download TailwindCSS standalone CLI
+        run: |
+          curl \
+            -sL https://github.com/tailwindlabs/tailwindcss/releases/download/v${{ env.TAILWIND_VERSION }}/tailwindcss-linux-x64 \
+            -o tailwindcss
+          chmod +x tailwindcss
+          ./tailwindcss --help
+
+      - name: Build and minify stylesheet
+        run: |
+          mkdir -p ./swoogle/priv/static/assets/
+          ./tailwindcss --input ./swoogle/assets/app.css \
+            --output ./swoogle/priv/static/assets/app.css \
+            --config ./swoogle/assets/tailwind.config.js \
+            --minify
+
       - name: Setup GHC ${{ matrix.ghc }} and Stack ${{ matrix.stack }}
         uses: haskell/actions/setup@v1
         with:
@@ -60,9 +76,9 @@ jobs:
 
       - name: Bundle swoogle
         run: |
-          mkdir -p artifact/swoogle/priv
+          mkdir -p artifact
           cp ~/.local/bin/swoogle ./artifact/swoogle-bin
-          cp -r ./swoogle/priv ./artifact/swoogle/priv
+          cp -r ./swoogle/priv ./artifact/swoogle/
           zip -r swoogle-linux.zip artifact
 
       - name: Create artifact
