@@ -60,68 +60,33 @@ jobs:
         run: |
           stack build --only-dependencies
 
-      - name: Build swoogle
-        run: |
-          stack build swapi:exe:swoogle --copy-bins
-
       - name: Cache stack
         uses: actions/cache@v2
         with:
           path: |
             ~/.stack
-            .stack-work
+            ./.stack-work
           key: ${{ runner.os }}-${{ matrix.ghc }}-stack-${{ hashFiles('stack.yaml.lock') }}
           restore-keys: |
             ${{ runner.os }}-stack
 
+      - name: Build swoogle
+        run: |
+          stack build swapi:exe:swoogle --copy-bins
+
       - name: Bundle swoogle
         run: |
-          mkdir -p artifact
+          mkdir -p artifact/swoogle/priv
           cp ~/.local/bin/swoogle ./artifact/swoogle-bin
-          cp -r ./swoogle/priv ./artifact/swoogle/
-          zip -r swoogle-linux.zip artifact
+          cp -r ./swoogle/priv ./artifact/swoogle/priv
 
-      - name: Create artifact
-        uses: actions/upload-artifact@v2
+      - name: Deploy with flyctl
+        uses: superfly/flyctl-actions@1.3
         with:
-          name: swoogle-linux
-          path: swoogle-linux.zip
+          args: "deploy --local-only --dockerfile ./Dockerfile.cd"
 
 #      - name: Create release
 #        uses: softprops/action-gh-release@v1
 #        if: startsWith(github.ref, 'refs/tags/')
 #        with:
 #          files: ~/.local/bin/swoogle
-
-# deploy-swoogle:
-#   name: Deploy swoogle to Fly.io
-#   runs-on: ubuntu-latest
-#   if: ${{ github.event.workflow_run.conclusion == 'success' }}
-
-#   steps:
-#     - name: Checkout repo
-#       uses: actions/checkout@v2
-
-#     - name: Download TailwindCSS standalone CLI
-#       run: |
-#         # GitHub bin path:
-#         # https://github.community/t/adding-a-binary-to-the-path-from-a-docker-github-action-for-use-by-later-workflow-steps/16922/2
-#         curl \
-#           -sL https://github.com/tailwindlabs/tailwindcss/releases/download/v${{ env.TAILWIND_VERSION }}/tailwindcss-linux-x64 \
-#           -o tailwindcss
-#         chmod +x tailwindcss
-#         ./tailwindcss --help
-
-#     - name: Build and minify stylesheet
-#       run: |
-#         mkdir -p ./swoogle/priv/static/assets/
-
-#         ./tailwindcss --input ./swoogle/assets/app.css \
-#           --output ./swoogle/priv/static/assets/app.css \
-#           --config ./swoogle/assets/tailwind.config.js \
-#           --minify
-
-#     - name: Deploy with flyctl
-#       uses: superfly/flyctl-actions@1.3
-#       with:
-#         args: "deploy --local-only"

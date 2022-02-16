@@ -1,0 +1,13 @@
+FROM alpine:3.14.0
+
+WORKDIR /app
+
+RUN chown nobody /app
+RUN apk add gcc g++ gmp-dev ncurses-dev libffi-dev make xz tar perl zlib zlib-dev
+
+COPY artifact/swoogle-bin swoogle-bin
+COPY artifact/swoogle/priv swoogle/priv
+
+EXPOSE 3000
+
+CMD ["/app/swoogle-bin"]
