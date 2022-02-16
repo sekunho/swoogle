@@ -39,7 +39,7 @@ content = do
         button_ [type_ "submit", class_"w-2/8 px-2.5 text-su-fg dark:text-su-dark-fg rounded-r hover:bg-white/[0.1]"] $
           span_ Icon.search
 
-        div_ [id_ "search-suggestions", class_ "p-2.5 border-t border-su-bg dark:border-su-dark-bg hidden bg-white dark:bg-su-dark-bg-alt absolute w-full h-full top-full rounded-b shadow-md dark:shadow-black/[0.2]"] $ do
+        div_ [id_ "search-suggestions", class_ "border-t border-su-bg dark:border-su-dark-bg hidden bg-white dark:bg-su-dark-bg-alt absolute w-full h-full top-full rounded-b shadow-md dark:shadow-black/[0.2]"] $ do
           Search.suggestionsEntry "People" "luke"
 
       div_ [class_ "text-su-fg dark:text-su-dark-fg flex gap-2 text-sm sm:text-base"] $ do
