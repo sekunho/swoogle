@@ -31,6 +31,9 @@ tailwindcss --input assets/app.css \
   --output priv/static/assets/app.css \
   --config assets/tailwind.config.js \
   --watch
+
+# Have esbuild automatically build `app.js`
+esbuild assets/app.js --outfile=priv/static/assets/app.js --watch
 ```
 
 ## `swapi-lib`

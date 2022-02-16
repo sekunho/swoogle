@@ -31,5 +31,4 @@ cabal.sandbox.config
 .direnv/
 result
 
-# TODO: Include entire directory once esbuild is sorted out.
-priv/static/assets/app.css
+priv/static/assets/*

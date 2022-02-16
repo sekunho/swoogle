@@ -1,3 +1,4 @@
+
 # From https://gist.github.com/hasufell/f0893abfbba63ac4ea40feb0520946ee
 FROM alpine:3.14.0 AS builder
 
@@ -19,7 +20,7 @@ COPY Setup.hs Setup.hs
 COPY hie.yaml hie.yaml
 COPY stack.yaml stack.yaml
 COPY stack.yaml.lock stack.yaml.lock
-COPY swapi-lib swapi-lib
+COPY src src
 COPY swapi.cabal swapi.cabal
 COPY swoogle swoogle
 
@@ -30,11 +31,15 @@ RUN \
       --stack-yaml=stack.yaml \
       --no-nix \
       --copy-bins
+# ============================================================================ #
 
-FROM alpine:3.14.0 AS tailwind
+FROM alpine:3.14.0 AS assets
 
 ENV TAILWIND_VERSION=3.0.18
 ENV TAILWIND_URL=https://github.com/tailwindlabs/tailwindcss/releases/download/v${TAILWIND_VERSION}/tailwindcss-linux-x64
+
+ENV ESBUILD_VERSION=0.14.13
+ENV ESBUILD_URL=https://registry.npmjs.org/esbuild-linux-64/-/esbuild-linux-64-${ESBUILD_VERSION}.tgz
 
 WORKDIR /app
 
@@ -43,6 +48,13 @@ RUN \
     apk add curl && \
     curl -sL ${TAILWIND_URL} -o /usr/bin/tailwindcss && \
      chmod +x /usr/bin/tailwindcss
+
+# Download esbuild
+RUN \
+    apk add curl && \
+    curl ${ESBUILD_URL} | tar xvz && \
+     mv ./package/bin/esbuild /usr/bin/esbuild && \
+     chmod +x /usr/bin/esbuild
 
 # Copy swoogle template
 # Need this because Tailwind purges the classes in the template. So, without it,
@@ -63,6 +75,12 @@ RUN \
       --config assets/tailwind.config.js \
       --minify
 
+# Build and minify *S
+RUN \
+    esbuild assets/app.js \
+      --outfile=priv/static/assets/app.js \
+      --minify
+
 # ============================================================================ #
 
 FROM alpine:3.14.0
@@ -73,7 +91,7 @@ RUN chown nobody /app
 RUN apk add gcc g++ gmp-dev ncurses-dev libffi-dev make xz tar perl zlib zlib-dev
 
 COPY --from=builder --chown=nobody:root /root/.local/bin/swoogle swoogle
-COPY --from=tailwind --chown=nobody:root /app/priv/ priv/
+COPY --from=assets --chown=nobody:root /app/priv/ priv/
 
 EXPOSE 3000
 

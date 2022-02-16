@@ -37,6 +37,7 @@
 
             # Front-end
             unstable.nodePackages.tailwindcss    # Styling with utility classes
+            unstable.esbuild                     # Node.JS? What's that?
 
             # Deploy
             pkgs.flyctl                          # Fly's CLI for deploy
