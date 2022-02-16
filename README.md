@@ -24,7 +24,7 @@
 
 ``` sh
 # Restart web server on change
-watchexec --restart --exts css,hs,html -- stack run -- swapi:exe:swoogle
+watchexec --restart --exts css,hs,html,js -- stack run -- swapi:exe:swoogle
 
 # Have tailwind automatically parse and purge classes
 tailwindcss --input assets/app.css \
