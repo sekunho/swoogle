@@ -23,7 +23,7 @@ root content = doctypehtml_ $ do
   script_ [src_ "/assets/app.js"] ("" :: Html ())
   title_ "swoogle: A Star Wars search engine"
   body_
-    [class_ "bg-gray-50 dark:bg-su-dark-bg"]
+    [class_ "bg-gray-100 dark:bg-su-dark-bg"]
     (main_
       [class_ "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"]
       (div_
