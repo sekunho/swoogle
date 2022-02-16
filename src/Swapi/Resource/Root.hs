@@ -6,7 +6,7 @@ the URL for each resource. Initially, I wanted to work on it like the others,
 but this doesn't seem all that useful. I only used it to practice using @aeson@,
 but after that, there's not much else to this.
 -}
-module SwapiLib.Resource.Root
+module Swapi.Resource.Root
   ( Root
     ( Root
     , rFilms

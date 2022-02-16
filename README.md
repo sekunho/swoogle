@@ -24,7 +24,7 @@
 
 ``` sh
 # Restart web server on change
-watchexec --restart --exts css,hs,html -- stack exec swoogle
+watchexec --restart --exts css,hs,html -- stack run -- swapi:exe:swoogle
 
 # Have tailwind automatically parse and purge classes
 tailwindcss --input assets/app.css \
@@ -39,8 +39,8 @@ tailwindcss --input assets/app.css \
 with SWAPI ([Star Wars API](https://swapi.dev)).
 
 ``` haskell
-import qualified SwapiLib.Api as Api (getFilm)
-import SwapiLib.Id (FilmId (FilmId))
+import qualified Swapi.Api as Api (getFilm)
+import Swapi.Id (FilmId (FilmId))
 
 main :: IO ()
 main = do

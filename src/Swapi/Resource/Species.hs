@@ -43,7 +43,7 @@ And bind it to `sampleJSON`. Let's try decoding it!
 
 @
 import Data.Aeson
-import SwapiLib.Resource.Species
+import Swapi.Resource.Species
 
 -- I'm assuming `sampleJSON` is a ByteString
 someSpecies :: Maybe SpeciesType
@@ -78,10 +78,10 @@ Just $
    `SkinColor`, etc.
 2. The JSON object's `url` field was parsed into a `SpeciesId`, since we won't
    deal with the URL itself to communicate with the API. Less error-prone this
-   way. See `SwapiLib.Api` on how to communicate with @https://swapi.dev@.
+   way. See `Swapi.Api` on how to communicate with @https://swapi.dev@.
 3. Similar to the previous point, all IDs were parsed into their own ID types.
 -}
-module SwapiLib.Resource.Species
+module Swapi.Resource.Species
   ( SpeciesName (SpeciesName)
   , Designation (SentientDesignation, ReptilianDesignation)
   , Classification
@@ -157,9 +157,9 @@ import Data.Time                 (UTCTime)
 
 --------------------------------------------------------------------------------
 
-import SwapiLib.Color         (EyeColor, HairColor, SkinColor)
-import SwapiLib.Id            (FilmId, PersonId, PlanetId, SpeciesId)
-import SwapiLib.Internal.Page (Index (Index))
+import Swapi.Color         (EyeColor, HairColor, SkinColor)
+import Swapi.Id            (FilmId, PersonId, PlanetId, SpeciesId)
+import Swapi.Internal.Page (Index (Index))
 
 --------------------------------------------------------------------------------
 -- Data types

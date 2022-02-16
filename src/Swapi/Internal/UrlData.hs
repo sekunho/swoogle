@@ -1,4 +1,4 @@
-module SwapiLib.Internal.UrlData
+module Swapi.Internal.UrlData
   ( module Types
   , getId
   , decimalMaybe
@@ -21,8 +21,8 @@ import Data.Text.Read                     qualified as Text.Read (decimal)
 
 --------------------------------------------------------------------------------
 
-import SwapiLib.Internal.Url           qualified as Url (baseUrl)
-import SwapiLib.Internal.UrlData.Types as Types (UrlData (UrlData, udParams, udSubdir))
+import Swapi.Internal.Url           qualified as Url (baseUrl)
+import Swapi.Internal.UrlData.Types as Types (UrlData (UrlData, udParams, udSubdir))
 
 --------------------------------------------------------------------------------
 

@@ -1,22 +1,19 @@
 cradle:
-  cabal:
-    - path: "swapi-lib"
-      component: "swapi:lib:swapi-lib"
+  stack:
+    - path: "./src"
+      component: "swapi:lib"
 
-#    - path: "swoogle-tui/Main.hs"
-#      component: "swapi:exe:swoogle-tui"
-
-    - path: "swoogle/Main.hs"
+    - path: "./swoogle/Main.hs"
       component: "swapi:exe:swoogle"
 
-    - path: "swoogle/Swoogle/Views/Home.hs"
+    - path: "./swoogle/Swoogle/Views/Home.hs"
       component: "swapi:exe:swoogle"
 
-    - path: "swoogle/Swoogle/Views/Layout.hs"
+    - path: "./swoogle/Swoogle/Views/Layout.hs"
       component: "swapi:exe:swoogle"
 
-    - path: "swoogle/Swoogle/Components/Icon.hs"
+    - path: "./swoogle/Swoogle/Components/Icon.hs"
       component: "swapi:exe:swoogle"
 
-    - path: "test"
+    - path: "./test"
       component: "swapi:test:swapi-lib-test"
