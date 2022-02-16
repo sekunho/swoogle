@@ -41,6 +41,8 @@ packages:
 #   commit: e7b331f14bcffb8367cd58fbfc8b40ec7642100a
 #
 # extra-deps: []
+extra-deps:
+  - integer-gmp-1.0.3.0@sha256:514e81647473ce380cf1814821664c0dcedc2801ad8dbf41b19a10f916e1cc75,2138
 
 # Override default flag values for local packages and extra-deps
 # flags: {}
