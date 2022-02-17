@@ -47,16 +47,20 @@ content = do
         div_ [id_ "search-suggestions", class_ "border-t border-su-bg dark:border-su-dark-bg hidden bg-white dark:bg-su-dark-bg-alt absolute w-full h-full top-full rounded-b shadow-md dark:shadow-black/[0.2]"] $ do
           Search.suggestionsEntry "People" "luke"
 
-      div_ [class_ "text-su-fg dark:text-su-dark-fg flex gap-2 text-sm sm:text-base"] $ do
-        span_ [class_ "font-light"] "A Star Wars search engine"
+      div_ [class_ "text-su-fg dark:text-su-dark-fg flex flex-col sm:flex-row gap-2 text-sm sm:text-base"] $ do
+        span_ [class_ "text-center sm:text-left font-light"] "A Star Wars search engine"
         middot
-        span_ [] (a_ [class_ "text-yellow-500 hover:text-yellow-300", href_ "https://ko-fi.com/sekun", target_ "blank"] "Support me on Kofi")
+        span_ [class_ "text-center sm:text-left"] (a_ [class_ "text-yellow-500 hover:text-yellow-300", href_ "https://ko-fi.com/sekun", target_ "blank"] "Support me on Kofi")
         middot
-        span_ [] "Made by " <> a_ [class_ "text-yellow-500 hover:text-yellow-300", href_ "https://twitter.com/hsekun", target_ "_blank"] "Sek Un"
+        span_
+          [class_ "text-center sm:text-left"]
+          ("Made by " <> a_ [class_ "text-yellow-500 hover:text-yellow-300", href_ "https://twitter.com/hsekun", target_ "_blank"] "Sek Un")
         middot
-        span_ [] (a_ [class_ "text-yellow-500 hover:text-yellow-300", href_ "https://github.com/sekunho/swapi", target_ "blank"] Icon.github)
+        span_
+          [class_ "flex justify-center sm:block"]
+          (a_ [class_ "text-yellow-500 hover:text-yellow-300", href_ "https://github.com/sekunho/swapi", target_ "blank"] Icon.github)
 
     div_ [class_ "absolute bottom-0 pb-8"] ""
 
 middot :: Html ()
-middot = span_ [] "·"
+middot = span_ [class_ "hidden sm:block"] "·"

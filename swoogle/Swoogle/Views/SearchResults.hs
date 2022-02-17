@@ -17,7 +17,7 @@ import Swapi
 
 content :: Text -> Index Entry -> Html ()
 content partialUrl entryIndex = do
-    div_ [class_ "w-2/3 py-6 flex flex-col min-h-screen mx-auto"] $ do
+    div_ [class_ "w-full sm:w-2/3 py-6 flex flex-col min-h-screen mx-auto"] $ do
       searchBar
 
       div_
@@ -69,7 +69,7 @@ searchBar =
         ul_ [class_ "overflow-x-auto mt-2.5 sm:mt-2 flex gap-4"] $ do
           mapM
             (\label -> li_ [class_ "opacity-90 text-sm text-su-fg dark:text-su-dark-fg"] $ resourceButton "anakin" label (Text.toLower label))
-            ["All", "People", "Films", "Starships", "Vehicles", "Species", "Planets"]
+            ["People", "Films", "Starships", "Vehicles", "Species", "Planets"]
 
       div_ [id_ "search-suggestions", class_ "border-t border-su-bg dark:border-su-dark-bg hidden bg-white dark:bg-su-dark-bg-alt absolute w-full h-full top-full rounded-b shadow-md dark:shadow-black/[0.2]"] $ do
         Search.suggestionsEntry "People" "luke"
@@ -85,18 +85,18 @@ resultEntry entry =
   div_ [class_ "flex flex-col gap-2"] $ do
     a_
       [ href_ (eLink entry)
-      , class_ "hover:underline text-su-fg dark:text-su-dark-fg text-xl"
+      , class_ "hover:underline text-su-fg dark:text-su-dark-fg text-base sm:text-xl"
       ]
       (Lucid.toHtml (eTitle entry))
 
     -- p_ [class_ "text-sm text-su-fg dark:text-su-dark-fg font-light"] "This is a sample description text"
 
-    div_ [class_ "text-xs flex gap-2 text-su-accent-1 dark:text-su-dark-fg/[0.8] opacity-80"] $ do
+    div_ [class_ "text-xs space-y-1 sm:space-y-2.5 text-su-accent-1 dark:text-su-dark-fg opacity-80"] $ do
       foldl'
         (\html tagName ->
           html <>
             span_
-              [class_ "px-2 py-1 rounded bg-su-accent-1/[0.2] dark:bg-su-dark-bg-alt/[0.5]"]
+              [class_ "inline-flex px-2 py-1 mr-1 sm:mr-2.5 rounded bg-su-accent-1/[0.2] dark:bg-su-dark-bg-alt/[0.5]"]
               (Lucid.toHtml tagName))
         mempty
         (eTags entry)
