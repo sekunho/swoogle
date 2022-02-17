@@ -6,6 +6,7 @@ FROM alpine:3.14.0 AS builder
 WORKDIR /app
 
 ENV GHC_VERSION=8.10.7
+# ENV GHC_OPTIONS="'-threaded -rtsopts -with-rtsopts=-N -split-sections -O2'"
 
 # install ghc and stack
 RUN \

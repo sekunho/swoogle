@@ -9,6 +9,15 @@ cradle:
     - path: "./swoogle/Swoogle/Entry.hs"
       component: "swapi:exe:swoogle"
 
+    - path: "./swoogle/Swoogle/SearchData.hs"
+      component: "swapi:exe:swoogle"
+
+    - path: "./swoogle/Swoogle/Controllers.hs"
+      component: "swapi:exe:swoogle"
+
+    - path: "./swoogle/Swoogle/Views/Errors.hs"
+      component: "swapi:exe:swoogle"
+
     - path: "./swoogle/Swoogle/Views/Home.hs"
       component: "swapi:exe:swoogle"
 
