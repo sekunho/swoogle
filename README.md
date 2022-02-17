@@ -24,7 +24,8 @@
 
 ``` sh
 # Restart web server on change
-watchexec --restart --exts css,hs,html,js -- stack run -- swapi:exe:swoogle
+# This one is so much faster than manually rebuilding!
+ghcid --command stack ghci swoogle/Main.hs --test :main
 
 # Have tailwind automatically parse and purge classes
 tailwindcss --input assets/app.css \

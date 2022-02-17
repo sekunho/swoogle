@@ -23,6 +23,7 @@
         devShell = pkgs.mkShell rec {
           buildInputs = [
             unstable.ghc
+            unstable.ghcid
             # pkgs.haskell.compiler.integer-simple.ghc8107
 
             # I had to wrestle with `cabal`'s resolver and so I decided to switch.
