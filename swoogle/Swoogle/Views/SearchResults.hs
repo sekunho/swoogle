@@ -24,10 +24,6 @@ content searchData entryIndex = do
     div_ [class_ "w-full sm:w-2/3 py-6 flex flex-col min-h-screen mx-auto"] $ do
       searchBar searchData
 
-      div_
-        [class_ "mt-10 h-1 border-b border-black/[0.2] dark:border-white/[0.1] w-full block sm:hidden"]
-        ""
-
       -- Search results are rendered here
       case iResults entryIndex of
         [] ->
@@ -43,7 +39,7 @@ content searchData entryIndex = do
               span_ [class_ "font-light"] "."
 
         _ -> do
-          div_ [class_ "mt-4 sm:mt-14 w-full flex flex-col gap-8"] $ do
+          div_ [class_ "mt-4 sm:mt-12 w-full flex flex-col gap-8"] $ do
             foldl' (\acc -> (<>) acc . renderEntry) mempty (iResults entryIndex)
 
           div_ [class_ "mt-4 sm:mt-6 flex justify-center gap-4"] $ do
@@ -77,6 +73,7 @@ navLink label href =
     ]
     (Lucid.toHtml label)
 
+-- TODO: Move this to a component
 searchBar :: SearchData -> Html ()
 searchBar searchData =
   div_ [class_ "flex flex-col sm:flex-row justify-center items-center gap-4 w-full"] $ do
@@ -114,20 +111,8 @@ searchBar searchData =
             mempty
             ["People", "Film", "Starship", "Vehicle", "Species", "Planet"]
 
---          option_ [value_ "film"] "Film"
---          option_ [value_ "starship"] "Starship"
---          option_ [value_ "vehicle"] "Vehicle"
---          option_ [value_ "species"] "Species"
---          option_ [value_ "planet"] "Planet"
-
         button_ [type_ "submit", class_"w-2/8 px-2.5 text-su-fg dark:text-su-dark-fg rounded-r hover:bg-white/[0.1]"] $
           span_ Icon.search
-
-      div_ [class_ "w-full absolute top-full"] $ do
-        ul_ [class_ "overflow-x-auto mt-2.5 sm:mt-2 flex gap-4"] $ do
-          mapM
-            (\label -> li_ [class_ "opacity-90 text-sm text-su-fg dark:text-su-dark-fg"] $ resourceButton "anakin" label (Text.toLower label))
-            ["People", "Films", "Starships", "Vehicles", "Species", "Planets"]
 
       div_ [id_ "search-suggestions", class_ "border-t border-su-bg dark:border-su-dark-bg hidden bg-white dark:bg-su-dark-bg-alt absolute w-full h-full top-full rounded-b shadow-md dark:shadow-black/[0.2]"] $ do
         Search.suggestionsEntry "People" "luke"

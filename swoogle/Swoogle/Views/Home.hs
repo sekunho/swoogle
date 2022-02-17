@@ -39,6 +39,7 @@ content = do
       [class_ "font-serif text-center text-5xl sm:text-6xl text-7xl text-su-fg dark:text-su-dark-fg mb-12"]
       (span_ [class_ "text-yellow-500"] "sw" <> "oogle")
 
+    -- TODO: Move this to a component
     form_
       [autocomplete_ "off", action_ "/search", method_ "GET", id_ "search", class_ "flex flex-col gap-8 items-center justify-center w-full"] $ do
       div_ [id_ "search-bar-wrapper", class_ "w-full sm:w-2/3 flex shadow-md dark:shadow-black/[0.2] bg-white dark:bg-su-dark-bg-alt rounded-t rounded-b relative"] $ do
