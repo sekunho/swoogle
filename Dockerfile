@@ -30,7 +30,9 @@ RUN \
       --system-ghc \
       --stack-yaml=stack.yaml \
       --no-nix \
-      --copy-bins
+      --copy-bins \
+      --verbose
+
 # ============================================================================ #
 
 FROM alpine:3.14.0 AS assets
@@ -88,10 +90,12 @@ FROM alpine:3.14.0
 WORKDIR /app
 
 RUN chown nobody /app
-RUN apk add gcc g++ gmp-dev ncurses-dev libffi-dev make xz tar perl zlib zlib-dev
+RUN apk add gcc g++ gmp-dev ncurses-dev libffi-dev make xz tar perl zlib zlib-dev tree
 
 COPY --from=builder --chown=nobody:root /root/.local/bin/swoogle swoogle
-COPY --from=assets --chown=nobody:root /app/priv/ priv/
+COPY --from=assets --chown=nobody:root /app/priv priv
+
+RUN tree .
 
 EXPOSE 3000
 
