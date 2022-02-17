@@ -12,7 +12,13 @@ cradle:
     - path: "./swoogle/Swoogle/Views/Layout.hs"
       component: "swapi:exe:swoogle"
 
+    - path: "./swoogle/Swoogle/Views/SearchResults.hs"
+      component: "swapi:exe:swoogle"
+
     - path: "./swoogle/Swoogle/Components/Icon.hs"
+      component: "swapi:exe:swoogle"
+
+    - path: "./swoogle/Swoogle/Components/Search.hs"
       component: "swapi:exe:swoogle"
 
     - path: "./test"
