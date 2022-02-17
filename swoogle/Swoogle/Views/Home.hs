@@ -38,7 +38,7 @@ content = do
   div_ [class_ "flex flex-col relative items-center justify-center h-screen"] $ do
     h1_
       [class_ "font-serif text-center text-5xl sm:text-6xl text-7xl text-su-fg dark:text-su-dark-fg mb-12"]
-      (span_ [class_ "text-yellow-500"] "sw" <> "oogle")
+      (a_ [href_ "/", class_ ""] (span_ [class_ "text-yellow-600 dark:text-yellow-500"] "sw" <> "oogle"))
 
     -- TODO: Move this to a component
     form_
@@ -82,15 +82,15 @@ content = do
       div_ [class_ "text-su-fg dark:text-su-dark-fg flex flex-col sm:flex-row gap-2 text-sm sm:text-base"] $ do
         span_ [class_ "text-center sm:text-left font-light"] "A Star Wars search engine"
         middot
-        span_ [class_ "text-center sm:text-left"] (a_ [class_ "text-yellow-500 hover:text-yellow-300", href_ "https://ko-fi.com/sekun", target_ "blank"] "Support me on Kofi")
+        span_ [class_ "text-center sm:text-left"] (a_ [class_ "text-yellow-600 dark:text-yellow-500 hover:text-yellow-300", href_ "https://ko-fi.com/sekun", target_ "blank"] "Support me on Kofi")
         middot
         span_
           [class_ "text-center sm:text-left"]
-          ("Made by " <> a_ [class_ "text-yellow-500 hover:text-yellow-300", href_ "https://twitter.com/hsekun", target_ "_blank"] "Sek Un")
+          ("Made by " <> a_ [class_ "text-yellow-600 dark:text-yellow-500 hover:text-yellow-300", href_ "https://twitter.com/hsekun", target_ "_blank"] "Sek Un")
         middot
         span_
           [class_ "flex justify-center sm:block"]
-          (a_ [class_ "text-yellow-500 hover:text-yellow-300", href_ "https://github.com/sekunho/swapi", target_ "blank"] Icon.github)
+          (a_ [class_ "text-yellow-600 dark:text-yellow-500 hover:text-yellow-300", href_ "https://github.com/sekunho/swapi", target_ "blank"] Icon.github)
 
     div_ [class_ "absolute bottom-0 pb-8"] ""
 

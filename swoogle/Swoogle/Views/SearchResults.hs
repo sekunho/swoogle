@@ -93,7 +93,7 @@ searchBar searchData =
           , class_ "rounded-l outline-none bg-inherit w-full p-2 font-sans text-su-fg dark:text-white text-base"
           ]
 
-        select_ [name_ "resource", class_ "dark:bg-su-dark-bg-alt text-su-fg dark:text-su-dark-fg"] $ do
+        select_ [name_ "resource", class_ "bg-white dark:bg-su-dark-bg-alt text-su-fg dark:text-su-dark-fg"] $ do
           option_ [disabled_ "disabled", selected_ ""] "Category"
 
           foldl'
@@ -168,7 +168,7 @@ buildBriefEntry entry =
         (\html tagName ->
           html <>
             span_
-              [class_ "inline-flex px-2 py-1 mr-1 sm:mr-2.5 rounded bg-su-accent-1/[0.2] dark:bg-su-dark-bg-alt/[0.5]"]
+              [class_ "inline-flex px-2 py-1 mr-1 sm:mr-2.5 rounded bg-su-accent-1/[0.1] dark:bg-su-dark-bg-alt/[0.5]"]
               (Lucid.toHtml tagName))
         mempty
         (beTags entry)

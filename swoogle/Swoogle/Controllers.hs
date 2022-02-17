@@ -93,11 +93,11 @@ search = do
 
         Scotty.html (Lucid.renderText (Layout.root content))
 
-      ur ->
+      _ ->
         -- TODO: Implement own template because the default is too barebones
         Scotty.rescue
           (Scotty.raise "Invalid resource")
-          (const $ Scotty.html $ Lucid.renderText $ Layout.root $ Errors.unexpectedResource ur)
+          (const $ Scotty.html $ Lucid.renderText $ Layout.root $ Errors.unexpectedResource searchData)
 
 --------------------------------------------------------------------------------
 

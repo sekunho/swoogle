@@ -1,8 +1,12 @@
 module Swoogle.Views.Errors where
 
+import Data.List (foldl')
 import Data.Text (Text)
 import Lucid
 import Lucid qualified (toHtml)
+
+import Swoogle.SearchData
+import Swoogle.SearchData qualified as SearchData (toParamsText)
 
 renderError500 :: Html () -> Html ()
 renderError500 slot = do
@@ -10,25 +14,54 @@ renderError500 slot = do
     h1_ [class_ "text-4xl text-su-fg dark:text-su-dark-fg font-serif text-center"] "Internal Server Error"
     slot
 
-unexpectedResource :: Text -> Html ()
-unexpectedResource resource = do
+unexpectedResource :: SearchData -> Html ()
+unexpectedResource searchData = do
   renderError500 $ do
     div_ [class_ "text-su-fg dark:text-su-dark-fg text-xl"] $ do
-        span_ [class_ "font-light"] "I did not expect a resource of "
-        span_ [class_ "font-bold"] (Lucid.toHtml resource)
+        span_ [class_ "font-light"] "I didn't expect a resource called "
+        span_ [class_ "font-bold"] (Lucid.toHtml $ sdResource searchData)
         span_ [class_ "font-light"] ". "
-        span_ [] $ do
-          span_ [class_ "font-light"] "If this is supposed to exist, please open an issue here: "
-          a_
-            [ href_ "https://github.com/sekunho/swoogle/issues"
-            , target_ "_blank"
-            , class_ "text-yellow-500"
-            ]
-            "https://github.com/sekunho/swoogle/issues"
+
+        case sdResource searchData of
+          "films" -> renderSuggestion (searchData {sdResource = "film"})
+          "peoples" -> renderSuggestion (searchData {sdResource = "people"})
+          "planets" -> renderSuggestion (searchData {sdResource = "planet"})
+
+          _ -> ""
+
+        span_ [class_ ""] $ do
+          span_
+            [class_ "font-light"]
+            "Here are the resources that I know of: "
+          span_ [class_ "space-x-2.5"] $ do
+            foldl'
+              (\items resource ->
+                 items <> renderResource (searchData { sdResource = resource }))
+              mempty
+              ["people", "film"]
 
     renderQuote
       "Be careful not to choke on your aspirations."
       "Darth Vader, Rogue One, 2016"
+
+  where
+    renderResource :: SearchData -> Html ()
+    renderResource searchData =
+      a_
+        [ class_ "font-bold text-yellow-600 dark:text-yellow-500"
+        , href_ ("search" <> SearchData.toParamsText searchData)
+        ]
+        (Lucid.toHtml $ sdResource searchData)
+
+    renderSuggestion :: SearchData -> Html ()
+    renderSuggestion searchData =
+      mconcat
+        [ span_ [class_ "font-light"] "Perhaps you meant "
+        , renderResource searchData
+        , "? "
+        , br_ []
+        , br_ []
+        ]
 
 renderQuote :: Text -> Text -> Html ()
 renderQuote quote source =
