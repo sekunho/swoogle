@@ -114,8 +114,10 @@ executable swoogle
     import: default-extensions
     build-depends:
        base      >= 4.7 && <5
+     , containers
      , swapi
      , text
+     , text-show
      , lucid
      , scotty
 
@@ -123,7 +125,11 @@ executable swoogle
     hs-source-dirs: swoogle
 
     other-modules:
-       Swoogle.Views.Home
+       Swoogle.Entry
+     , Swoogle.SearchData
+     , Swoogle.Controllers
+     , Swoogle.Views.Errors
+     , Swoogle.Views.Home
      , Swoogle.Views.Layout
      , Swoogle.Views.SearchResults
      , Swoogle.Components.Icon

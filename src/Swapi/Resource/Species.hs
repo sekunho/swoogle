@@ -92,7 +92,7 @@ module Swapi.Resource.Species
     , ReptileClass
     , AmphibianClass
     )
-  , AverageHeight (Height, HeightNotApplicable)
+  , AverageHeight (AverageHeight, AverageHeightNotApplicable)
   , AverageLifespan (Lifespan, Indefinite, UnknownLifespan)
   , Language
     ( GalacticBasic
@@ -196,8 +196,8 @@ data Classification
 
 -- | Average height of a species in centimeters
 data AverageHeight
-  = Height Word         -- ^ A species' average height in centimeters (cm)
-  | HeightNotApplicable -- ^ This dude says they're 6'5" and won't admit any less
+  = AverageHeight Word         -- ^ A species' average height in centimeters (cm)
+  | AverageHeightNotApplicable -- ^ This dude says they're 6'5" and won't admit any less
   deriving stock
     ( Eq   -- ^ Compare `AverageHeight`s with each other
     , Show -- ^ Encode `AverageHeight` as `String` through `show`
@@ -386,11 +386,11 @@ instance FromJSON (AverageHeight :: Type) where
   parseJSON =
     Aeson.withText "AverageHeight" $
       \case
-        "n/a" -> pure HeightNotApplicable
+        "n/a" -> pure AverageHeightNotApplicable
         val ->
           case Text.Read.decimal val of
             Right (avgHeight, "") ->
-              pure (Height avgHeight)
+              pure (AverageHeight avgHeight)
 
             Right _ -> fail "Unexpected value for species' average height"
             Left e -> fail e

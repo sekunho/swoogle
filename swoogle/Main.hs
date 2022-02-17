@@ -1,12 +1,30 @@
 module Main where
 
+import Control.Monad.IO.Class qualified as IO (liftIO)
+import Data.Map qualified as Map
+import Data.Text (Text)
 import Lucid
-import Web.Scotty (ScottyM)
-import Web.Scotty qualified as Scotty (scotty, html, get, param, file, setHeader)
+import Web.Scotty (ScottyM, ActionM)
+import Web.Scotty qualified as Scotty
+  ( scotty
+  , html
+  , get
+  , param
+  , file
+  , setHeader
+  , liftAndCatchIO
+  )
+import TextShow qualified as Show (showt)
 
-import Swoogle.Views.Home qualified as Home (content)
+import Swoogle.SearchData
+import Swoogle.Entry qualified as Entry
+
+-- Views
 import Swoogle.Views.Layout qualified as Layout (root)
 import Swoogle.Views.SearchResults qualified as Results (content)
+
+-- Controllers
+import Swoogle.Controllers qualified as Controllers
 
 main :: IO ()
 main = Scotty.scotty 3000 swapiWeb
@@ -14,26 +32,10 @@ main = Scotty.scotty 3000 swapiWeb
 swapiWeb :: ScottyM ()
 swapiWeb = do
   -- Assets
-
-  Scotty.get
-    "/assets/app.css"
-    (Scotty.setHeader "Content-Type" "text/css; charset=utf-8" >>
-      Scotty.file (staticPath <> "assets/app.css"))
-
-  Scotty.get
-    "/assets/app.js"
-    (Scotty.setHeader "Content-Type" "application/javascript" >>
-      Scotty.file (staticPath <> "assets/app.js"))
-
-  Scotty.get "/fonts/:file" (Scotty.param "file" >>= Scotty.file . (<>) (staticPath <> "fonts/"))
-
-  Scotty.get "/images/:file" (Scotty.param "file" >>= Scotty.file . (<>) (staticPath <> "images/"))
+  Scotty.get "/assets/:file" (Scotty.param "file" >>= Controllers.assets)
+  Scotty.get "/fonts/:file" (Scotty.param "file" >>= Controllers.fonts)
+  Scotty.get "/images/:file" (Scotty.param "file" >>= Controllers.images)
 
   -- Page routes
-
-  Scotty.get "/" (Scotty.html (Lucid.renderText (Layout.root Home.content)))
-
-  Scotty.get "/search" (Scotty.html (Lucid.renderText (Layout.root Results.content)))
-
-
-  where staticPath = "./priv/static/"
+  Scotty.get "/" Controllers.home
+  Scotty.get "/search" Controllers.search

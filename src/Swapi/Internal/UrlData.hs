@@ -4,6 +4,7 @@ module Swapi.Internal.UrlData
   , decimalMaybe
   , toUrlText
   , fromUrlText
+  , toParamsText
   ) where
 
 --------------------------------------------------------------------------------
@@ -11,12 +12,12 @@ module Swapi.Internal.UrlData
 import Data.List                          qualified as List (foldl')
 import Data.Map                           (Map)
 import Data.Map                           qualified as Map (foldlWithKey',
-                                                            fromList, null)
+                                                            fromList, null, toList)
 import Data.Text                          (Text)
 import Data.Text                          qualified as Text (cons, drop,
                                                              dropWhileEnd, null,
                                                              split, splitOn,
-                                                             stripPrefix, take)
+                                                             stripPrefix, take, intercalate)
 import Data.Text.Read                     qualified as Text.Read (decimal)
 
 --------------------------------------------------------------------------------
@@ -129,3 +130,11 @@ parseKeyValue = go ("", "") False
             if isEncountered
             then go (key, value <> currChar) isEncountered paramText'
             else go (key <> currChar, value) isEncountered paramText'
+
+toParamsText :: UrlData -> Text
+toParamsText =
+  (<>) "&"
+    . Text.intercalate "?"
+    . concatMap (\(key, val) -> [key <> "=" <> val])
+    . Map.toList
+    . udParams
