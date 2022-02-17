@@ -36,9 +36,9 @@ tailwindcss --input assets/app.css \
 esbuild assets/app.js --outfile=priv/static/assets/app.js --watch
 ```
 
-## `swapi-lib`
+## `swapi`
 
-`swapi-lib` is a client library (without much bells and whistles) to interact
+`swapi` (found in the `src` directory) is a client library to interact
 with SWAPI ([Star Wars API](https://swapi.dev)).
 
 ``` haskell

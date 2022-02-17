@@ -20,6 +20,7 @@ import Lucid
       name_,
       autofocus_,
       autocomplete_,
+      required_,
       ToHtml(toHtml, toHtmlRaw) )
 
 import Swoogle.Components.Icon qualified as Icon (search, github)
@@ -35,7 +36,7 @@ content = do
     form_
       [autocomplete_ "off", action_ "/search", method_ "GET", id_ "search", class_ "flex flex-col gap-8 items-center justify-center w-full"] $ do
       div_ [id_ "search-bar-wrapper", class_ "w-full sm:w-2/3 flex shadow-md dark:shadow-black/[0.2] bg-white dark:bg-su-dark-bg-alt rounded-t rounded-b relative"] $ do
-        input_ [type_ "text", id_ "search-bar", name_ "q", class_ "rounded-l outline-none bg-inherit w-6/8 w-full p-2.5 font-sans text-su-fg dark:text-white text-lg", autofocus_]
+        input_ [required_ "required", type_ "text", id_ "search-bar", name_ "q", class_ "rounded-l outline-none bg-inherit w-6/8 w-full p-2.5 font-sans text-su-fg dark:text-white text-lg", autofocus_]
         button_ [type_ "submit", class_"w-2/8 px-2.5 text-su-fg dark:text-su-dark-fg rounded-r hover:bg-white/[0.1]"] $
           span_ Icon.search
 
