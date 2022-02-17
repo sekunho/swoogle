@@ -6,7 +6,7 @@ module Swoogle.Views.Layout where
 import Lucid
 import Lucid.Base (makeAttribute)
 
-root :: Monad m => HtmlT m a -> HtmlT m a
+root :: Monad m => HtmlT m a -> HtmlT m ()
 root content = doctypehtml_ $ do
   meta_ [makeAttribute "charset" "utf-8"]
   meta_ [makeAttribute "http-equiv" "X-UA-Compatible", makeAttribute "content" "IE=edge"]
@@ -19,11 +19,11 @@ root content = doctypehtml_ $ do
     [ makeAttribute "rel" "stylesheet"
     , makeAttribute "href" "/assets/app.css"
     ]
+
   title_ "swoogle: A Star Wars search engine"
-  body_
-    [class_ "bg-gray-50 dark:bg-su-dark-bg"]
-    (main_
-      [class_ "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"]
-      (div_
-        [class_ "max-w-4xl mx-auto"]
-        content))
+
+  body_ [class_ "bg-gray-100 dark:bg-su-dark-bg"] $ do
+    main_ [class_ "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"]
+      (div_ [class_ "max-w-4xl mx-auto"] content)
+
+    script_ [src_ "/assets/app.js"] ("" :: Html ())

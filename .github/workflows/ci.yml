@@ -37,14 +37,23 @@ jobs:
       # --bench --no-run-benchmarks
       - name: Install dependencies
         run: |
-          stack build --system-ghc --test --no-run-tests --only-dependencies
+          stack build \
+            --system-ghc \
+            --test \
+            --no-run-tests \
+            --only-dependencies \
+            --no-nix
 
       # TODO: Include benchmarks if ever I do end up writing some
       # --bench --no-run-benchmarks
       - name: Build
         run: |
-          stack build --system-ghc --test --no-run-tests
+          stack build \
+            --system-ghc \
+            --test \
+            --no-run-tests \
+            --no-nix
 
       - name: Test
         run: |
-          stack test --system-ghc
+          stack test --system-ghc --no-nix

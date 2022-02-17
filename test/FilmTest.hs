@@ -14,8 +14,8 @@ import Test.Tasty.Golden         qualified as Golden (goldenVsFile)
 
 --------------------------------------------------------------------------------
 
-import SwapiLib.Page          (Index)
-import SwapiLib.Resource.Film (Film)
+import Swapi.Page          (Index)
+import Swapi.Resource.Film (Film)
 
 --------------------------------------------------------------------------------
 

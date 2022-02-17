@@ -1,4 +1,4 @@
-module SwapiLib.Resource.Starship
+module Swapi.Resource.Starship
   ( Starship ( Starship
     , sName
     , sModel
@@ -62,8 +62,8 @@ import TextShow                  qualified as Text.Show (showt)
 
 --------------------------------------------------------------------------------
 
-import SwapiLib.Id            (FilmId, PersonId, StarshipId)
-import SwapiLib.Internal.Page (Index (Index, iCount, iNextPage, iPreviousPage, iResults))
+import Swapi.Id            (FilmId, PersonId, StarshipId)
+import Swapi.Internal.Page (Index (Index, iCount, iNextPage, iPreviousPage, iResults))
 
 --------------------------------------------------------------------------------
 -- Data types

@@ -16,8 +16,8 @@ import Test.Tasty.Golden           qualified as Golden (findByExtension)
 
 --------------------------------------------------------------------------------
 
-import SwapiLib.Page            (Index)
-import SwapiLib.Resource.Person (Person)
+import Swapi.Page            (Index)
+import Swapi.Resource.Person (Person)
 import Util                        qualified (batchGoldenVsFile)
 
 --------------------------------------------------------------------------------

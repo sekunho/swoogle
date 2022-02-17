@@ -1,6 +1,6 @@
-module SwapiLib.Page (module Page) where
+module Swapi.Page (module Page) where
 
 --------------------------------------------------------------------------------
 
-import SwapiLib.Internal.Page as Page (Index (Index, iCount, iNextPage, iPreviousPage, iResults),
+import Swapi.Internal.Page as Page (Index (Index, iCount, iNextPage, iPreviousPage, iResults),
                                           Page (NoPage, Page))
