@@ -140,7 +140,7 @@ buildDescriptiveEntry entry =
       (Lucid.toHtml (deTitle entry))
 
     p_
-      [class_ "text-sm text-su-fg dark:text-su-dark-fg font-light"]
+      [class_ "text-sm text-su-fg dark:text-su-dark-fg font-light truncate"]
       (Lucid.toHtml (deDescription entry))
 
     div_ [class_ "text-xs space-y-1 sm:space-y-2.5 text-su-accent-1 dark:text-su-dark-fg opacity-80"] $ do
