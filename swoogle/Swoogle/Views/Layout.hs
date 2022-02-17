@@ -22,8 +22,11 @@ root content = doctypehtml_ $ do
 
   title_ "swoogle: A Star Wars search engine"
 
-  body_ [class_ "bg-gray-100 dark:bg-su-dark-bg"] $ do
-    main_ [class_ "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"]
-      (div_ [class_ "max-w-4xl mx-auto"] content)
+  body_ [class_ "bg-gray-100 dark:bg-su-dark-bg relative"] $ do
+    main_ [class_ "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"] $ do
+      div_ [class_ "max-w-4xl mx-auto"] content
+      span_
+        [class_ "absolute bottom-2.5 right-7 text-su-fg dark:text-su-dark-fg/[0.5] font-light"]
+        "v0.1"
 
     script_ [src_ "/assets/app.js"] ("" :: Html ())

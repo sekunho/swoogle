@@ -20,6 +20,7 @@ import Web.Scotty qualified as Scotty
 --------------------------------------------------------------------------------
 
 import Swoogle.SearchData
+import Swoogle.Entry (Entry)
 import Swoogle.Entry qualified as Entry
 
 -- Swoogle's views
@@ -75,29 +76,56 @@ search = do
         peopleResults <-
           Scotty.liftAndCatchIO (searchPeople searchQuery (Page searchPage))
 
-        let
-          content :: Html ()
-          content =
-            Layout.root
-              (Results.content searchData (Entry.fromPerson <$> peopleResults))
-
-        Scotty.html (Lucid.renderText (Layout.root content))
+        renderResults searchData (Entry.fromPerson <$> peopleResults)
 
       "film" -> do
         filmResults <-
           Scotty.liftAndCatchIO (searchFilms searchQuery (Page searchPage))
 
-        let
-          content :: Html ()
-          content = Layout.root (Results.content searchData (Entry.fromFilm <$> filmResults))
+        renderResults searchData (Entry.fromFilm <$> filmResults)
 
-        Scotty.html (Lucid.renderText (Layout.root content))
+      "starship" -> do
+        starshipResults <-
+          Scotty.liftAndCatchIO $
+            searchStarships (sdQuery searchData) (Page (sdPage searchData))
+
+        renderResults searchData (Entry.fromStarship <$> starshipResults)
+
+      "vehicle" -> do
+        vehicleResults <-
+          Scotty.liftAndCatchIO $
+            searchVehicles (sdQuery searchData) (Page (sdPage searchData))
+
+        renderResults searchData (Entry.fromVehicle <$> vehicleResults)
+
+      "species" -> do
+        speciesResults <-
+          Scotty.liftAndCatchIO $
+            searchSpecies (sdQuery searchData) (Page (sdPage searchData))
+
+        renderResults searchData (Entry.fromSpecies <$> speciesResults)
+
+      "planet" -> do
+        planetResults <-
+          Scotty.liftAndCatchIO $
+            searchPlanets (sdQuery searchData) (Page (sdPage searchData))
+
+        renderResults searchData (Entry.fromPlanet <$> planetResults)
+
 
       _ ->
         -- TODO: Implement own template because the default is too barebones
         Scotty.rescue
           (Scotty.raise "Invalid resource")
           (const $ Scotty.html $ Lucid.renderText $ Layout.root $ Errors.unexpectedResource searchData)
+
+  where
+    renderResults :: SearchData -> Index Entry -> ActionM ()
+    renderResults searchData entries =
+      let
+        content :: Html ()
+        content = Layout.root (Results.content searchData entries)
+      in Scotty.html (Lucid.renderText (Layout.root content))
 
 --------------------------------------------------------------------------------
 

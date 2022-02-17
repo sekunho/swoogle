@@ -68,6 +68,63 @@ fromFilm f =
     , deLink = "/film/" <> Show.showt (fId f)
     }
 
+-- | Parses a `Starship` to a more generic `Entry`
+fromStarship :: Starship -> Entry
+fromStarship s =
+  NoDescription $ BriefEntry
+    { beTitle = coerce @StarshipName @Text (sName s)
+    , beTags =
+        [
+        ]
+    , beLink = "/starship/" <> Show.showt (sId s)
+    }
+
+-- | Parses a `Vehicle` to a more generic `Entry`
+fromVehicle :: Vehicle -> Entry
+fromVehicle v =
+  NoDescription $ BriefEntry
+    { beTitle = coerce @VehicleName @Text (vName v)
+    , beTags =
+        [
+        ]
+    , beLink = "/vehicle/" <> Show.showt (vId v)
+    }
+
+
+-- | Parses a `SpeciesType` to a more generic `Entry`
+fromSpecies :: SpeciesType -> Entry
+fromSpecies s =
+  case s of
+    HasOrigin s ->
+      NoDescription $ BriefEntry
+        { beTitle = coerce @SpeciesName @Text (spName s)
+        , beTags =
+            [
+            ]
+        , beLink = "/species/" <> Show.showt (spId s)
+        }
+
+    NoOrigin os ->
+      NoDescription $ BriefEntry
+        { beTitle = coerce @SpeciesName @Text (hSpName os)
+        , beTags =
+            [
+            ]
+        , beLink = "/species/" <> Show.showt (hSpId os)
+        }
+
+
+-- | Parses a `Planet` to a more generic `Entry`
+fromPlanet :: Planet -> Entry
+fromPlanet p =
+  NoDescription $ BriefEntry
+    { beTitle = coerce @PlanetName @Text (plName p)
+    , beTags =
+        [
+        ]
+    , beLink = "/planet/" <> Show.showt (plId p)
+    }
+
 --------------------------------------------------------------------------------
 
 heightToText :: Height -> Text

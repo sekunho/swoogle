@@ -26,6 +26,9 @@ unexpectedResource searchData = do
           "films" -> renderSuggestion (searchData {sdResource = "film"})
           "peoples" -> renderSuggestion (searchData {sdResource = "people"})
           "planets" -> renderSuggestion (searchData {sdResource = "planet"})
+          "specie" -> renderSuggestion (searchData {sdResource = "species"})
+          "vehicles" -> renderSuggestion (searchData {sdResource = "vehicle"})
+          "starships" -> renderSuggestion (searchData {sdResource = "starship"})
 
           _ -> ""
 
@@ -38,7 +41,7 @@ unexpectedResource searchData = do
               (\items resource ->
                  items <> renderResource (searchData { sdResource = resource }))
               mempty
-              ["people", "film"]
+              ["people", "film", "starship", "vehicle", "species", "planet"]
 
     renderQuote
       "Be careful not to choke on your aspirations."
