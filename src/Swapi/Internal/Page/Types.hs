@@ -45,7 +45,7 @@ blankPage = NoPage
 @
 -}
 data Page
-  = Page Int -- ^ Presence of a page
+  = Page Word -- ^ Presence of a page
   | NoPage   -- ^ Absence of a page
   deriving stock
     ( Eq    -- ^ Compare `Page`s with each other

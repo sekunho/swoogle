@@ -162,3 +162,7 @@ I would like to make, should I get the free time to build a JSON api.
 
 These changes won't be implemented here, unless the swapi.dev maintainer decides
 to do the same as well. `swapi` is just meant to be compatible with swapi.dev.
+
+I'm not so satisfied with the current database of SW stuff so I might just branch
+away from swapi.dev. I'd like to add descriptions to resources, or some trivia
+about them. Maybe I'll implement the improvements I've listed above. Who knows?

@@ -8,27 +8,64 @@ import TextShow qualified as Show (showt)
 --------------------------------------------------------------------------------
 
 import Swapi.Resource.Person
+import Swapi.Resource.Film
+import Swapi.Resource.Starship
+import Swapi.Resource.Vehicle
+import Swapi.Resource.Species
+import Swapi.Resource.Planet
 
 --------------------------------------------------------------------------------
 
-data Entry = Entry
-  { eTitle :: Text
-  , eTags :: [Text]
-  , eLink :: Text
+-- | An entry with a description
+data DescriptiveEntry = DescriptiveEntry
+  { deTitle :: Text
+  , deDescription :: Text
+  , deTags :: [Text]
+  , deLink :: Text
   }
-  deriving (Eq, Show)
+  deriving stock (Eq, Show)
 
-personToEntry :: Person -> Entry
-personToEntry p =
-  Entry
-    { eTitle = coerce @PersonName @Text (pName p)
-    , eTags =
+-- | An entry without a description
+data BriefEntry = BriefEntry
+  { beTitle :: Text
+  , beTags :: [Text]
+  , beLink :: Text
+  }
+  deriving stock (Eq, Show)
+
+-- | `Entry` is used to carry the data fetched from SWAPI, and is then rendered.
+data Entry
+  = HasDescription DescriptiveEntry
+  | NoDescription BriefEntry
+  deriving stock (Eq, Show)
+
+--------------------------------------------------------------------------------
+
+-- | Parses a `Person` to a more generic `Entry`
+fromPerson :: Person -> Entry
+fromPerson p =
+  NoDescription $ BriefEntry
+    { beTitle = coerce @PersonName @Text (pName p)
+    , beTags =
         [ heightToText (pHeight p)
         , massToText (pMass p)
         , Text.intercalate " + " (Show.showt <$> pHairColor p) <> " hair"
         , Text.intercalate " + " (Show.showt <$> pEyeColor p) <> " eyes"
+
         ]
-    , eLink = "/people/" <> Show.showt (pId p)
+    , beLink = "/people/" <> Show.showt (pId p)
+    }
+
+-- | Parses a `Film` to a more generic `Entry`
+fromFilm :: Film -> Entry
+fromFilm f =
+  HasDescription $ DescriptiveEntry
+    { deTitle = fTitle f
+    , deDescription = coerce @OpeningCrawl @Text (fOpeningCrawl f)
+    , deTags =
+        [
+        ]
+    , deLink = "/film/" <> Show.showt (fId f)
     }
 
 --------------------------------------------------------------------------------

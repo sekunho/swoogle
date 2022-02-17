@@ -126,6 +126,9 @@ executable swoogle
 
     other-modules:
        Swoogle.Entry
+     , Swoogle.SearchData
+     , Swoogle.Controllers
+     , Swoogle.Views.Errors
      , Swoogle.Views.Home
      , Swoogle.Views.Layout
      , Swoogle.Views.SearchResults
