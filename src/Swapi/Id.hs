@@ -1,8 +1,8 @@
-module SwapiLib.Id (module Types) where
+module Swapi.Id (module Types) where
 
 --------------------------------------------------------------------------------
 
-import SwapiLib.Internal.Id.Types as Types (FilmId (FilmId),
+import Swapi.Internal.Id.Types as Types (FilmId (FilmId),
                                                PersonId (PersonId),
                                                PlanetId (PlanetId),
                                                SpeciesId (SpeciesId),

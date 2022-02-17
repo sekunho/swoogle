@@ -1,4 +1,4 @@
-module SwapiLib.Internal.UrlData.Types where
+module Swapi.Internal.UrlData.Types where
 
 --------------------------------------------------------------------------------
 

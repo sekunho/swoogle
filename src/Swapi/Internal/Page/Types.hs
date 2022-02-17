@@ -1,4 +1,4 @@
-module SwapiLib.Internal.Page.Types where
+module Swapi.Internal.Page.Types where
 
 --------------------------------------------------------------------------------
 
@@ -13,9 +13,9 @@ import TextShow                           qualified as Text.Show (showt)
 
 --------------------------------------------------------------------------------
 
-import SwapiLib.Internal.UrlData       qualified as UrlData (fromUrlText,
+import Swapi.Internal.UrlData       qualified as UrlData (fromUrlText,
                                                                 toUrlText)
-import SwapiLib.Internal.UrlData.Types (UrlData (UrlData, udParams, udSubdir))
+import Swapi.Internal.UrlData.Types (UrlData (UrlData, udParams, udSubdir))
 
 --------------------------------------------------------------------------------
 -- Data types

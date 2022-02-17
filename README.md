@@ -24,23 +24,26 @@
 
 ``` sh
 # Restart web server on change
-watchexec --restart --exts css,hs,html -- stack exec swoogle
+watchexec --restart --exts css,hs,html,js -- stack run -- swapi:exe:swoogle
 
 # Have tailwind automatically parse and purge classes
 tailwindcss --input assets/app.css \
   --output priv/static/assets/app.css \
   --config assets/tailwind.config.js \
   --watch
+
+# Have esbuild automatically build `app.js`
+esbuild assets/app.js --outfile=priv/static/assets/app.js --watch
 ```
 
-## `swapi-lib`
+## `swapi`
 
-`swapi-lib` is a client library (without much bells and whistles) to interact
+`swapi` (found in the `src` directory) is a client library to interact
 with SWAPI ([Star Wars API](https://swapi.dev)).
 
 ``` haskell
-import qualified SwapiLib.Api as Api (getFilm)
-import SwapiLib.Id (FilmId (FilmId))
+import qualified Swapi.Api as Api (getFilm)
+import Swapi.Id (FilmId (FilmId))
 
 main :: IO ()
 main = do

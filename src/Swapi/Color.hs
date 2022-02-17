@@ -1,4 +1,4 @@
-module SwapiLib.Color
+module Swapi.Color
   ( HairColor
     ( AuburnHair
     , BlackHair

@@ -15,12 +15,12 @@ import Test.Hspec                    qualified as Hspec (describe, it, shouldBe)
 
 --------------------------------------------------------------------------------
 
-import SwapiLib.Internal.Resource (Resource (FilmResource, PeopleResource, PlanetResource, SpeciesResource, StarshipResource, VehicleResource))
-import SwapiLib.Internal.Resource qualified as Resource (resourceToUrlText)
-import SwapiLib.Internal.UrlData  (UrlData (UrlData, udParams, udSubdir))
-import SwapiLib.Internal.UrlData  qualified as UrlData (fromUrlText, getId,
+import Swapi.Internal.Resource (Resource (FilmResource, PeopleResource, PlanetResource, SpeciesResource, StarshipResource, VehicleResource))
+import Swapi.Internal.Resource qualified as Resource (resourceToUrlText)
+import Swapi.Internal.UrlData  (UrlData (UrlData, udParams, udSubdir))
+import Swapi.Internal.UrlData  qualified as UrlData (fromUrlText, getId,
                                                            toUrlText)
-import SwapiLib.Url               qualified as Url (baseUrl)
+import Swapi.Url               qualified as Url (baseUrl)
 
 --------------------------------------------------------------------------------
 -- Specs

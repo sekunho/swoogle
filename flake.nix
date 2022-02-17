@@ -22,14 +22,14 @@
         # `nix-direnv`: https://github.com/nix-community/nix-direnv
         devShell = pkgs.mkShell rec {
           buildInputs = [
-            pkgs.ghc
+            unstable.ghc
             # pkgs.haskell.compiler.integer-simple.ghc8107
 
             # I had to wrestle with `cabal`'s resolver and so I decided to switch.
             # I will look into using `haskell.nix`, but only when I get my fiber
             # internet back.
             pkgs.stack                           # Build tool
-            pkgs.haskell-language-server         # Haskell LSP
+            unstable.haskell-language-server     # Haskell LSP
             pkgs.hlint                           # Linter
             pkgs.haskellPackages.implicit-hie    # To deal with HLS + cabal oddities
             pkgs.haskellPackages.stylish-haskell # Code formatter
@@ -37,6 +37,7 @@
 
             # Front-end
             unstable.nodePackages.tailwindcss    # Styling with utility classes
+            unstable.esbuild                     # Node.JS? What's that?
 
             # Deploy
             pkgs.flyctl                          # Fly's CLI for deploy

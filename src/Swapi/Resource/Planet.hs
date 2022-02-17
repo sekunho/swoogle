@@ -1,4 +1,4 @@
-module SwapiLib.Resource.Planet
+module Swapi.Resource.Planet
   ( PlanetName (MkPlanetName)
   , RotationPeriod (RotationPeriod, UnknownRotationPeriod)
   , OrbitalPeriod (OrbitalPeriod, UnknownOrbitalPeriod)
@@ -117,8 +117,8 @@ import TextShow                  (TextShow)
 
 --------------------------------------------------------------------------------
 
-import SwapiLib.Id            (FilmId, PersonId, PlanetId)
-import SwapiLib.Internal.Page (Index (Index))
+import Swapi.Id            (FilmId, PersonId, PlanetId)
+import Swapi.Internal.Page (Index (Index))
 
 --------------------------------------------------------------------------------
 -- Data types
