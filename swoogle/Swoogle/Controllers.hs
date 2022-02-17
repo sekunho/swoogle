@@ -35,6 +35,7 @@ import Swapi
 
 assets :: Text -> ActionM ()
 assets asset =
+  -- TODO: Handle other cases
   case asset of
     "app.css" ->
       Scotty.setHeader "Content-Type" "text/css; charset=utf-8" >>

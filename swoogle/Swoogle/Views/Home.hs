@@ -27,6 +27,7 @@ import Lucid
       option_,
       disabled_,
       selected_,
+      placeholder_,
       ToHtml(toHtml, toHtmlRaw) )
 
 import Swoogle.Components.Icon qualified as Icon (search, github)
@@ -52,8 +53,9 @@ content = do
           , type_ "text"
           , id_ "search-bar"
           , name_ "query"
-          , class_ "rounded-l outline-none bg-inherit w-6/8 w-full p-2.5 font-sans text-su-fg dark:text-white text-lg"
+          , class_ "placeholder-light-italic rounded-l outline-none bg-inherit w-6/8 w-full p-2.5 font-sans text-su-fg dark:text-white text-lg"
           , autofocus_
+--          , placeholder_ "What do you want to look for?"
           ]
 
         -- Category options

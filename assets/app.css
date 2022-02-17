@@ -3,6 +3,10 @@
 @import "tailwindcss/utilities";
 
 @layer base {
+  .placeholder-light-italic::placeholder{
+    @apply italic font-light
+  }
+
   /* Vollkorn */
   @font-face {
     font-family: 'Vollkorn';
