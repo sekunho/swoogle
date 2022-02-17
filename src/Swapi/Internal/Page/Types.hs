@@ -73,6 +73,7 @@ Index
   }
 @
 -}
+-- TODO: Refactor to turn this into a sum type: HasNext, HasPrev, HasNone, HasBoth
 data Index a = Index
   { iCount        :: Int  -- ^ Total number of entries for a resource
   , iNextPage     :: Page -- ^ Next page
@@ -80,6 +81,9 @@ data Index a = Index
   , iResults      :: [a]  -- ^ List of resources
   }
   deriving stock Show
+
+instance Functor Index where
+  fmap f index = index {iResults = f <$> iResults index}
 
 --------------------------------------------------------------------------------
 -- Instances

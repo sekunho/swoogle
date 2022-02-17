@@ -6,11 +6,17 @@ import Data.Text qualified as Text (toLower)
 import Lucid
 
 import Lucid qualified as Lucid (toHtml)
+import TextShow qualified as Show (showt)
+
+import Swoogle.Entry
 import Swoogle.Components.Icon qualified as Icon (search, github)
 import Swoogle.Components.Search qualified as Search (suggestionsEntry)
+import Swapi
 
-content :: Html ()
-content = do
+--------------------------------------------------------------------------------
+
+content :: Text -> Index Entry -> Html ()
+content partialUrl entryIndex = do
     div_ [class_ "w-2/3 py-6 flex flex-col min-h-screen mx-auto"] $ do
       searchBar
 
@@ -20,14 +26,31 @@ content = do
 
       -- Search results are rendered here
       div_ [class_ "mt-4 sm:mt-14 w-full flex flex-col gap-8"] $ do
-        foldl' (\acc _ -> acc <> resultEntry) mempty [1..10]
+        foldl' (\acc -> (<>) acc . resultEntry) mempty (iResults entryIndex)
 
       div_ [class_ "mt-4 sm:mt-6 flex justify-center gap-4"] $ do
-        a_ [href_ "/search?q=luke&page=3", class_ "text-su-fg bg-gray-200 hover:bg-gray-300 dark:text-su-dark-fg dark:bg-su-dark-bg-alt dark:hover:bg-su-dark-bg-alt/[0.7] rounded-md py-2 px-4 text-sm"] "Previous"
-        a_ [href_ "/search?q=luke&page=1", class_ "text-su-fg bg-gray-200 hover:bg-gray-300 dark:text-su-dark-fg dark:bg-su-dark-bg-alt dark:hover:bg-su-dark-bg-alt/[0.7] rounded-md py-2 px-4 text-sm"] "Next"
+        prevPage
+        nextPage
+  where
+    prevPage =
+      case iPreviousPage entryIndex of
+        Page num -> navLink "Previous" (partialUrl <> "&page=" <> Show.showt num)
+        NoPage -> mempty
+
+    nextPage =
+      case iNextPage entryIndex of
+        Page num -> navLink "Next" (partialUrl <> "&page=" <> Show.showt num)
+        NoPage -> mempty
 
 --------------------------------------------------------------------------------
 -- Components
+navLink :: Text -> Text -> Html ()
+navLink label href =
+  a_
+    [ href_ href
+    , class_ "text-su-fg bg-gray-200 hover:bg-gray-300 dark:text-su-dark-fg dark:bg-su-dark-bg-alt dark:hover:bg-su-dark-bg-alt/[0.7] rounded-md py-2 px-4 text-sm"
+    ]
+    (Lucid.toHtml label)
 
 searchBar :: Html ()
 searchBar =
@@ -57,13 +80,23 @@ resourceButton query label resource  =
     [href_ ("/search?r=" <> resource <> "&q=" <> query)]
     (Lucid.toHtml label)
 
-resultEntry :: Html ()
-resultEntry =
+resultEntry :: Entry -> Html ()
+resultEntry entry =
   div_ [class_ "flex flex-col gap-2"] $ do
-    a_ [href_ "#", class_ "hover:underline text-su-fg dark:text-su-dark-fg text-xl"] "Luke Skywalker"
-    p_ [class_ "text-sm text-su-fg dark:text-su-dark-fg font-light"] "This is a sample description text"
+    a_
+      [ href_ (eLink entry)
+      , class_ "hover:underline text-su-fg dark:text-su-dark-fg text-xl"
+      ]
+      (Lucid.toHtml (eTitle entry))
+
+    -- p_ [class_ "text-sm text-su-fg dark:text-su-dark-fg font-light"] "This is a sample description text"
+
     div_ [class_ "text-xs flex gap-2 text-su-accent-1 dark:text-su-dark-fg/[0.8] opacity-80"] $ do
-      span_ [class_ "px-2 py-1 rounded bg-su-accent-1/[0.2] dark:bg-su-dark-bg-alt/[0.5]"] "180m"
-      span_ [class_ "px-2 py-1 rounded bg-su-accent-1/[0.2] dark:bg-su-dark-bg-alt/[0.5]"] "people"
-      span_ [class_ "px-2 py-1 rounded bg-su-accent-1/[0.2] dark:bg-su-dark-bg-alt/[0.5]"] "brown eyes"
-      span_ [class_ "px-2 py-1 rounded bg-su-accent-1/[0.2] dark:bg-su-dark-bg-alt/[0.5]"] "fair skin"
+      foldl'
+        (\html tagName ->
+          html <>
+            span_
+              [class_ "px-2 py-1 rounded bg-su-accent-1/[0.2] dark:bg-su-dark-bg-alt/[0.5]"]
+              (Lucid.toHtml tagName))
+        mempty
+        (eTags entry)
