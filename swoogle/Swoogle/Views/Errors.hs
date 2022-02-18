@@ -1,18 +1,22 @@
 module Swoogle.Views.Errors where
 
+--------------------------------------------------------------------------------
+
 import Data.List (foldl')
 import Data.Text (Text)
-import Lucid
+import Lucid (a_, br_, class_, div_, h1_, href_, p_, span_, Html)
 import Lucid qualified (toHtml)
 import TextShow qualified as Show (showt)
 
-import Swoogle.SearchData
+import Swoogle.SearchData (SearchData (SearchData, sdResource))
 import Swoogle.SearchData qualified as SearchData (toParamsText)
+
+--------------------------------------------------------------------------------
 
 renderError500 :: Html () -> Html ()
 renderError500 slot = do
   div_ [class_ "text-su-fg dark:text-su-dark-fg relative h-screen w-full sm:w-2/3 flex flex-col gap-4 items-center justify-center mx-auto"] $ do
-    h1_ [class_ "text-4xl font-serif text-center"] "Internal Server Error"
+    h1_ [class_ "text-4xl font-bold font-serif text-center"] "Internal Server Error"
     slot
 
 httpNotFound :: Html ()

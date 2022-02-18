@@ -1,23 +1,61 @@
 module Swoogle.Views.SearchResults where
 
+--------------------------------------------------------------------------------
+
 import Data.List (foldl')
 import Data.Map qualified as Map (update, lookup)
 import Data.Text (Text)
 import Data.Text qualified as Text (toLower)
 import Lucid
+  ( a_
+  , action_
+  , autocomplete_
+  , br_
+  , button_
+  , class_
+  , disabled_
+  , div_
+  , form_
+  , hidden_
+  , href_
+  , id_
+  , input_
+  , method_
+  , min_
+  , name_
+  , option_
+  , p_
+  , required_
+  , select_
+  , selected_
+  , span_
+  , type_
+  , value_
+  , Html
+  )
 
-import Lucid qualified as Lucid (toHtml)
+import Lucid qualified (toHtml)
 import TextShow qualified as Show (showt)
 
-import Swoogle.SearchData
+--------------------------------------------------------------------------------
+
+import Swoogle.SearchData (SearchData(sdPage, sdQuery, sdResource))
 import Swoogle.SearchData qualified as SearchData
 import Swoogle.Entry
+    ( Entry (HasDescription, NoDescription)
+    , BriefEntry(beLink, beTitle, beTags)
+    , DescriptiveEntry(deLink, deTitle, deDescription, deTags)
+    )
+
 import Swoogle.Components.Icon qualified as Icon (search, github)
 import Swoogle.Components.Search qualified as Search (suggestionsEntry)
 import Swapi
-import Swapi.Url
+    ( Index(iPreviousPage, iNextPage, iResults)
+    , Page(NoPage, Page)
+    )
 
 --------------------------------------------------------------------------------
+-- Layouts
 
 content :: SearchData -> Index Entry -> Html ()
 content searchData entryIndex = do
@@ -65,6 +103,7 @@ content searchData entryIndex = do
 
 --------------------------------------------------------------------------------
 -- Components
+
 navLink :: Text -> Text -> Html ()
 navLink label href =
   a_

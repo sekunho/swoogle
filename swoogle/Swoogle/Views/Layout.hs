@@ -2,11 +2,36 @@
 -- to explain this lol.
 module Swoogle.Views.Layout where
 
+--------------------------------------------------------------------------------
+
 import Data.List (foldl')
 import Data.Text (Text)
-
--- TODO: Explicit imports
 import Lucid
+  ( a_
+  , body_
+  , class_
+  , crossorigin_
+  , div_
+  , doctypehtml_
+  , footer_
+  , href_
+  , link_
+  , main_
+  , meta_
+  , p_
+  , rel_
+  , script_
+  , src_
+  , target_
+  , title_
+  , charset_
+  , httpEquiv_
+  , content_
+  , name_
+  , Html
+  )
+
+import Lucid qualified (toHtmlRaw)
 import Lucid.Base (makeAttribute)
 
 --------------------------------------------------------------------------------
@@ -17,16 +42,16 @@ import Swoogle.Components.Icon qualified as Icon (search, github, twitter, youtu
 
 noFooterRoot :: Html () -> Html ()
 noFooterRoot content = doctypehtml_ $ do
-  meta_ [makeAttribute "charset" "utf-8"]
-  meta_ [makeAttribute "http-equiv" "X-UA-Compatible", makeAttribute "content" "IE=edge"]
+  meta_ [charset_ "utf-8"]
+  meta_ [httpEquiv_ "X-UA-Compatible", content_ "IE=edge"]
   meta_
-    [ makeAttribute "name" "viewport"
-    , makeAttribute "content" "width=device-width"
+    [ name_ "viewport"
+    , content_ "width=device-width"
     , makeAttribute "initial-scale" "1.0"
     ]
   link_
-    [ makeAttribute "rel" "stylesheet"
-    , makeAttribute "href" "/assets/app.css"
+    [ rel_ "stylesheet"
+    , href_ "/assets/app.css"
     ]
 
   -- Fonts

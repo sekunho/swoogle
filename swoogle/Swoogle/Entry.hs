@@ -1,5 +1,7 @@
 module Swoogle.Entry where
 
+--------------------------------------------------------------------------------
+
 import Data.Coerce (coerce)
 import Data.Text (Text)
 import Data.Text qualified as Text (intercalate)
@@ -8,11 +10,45 @@ import TextShow qualified as Show (showt)
 --------------------------------------------------------------------------------
 
 import Swapi.Resource.Person
+  ( Height (Height, UnknownHeight)
+  , Mass (Mass, UnknownMass)
+  , Person
+      ( pName
+      , pHeight
+      , pMass
+      , pHairColor
+      , pEyeColor
+      , pId
+      )
+  , PersonName (PersonName)
+  )
+
 import Swapi.Resource.Film
+  ( Film (fTitle, fOpeningCrawl, fId)
+  , OpeningCrawl (OpeningCrawl)
+  )
+
 import Swapi.Resource.Starship
+  ( Starship (sName, sId)
+  , StarshipName (StarshipName)
+  )
+
 import Swapi.Resource.Vehicle
+  ( Vehicle (vName, vId)
+  , VehicleName (VehicleName)
+  )
+
 import Swapi.Resource.Species
+  ( OriginlessSpecies (hSpName, hSpId),
+    Species (spName, spId),
+    SpeciesName (SpeciesName),
+    SpeciesType (HasOrigin, NoOrigin)
+  )
+
 import Swapi.Resource.Planet
+  ( Planet (plName, plId)
+  , PlanetName (MkPlanetName)
+  )
 
 --------------------------------------------------------------------------------
 
@@ -90,7 +126,6 @@ fromVehicle v =
     , beLink = "/vehicle/" <> Show.showt (vId v)
     }
 
-
 -- | Parses a `SpeciesType` to a more generic `Entry`
 fromSpecies :: SpeciesType -> Entry
 fromSpecies s =
@@ -112,7 +147,6 @@ fromSpecies s =
             ]
         , beLink = "/species/" <> Show.showt (hSpId os)
         }
-
 
 -- | Parses a `Planet` to a more generic `Entry`
 fromPlanet :: Planet -> Entry

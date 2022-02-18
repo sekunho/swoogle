@@ -3,14 +3,7 @@ module Main where
 --------------------------------------------------------------------------------
 
 import Control.Monad.IO.Class qualified as IO (liftIO)
-import Data.ByteString (ByteString)
-import Data.ByteString qualified as ByteString
-import Data.ByteString.Char8 qualified as Char8
-import Data.Map qualified as Map
-import Data.Word8 qualified as Word8 (_semicolon)
-import Data.Set qualified as Set
 import Data.Text (Text)
-import Lucid
 import Web.Scotty (ScottyM, ActionM)
 import Web.Scotty qualified as Scotty
   ( scotty

@@ -2,9 +2,13 @@ module Swoogle.Components.Search
   ( suggestionsEntry
   ) where
 
+--------------------------------------------------------------------------------
+
 import Data.Text (Text)
 import Lucid (Html)
 import Lucid qualified
+
+--------------------------------------------------------------------------------
 
 -- TODO: Use domain types
 suggestionsEntry :: Text -> Text -> Html ()

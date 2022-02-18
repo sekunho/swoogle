@@ -1,5 +1,7 @@
 module Swoogle.Views.Home where
 
+--------------------------------------------------------------------------------
+
 import Lucid
     ( Html,
       a_,
@@ -31,8 +33,12 @@ import Lucid
       footer_,
       ToHtml(toHtml, toHtmlRaw) )
 
+--------------------------------------------------------------------------------
+
 import Swoogle.Components.Icon qualified as Icon (search)
 import Swoogle.Components.Search qualified as Search (suggestionsEntry)
+
+--------------------------------------------------------------------------------
 
 content :: Html ()
 content = do
