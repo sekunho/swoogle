@@ -6,10 +6,11 @@ module Swoogle.Views.Layout where
 
 import Data.List               (foldl')
 import Data.Text               (Text)
-import Lucid                   (Html, a_, body_, charset_, class_, content_,
-                                crossorigin_, div_, doctypehtml_, footer_,
-                                href_, httpEquiv_, link_, main_, meta_, name_,
-                                p_, rel_, script_, src_, target_, title_)
+import Lucid                   (Html, a_, async_, body_, charset_, class_,
+                                content_, crossorigin_, defer_, div_,
+                                doctypehtml_, footer_, href_, httpEquiv_, link_,
+                                main_, meta_, name_, p_, rel_, script_, src_,
+                                target_, title_)
 
 import Lucid                   qualified (toHtmlRaw)
 import Lucid.Base              (makeAttribute)
@@ -98,12 +99,20 @@ root content = doctypehtml_ $ do
     footer
 
     script_ [src_ "/assets/app.js"] ("" :: Html ())
+    script_
+      [ async_ ""
+      , defer_ ""
+      , src_ "https://buttons.github.io/buttons.js"
+      ]
+      ("" :: Html ())
 
 footer :: Html ()
 footer =
   footer_ [class_ "bg-gray-100 dark:bg-su-dark-bg"] $ do
     div_ [class_ "max-w-7xl mx-auto pb-6 pt-2 px-4 sm:px-6 md:flex md:items-center md:justify-between lg:px-8"] $ do
       div_ [class_ "flex justify-center space-x-6 md:order-2"] $ do
+        Lucid.toHtmlRaw @Text
+          "<a class=\"github-button\" href=\"https://github.com/sekunho/swoogle\" data-color-scheme=\"no-preference: light; light: light; dark: dark_high_contrast;\" data-icon=\"octicon-star\" data-size=\"large\" data-show-count=\"true\" aria-label=\"Star sekunho/swoogle on GitHub\">Star</a>"
 
         foldl'
           (\links (label, link) ->
@@ -116,7 +125,7 @@ footer =
                  label
           )
           mempty
-          [ (Icon.github, "https://github.com/sekunho/swoogle")
+          [ (Icon.github, "https://github.com/sekunho")
           , (Icon.twitter, "https://twitter.com/hsekun")
           , (Icon.youtube, "https://youtube.com/sekunho")
           ]

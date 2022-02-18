@@ -280,6 +280,10 @@ suggest = do
     _ ->
       Scotty.raise "Unexpected category/resource"
 
+-- TODO: Implement this
+-- viewResource :: ActionM ()
+-- viewResource = _
+
 --------------------------------------------------------------------------------
 
 staticPath :: FilePath
