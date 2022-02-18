@@ -84,62 +84,13 @@ Just $
 module Swapi.Resource.Species
   ( SpeciesName (SpeciesName)
   , Designation (SentientDesignation, ReptilianDesignation)
-  , Classification
-    ( MammalClass
-    , ArtificialClass
-    , SentientClass
-    , GastropodClass
-    , ReptileClass
-    , AmphibianClass
-    )
+  , Classification (..)
   , AverageHeight (AverageHeight, AverageHeightNotApplicable)
   , AverageLifespan (Lifespan, Indefinite, UnknownLifespan)
-  , Language
-    ( GalacticBasic
-    , Shyriiwook
-    , Huttese
-    , Dosh
-    , MonCalamarian
-    , Ewokese
-    , Sullutese
-    , NoLanguage
-    )
+  , Language (..)
   , SpeciesType (HasOrigin, NoOrigin)
-  , Species
-    ( MkSpecies
-    , spName
-    , spClassification
-    , spDesignation
-    , spAverageHeight
-    , spSkinColors
-    , spHairColors
-    , spEyeColors
-    , spAverageLifespan
-    , spHomeworld
-    , spLanguage
-    , spPeople
-    , spFilms
-    , spCreatedAt
-    , spEditedAt
-    , spId
-    )
-  , OriginlessSpecies
-    ( MkOriginlessSpecies
-    , hSpName
-    , hSpClassification
-    , hSpDesignation
-    , hSpAverageHeight
-    , hSpSkinColors
-    , hSpHairColors
-    , hSpEyeColors
-    , hSpAverageLifespan
-    , hSpLanguage
-    , hSpPeople
-    , hSpFilms
-    , hSpCreatedAt
-    , hSpEditedAt
-    , hSpId
-    )
+  , Species (..)
+  , OriginlessSpecies (..)
   ) where
 
 --------------------------------------------------------------------------------
@@ -189,6 +140,8 @@ data Classification
   | GastropodClass
   | ReptileClass
   | AmphibianClass
+  | InsectoidClass
+  | UnknownClass
   deriving stock
     ( Eq   -- ^ Compare `Classification`s with each other
     , Show -- ^ Encode `Classification` as `String` through `show`
@@ -198,6 +151,7 @@ data Classification
 data AverageHeight
   = AverageHeight Word         -- ^ A species' average height in centimeters (cm)
   | AverageHeightNotApplicable -- ^ This dude says they're 6'5" and won't admit any less
+  | AverageHeightUnknown       -- ^ We don't know lol
   deriving stock
     ( Eq   -- ^ Compare `AverageHeight`s with each other
     , Show -- ^ Encode `AverageHeight` as `String` through `show`
@@ -222,6 +176,33 @@ data Language
   | MonCalamarian -- ^ Official language of the Mon Calamari species. /I'm hungry.../
   | Ewokese       -- ^ Fluffy teddy bears that have spears
   | Sullutese     -- ^ Official language of the Sullustan species
+  | Neimoidia     -- ^ Wth is this?
+  | GunganBasic   -- ^ TODO: Docs
+  | Toydarian     -- ^ TODO: Docs
+  | Dugese        -- ^ TODO: Docs
+  | TwiLeki       -- ^ TODO: Docs
+  | Aleena
+  | Vulpterish
+  | Xextese
+  | Tundan
+  | Cerean
+  | Nautila
+  | Zabraki
+  | Iktotchese
+  | Quermian
+  | KelDor
+  | Chagria
+  | Geonosian
+  | Mirialan
+  | Clawdite
+  | Besalisk
+  | Kaminoan
+  | Skakoan
+  | Muun
+  | Togruti
+  | Kaleesh
+  | Utapese
+  | UnknownLanguage
   | NoLanguage    -- ^ They don't communicate. Perhaps the archives have been deleted?
   deriving stock
     ( Eq   -- ^ Compare `Language`s with each other
@@ -341,11 +322,15 @@ instance FromJSON (Classification :: Type) where
     Aeson.withText "Classification" $
       \case
         "mammal" -> pure MammalClass
+        "mammals" -> pure MammalClass
         "artificial" -> pure ArtificialClass
         "sentient" -> pure SentientClass
         "gastropod" -> pure GastropodClass
+        "reptilian" -> pure ReptileClass
         "reptile" -> pure ReptileClass
         "amphibian" -> pure AmphibianClass
+        "insectoid" -> pure InsectoidClass
+        "unknown" -> pure UnknownClass
         c ->
           fail ("Unexpected value for species' classification: " <> Text.unpack c)
 
@@ -365,6 +350,7 @@ __Good__
 "123"
 "69"
 "42"
+"unknown"
 @
 
 __Bad__
@@ -387,6 +373,7 @@ instance FromJSON (AverageHeight :: Type) where
     Aeson.withText "AverageHeight" $
       \case
         "n/a" -> pure AverageHeightNotApplicable
+        "unknown" -> pure AverageHeightUnknown
         val ->
           case Text.Read.decimal val of
             Right (avgHeight, "") ->
@@ -454,7 +441,14 @@ A JSON value can be decoded to `Language` but must be one of these formats:
 6. @"mon calamarian"@
 7. @"ewokese"@
 8. @"sullutese"@
-9. @"n/a"@
+9. @"neimoidia"@
+10. @"gungan basic"@
+11. @"toydarian"@
+12. @"dugese"@
+13. @"twi'leki"@
+14. @"n/a"@
+
+There are more, so consult with the source code. Or make a PR to update it.
 
 Not case sensitive
 -}
@@ -473,6 +467,33 @@ instance FromJSON (Language :: Type) where
         "mon calamarian" -> pure MonCalamarian
         "ewokese" -> pure Ewokese
         "sullutese" -> pure Sullutese
+        "neimoidia" -> pure Neimoidia
+        "gungan basic" -> pure GunganBasic
+        "toydarian" -> pure Toydarian
+        "dugese" -> pure Dugese
+        "twi'leki" -> pure TwiLeki
+        "aleena" -> pure Aleena
+        "vulpterish" -> pure Vulpterish
+        "xextese" -> pure Xextese
+        "tundan" -> pure Tundan
+        "cerean" -> pure Cerean
+        "nautila" -> pure Nautila
+        "zabraki" -> pure Zabraki
+        "iktotchese" -> pure Iktotchese
+        "quermian" -> pure Quermian
+        "kel dor" -> pure KelDor
+        "chagria" -> pure Chagria
+        "geonosian" -> pure Geonosian
+        "mirialan" -> pure Mirialan
+        "clawdite" -> pure Clawdite
+        "besalisk" -> pure Besalisk
+        "kaminoan" -> pure Kaminoan
+        "skakoan" -> pure Skakoan
+        "muun" -> pure Muun
+        "togruti" -> pure Togruti
+        "kaleesh" -> pure Kaleesh
+        "utapese" -> pure Utapese
+        "unknown" -> pure UnknownLanguage
         "n/a" -> pure NoLanguage
         l -> fail ("Unexpected value for species' language: " <> Text.unpack l)
 

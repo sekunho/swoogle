@@ -1,58 +1,7 @@
 module Swapi.Color
-  ( HairColor
-    ( AuburnHair
-    , BlackHair
-    , BlondHair
-    , BrownHair
-    , GreyHair
-    , NoHairColor
-    , WhiteHair
-    , BlueHair
-    , RedHair
-    )
-  , SkinColor
-    ( BlueSkin
-    , BrownSkin
-    , BrownMottleSkin
-    , DarkSkin
-    , FairSkin
-    , GoldSkin
-    , GreenSkin
-    , GreenTanSkin
-    , GreySkin
-    , LightSkin
-    , MetalSkin
-    , MottledGreenSkin
-    , OrangeSkin
-    , PaleSkin
-    , RedSkin
-    , SilverSkin
-    , TanSkin
-    , UnknownSkinColor
-    , WhiteSkin
-    , YellowSkin
-    , CaucasianSkin
-    , BlackSkin
-    , AsianSkin
-    , HispanicSkin
-    )
-  , EyeColor
-    ( BlackEye
-    , BlueEye
-    , BlueGreyEye
-    , BrownEye
-    , GoldEye
-    , GreenEye
-    , HazelEye
-    , OrangeEye
-    , PinkEye
-    , RedEye
-    , UnknownEyeColor
-    , YellowEye
-    , WhiteEye
-    , AmberEye
-    , GreyEye
-    )
+  ( HairColor (..)
+  , SkinColor (..)
+  , EyeColor (..)
   ) where
 
 --------------------------------------------------------------------------------
@@ -74,10 +23,11 @@ data HairColor
   | BlondHair
   | BrownHair
   | GreyHair
-  | NoHairColor
   | WhiteHair
   | RedHair
   | BlueHair
+  | NoHairColor
+  | UnknownHairColor
   deriving (Eq, Show)
 
 data SkinColor
@@ -105,6 +55,10 @@ data SkinColor
   | BlackSkin
   | AsianSkin
   | HispanicSkin
+  | PurpleSkin
+  | PinkSkin
+  | PalePinkSkin
+  | PeachSkin
   | SkinColorNotApplicable
   | UnknownSkinColor
   deriving (Eq, Show)
@@ -124,6 +78,8 @@ data EyeColor
   | RedEye
   | YellowEye
   | WhiteEye
+  | IndigoEye
+  | SilverEye
   | EyeColorNotApplicable
   | UnknownEyeColor
   deriving (Eq, Show)
@@ -136,15 +92,16 @@ data EyeColor
 instance TextShow (HairColor :: Type) where
   showb :: HairColor -> Builder
   showb = \case
-    AuburnHair  -> "auburn"
-    BlackHair   -> "black"
-    BlondHair   -> "blond"
-    BrownHair   -> "brown"
-    GreyHair    -> "grey"
-    NoHairColor -> "none"
-    WhiteHair   -> "white"
-    RedHair     -> "red"
-    BlueHair    -> "blue"
+    AuburnHair       -> "auburn"
+    BlackHair        -> "black"
+    BlondHair        -> "blond"
+    BrownHair        -> "brown"
+    GreyHair         -> "grey"
+    WhiteHair        -> "white"
+    RedHair          -> "red"
+    BlueHair         -> "blue"
+    UnknownHairColor -> "unknown"
+    NoHairColor      -> "none"
 
 instance TextShow (SkinColor :: Type) where
   showb :: SkinColor -> Builder
@@ -173,6 +130,10 @@ instance TextShow (SkinColor :: Type) where
     BlackSkin              -> "black"
     AsianSkin              -> "asian"
     HispanicSkin           -> "hispanic"
+    PurpleSkin             -> "purple"
+    PinkSkin               -> "pink"
+    PalePinkSkin           -> "pale pink"
+    PeachSkin              -> "peach"
     SkinColorNotApplicable -> "n/a"
     UnknownSkinColor       -> "unknown"
 
@@ -193,6 +154,8 @@ instance TextShow (EyeColor :: Type) where
     WhiteEye              -> "white"
     AmberEye              -> "amber"
     GreyEye               -> "grey"
+    IndigoEye             -> "indigo"
+    SilverEye             -> "silver"
     EyeColorNotApplicable -> "n/a"
     UnknownEyeColor       -> "unknown"
 
@@ -261,18 +224,19 @@ instance {-# OVERLAPS #-} FromJSON ([EyeColor] :: Type) where
 
 textToHairColor :: Text -> Either String HairColor
 textToHairColor hct = case hct of
-  "auburn" -> Right AuburnHair
-  "black"  -> Right BlackHair
-  "blond"  -> Right BlondHair
-  "blonde" -> Right BlondHair
-  "brown"  -> Right BrownHair
-  "grey"   -> Right GreyHair
-  "white"  -> Right WhiteHair
-  "blue"   -> Right BlueHair
-  "red"    -> Right RedHair
-  "n/a"    -> Right NoHairColor
-  "none"   -> Right NoHairColor
-  _        -> Left "ERROR: Invalid hair color value/format"
+  "auburn"  -> Right AuburnHair
+  "black"   -> Right BlackHair
+  "blond"   -> Right BlondHair
+  "blonde"  -> Right BlondHair
+  "brown"   -> Right BrownHair
+  "grey"    -> Right GreyHair
+  "white"   -> Right WhiteHair
+  "blue"    -> Right BlueHair
+  "red"     -> Right RedHair
+  "n/a"     -> Right NoHairColor
+  "none"    -> Right NoHairColor
+  "unknown" -> Right UnknownHairColor
+  h         -> Left ("ERROR: Invalid hair color value/format: " <> Text.unpack h)
 
 textToSkinColor :: Text -> Either String SkinColor
 textToSkinColor sct = case sct of
@@ -301,8 +265,12 @@ textToSkinColor sct = case sct of
   "black"         -> Right BlackSkin
   "asian"         -> Right AsianSkin
   "hispanic"      -> Right HispanicSkin
-  "n/a"           -> Right SkinColorNotApplicable
+  "purple"        -> Right PurpleSkin
+  "pink"          -> Right PinkSkin
+  "pale pink"     -> Right PalePinkSkin
+  "peach"         -> Right PeachSkin
   "unknown"       -> Right UnknownSkinColor
+  "n/a"           -> Right SkinColorNotApplicable
   s               -> Left ("ERROR: Invalid skin color/format " <> Text.unpack s)
 
 textToEyeColor :: Text -> Either String EyeColor
@@ -319,10 +287,12 @@ textToEyeColor ect = case ect of
   "orange" -> pure OrangeEye
   "pink" -> pure PinkEye
   "red" -> pure RedEye
-  "unknown" -> pure UnknownEyeColor
   "yellow" -> pure YellowEye
   "amber" -> pure AmberEye
   "grey" -> pure GreyEye
+  "indigo" -> pure IndigoEye
+  "silver" -> pure SilverEye
+  "unknown" -> pure UnknownEyeColor
   "n/a" -> pure EyeColorNotApplicable
   e -> Left ("ERROR: Invalid eye color value/format " <> Text.unpack e)
 
