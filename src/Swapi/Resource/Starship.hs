@@ -47,18 +47,17 @@ module Swapi.Resource.Starship
 
 --------------------------------------------------------------------------------
 
-import Data.Aeson                (FromJSON, ToJSON, parseJSON, toJSON, (.:),
-                                  (.=))
-import Data.Aeson                qualified as Aeson
-import Data.Aeson.Types          (Parser, Value (String))
-import Data.Coerce               (Coercible, coerce)
-import Data.Kind                 (Type)
-import Data.Text                 (Text)
-import Data.Text                 qualified as Text (filter, split, toLower)
-import Data.Text.Read            qualified as Text.Read (decimal, double)
-import Data.Time                 (UTCTime)
-import TextShow                  (TextShow)
-import TextShow                  qualified as Text.Show (showt)
+import Data.Aeson          (FromJSON, ToJSON, parseJSON, toJSON, (.:), (.=))
+import Data.Aeson          qualified as Aeson
+import Data.Aeson.Types    (Parser, Value (String))
+import Data.Coerce         (Coercible, coerce)
+import Data.Kind           (Type)
+import Data.Text           (Text)
+import Data.Text           qualified as Text (filter, split, toLower)
+import Data.Text.Read      qualified as Text.Read (decimal, double)
+import Data.Time           (UTCTime)
+import TextShow            (TextShow)
+import TextShow            qualified as Text.Show (showt)
 
 --------------------------------------------------------------------------------
 

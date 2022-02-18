@@ -3,21 +3,20 @@ module Swapi.Internal.Id.Types where
 --------------------------------------------------------------------------------
 -- External
 
-import Data.Aeson                         (FromJSON (parseJSON),
-                                           ToJSON (toJSON), Value (String))
-import Data.Aeson                         qualified as Aeson (withText)
-import Data.Aeson.Types                   (Parser)
-import Data.Kind                          (Type)
-import Data.Map.Strict                    qualified as Map
-import Data.Text                          (Text)
-import TextShow                           (TextShow)
-import TextShow                           qualified as Text.Show (showt)
+import Data.Aeson                   (FromJSON (parseJSON), ToJSON (toJSON),
+                                     Value (String))
+import Data.Aeson                   qualified as Aeson (withText)
+import Data.Aeson.Types             (Parser)
+import Data.Kind                    (Type)
+import Data.Map.Strict              qualified as Map
+import Data.Text                    (Text)
+import TextShow                     (TextShow)
+import TextShow                     qualified as Text.Show (showt)
 
 --------------------------------------------------------------------------------
 -- Internal
 
-import Swapi.Internal.UrlData       qualified as UrlData (getId,
-                                                                toUrlText)
+import Swapi.Internal.UrlData       qualified as UrlData (getId, toUrlText)
 import Swapi.Internal.UrlData.Types (UrlData (UrlData))
 
 --------------------------------------------------------------------------------

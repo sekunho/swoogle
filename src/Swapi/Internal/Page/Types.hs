@@ -2,19 +2,19 @@ module Swapi.Internal.Page.Types where
 
 --------------------------------------------------------------------------------
 
-import Data.Aeson                         (parseJSON, toJSON)
-import Data.Aeson.Types                   (FromJSON, Parser, ToJSON,
-                                           Value (Null, String))
-import Data.Kind                          (Type)
-import Data.Map                           qualified as Map (fromList, lookup)
-import Data.Text.Read                     qualified as Text.Read (decimal)
-import TextShow                           (TextShow)
-import TextShow                           qualified as Text.Show (showt)
+import Data.Aeson                   (parseJSON, toJSON)
+import Data.Aeson.Types             (FromJSON, Parser, ToJSON,
+                                     Value (Null, String))
+import Data.Kind                    (Type)
+import Data.Map                     qualified as Map (fromList, lookup)
+import Data.Text.Read               qualified as Text.Read (decimal)
+import TextShow                     (TextShow)
+import TextShow                     qualified as Text.Show (showt)
 
 --------------------------------------------------------------------------------
 
 import Swapi.Internal.UrlData       qualified as UrlData (fromUrlText,
-                                                                toUrlText)
+                                                          toUrlText)
 import Swapi.Internal.UrlData.Types (UrlData (UrlData, udParams, udSubdir))
 
 --------------------------------------------------------------------------------

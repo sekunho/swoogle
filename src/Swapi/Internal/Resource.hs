@@ -4,9 +4,9 @@ module Swapi.Internal.Resource where
 
 --------------------------------------------------------------------------------
 
-import Data.Text                (Text)
-import Data.Text                qualified as Text (append)
-import Network.HTTP.Req         (Scheme (Https), Url, (/:))
+import Data.Text          (Text)
+import Data.Text          qualified as Text (append)
+import Network.HTTP.Req   (Scheme (Https), Url, (/:))
 
 
 --------------------------------------------------------------------------------

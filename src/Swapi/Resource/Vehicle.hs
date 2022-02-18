@@ -44,23 +44,22 @@ module Swapi.Resource.Vehicle
 
 --------------------------------------------------------------------------------
 
-import Data.Aeson                    (parseJSON, (.:))
-import Data.Aeson                    qualified as Aeson (withObject, withText)
-import Data.Aeson.Types              (FromJSON, Parser, ToJSON, Value)
-import Data.Kind                     (Type)
-import Data.Text                     (Text)
-import Data.Text                     qualified as Text (stripEnd, toLower)
-import Data.Text.Read                qualified as Text.Read (double)
-import Data.Time                     (UTCTime)
+import Data.Aeson              (parseJSON, (.:))
+import Data.Aeson              qualified as Aeson (withObject, withText)
+import Data.Aeson.Types        (FromJSON, Parser, ToJSON, Value)
+import Data.Kind               (Type)
+import Data.Text               (Text)
+import Data.Text               qualified as Text (stripEnd, toLower)
+import Data.Text.Read          qualified as Text.Read (double)
+import Data.Time               (UTCTime)
 
 --------------------------------------------------------------------------------
 
 import Swapi.Id                (FilmId, PersonId, VehicleId)
 import Swapi.Internal.Page     (Index (Index))
-import Swapi.Resource.Starship (CargoCapacity, Consumable, Cost,
-                                      Manufacturer, MaxAtmospheringSpeed,
-                                      PassengerLimit, RequiredCrew,
-                                      Wrapped (Wrapped))
+import Swapi.Resource.Starship (CargoCapacity, Consumable, Cost, Manufacturer,
+                                MaxAtmospheringSpeed, PassengerLimit,
+                                RequiredCrew, Wrapped (Wrapped))
 
 --------------------------------------------------------------------------------
 -- Data types

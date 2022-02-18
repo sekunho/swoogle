@@ -41,19 +41,18 @@ module Swapi.Api
 
 --------------------------------------------------------------------------------
 
-import Control.Exception             (throwIO)
-import Data.Aeson                    (FromJSON)
-import Data.Aeson                    qualified as Aeson (decodeStrict,
-                                                         eitherDecodeStrict)
-import Data.ByteString               (ByteString)
-import Data.Functor                  ((<&>))
-import Data.Text                     (Text)
-import Network.HTTP.Req              (GET (GET), NoReqBody (NoReqBody), Option,
-                                      Req, Url, (/:), (=:))
-import Network.HTTP.Req              qualified as Req (bsResponse,
-                                                       defaultHttpConfig, req,
-                                                       responseBody, runReq)
-import TextShow                      qualified as Text.Show (showt)
+import Control.Exception       (throwIO)
+import Data.Aeson              (FromJSON)
+import Data.Aeson              qualified as Aeson (decodeStrict,
+                                                   eitherDecodeStrict)
+import Data.ByteString         (ByteString)
+import Data.Functor            ((<&>))
+import Data.Text               (Text)
+import Network.HTTP.Req        (GET (GET), NoReqBody (NoReqBody), Option, Req,
+                                Url, (/:), (=:))
+import Network.HTTP.Req        qualified as Req (bsResponse, defaultHttpConfig,
+                                                 req, responseBody, runReq)
+import TextShow                qualified as Text.Show (showt)
 
 --------------------------------------------------------------------------------
 

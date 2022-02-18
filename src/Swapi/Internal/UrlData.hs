@@ -9,16 +9,16 @@ module Swapi.Internal.UrlData
 
 --------------------------------------------------------------------------------
 
-import Data.List                          qualified as List (foldl')
-import Data.Map                           (Map)
-import Data.Map                           qualified as Map (foldlWithKey',
-                                                            fromList, null, toList)
-import Data.Text                          (Text)
-import Data.Text                          qualified as Text (cons, drop,
-                                                             dropWhileEnd, null,
-                                                             split, splitOn,
-                                                             stripPrefix, take, intercalate)
-import Data.Text.Read                     qualified as Text.Read (decimal)
+import Data.List                    qualified as List (foldl')
+import Data.Map                     (Map)
+import Data.Map                     qualified as Map (foldlWithKey', fromList,
+                                                      null, toList)
+import Data.Text                    (Text)
+import Data.Text                    qualified as Text (cons, drop, dropWhileEnd,
+                                                       intercalate, null, split,
+                                                       splitOn, stripPrefix,
+                                                       take)
+import Data.Text.Read               qualified as Text.Read (decimal)
 
 --------------------------------------------------------------------------------
 

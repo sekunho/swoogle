@@ -144,16 +144,16 @@ module Swapi.Resource.Species
 
 --------------------------------------------------------------------------------
 
-import Data.Aeson                ((.:))
-import Data.Aeson                qualified as Aeson (withObject, withText)
+import Data.Aeson          ((.:))
+import Data.Aeson          qualified as Aeson (withObject, withText)
+import Data.Aeson.Types    (FromJSON, Parser, Value (Null, Object, String),
+                            parseJSON)
 import Data.HashMap.Strict qualified as HashMap
-import Data.Aeson.Types          (FromJSON, Parser,
-                                  Value (Null, Object, String), parseJSON)
-import Data.Kind                 (Type)
-import Data.Text                 (Text)
-import Data.Text                 qualified as Text (toLower, unpack)
-import Data.Text.Read            qualified as Text.Read (decimal)
-import Data.Time                 (UTCTime)
+import Data.Kind           (Type)
+import Data.Text           (Text)
+import Data.Text           qualified as Text (toLower, unpack)
+import Data.Text.Read      qualified as Text.Read (decimal)
+import Data.Time           (UTCTime)
 
 --------------------------------------------------------------------------------
 

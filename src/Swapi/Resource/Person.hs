@@ -146,23 +146,22 @@ module Swapi.Resource.Person
 
 --------------------------------------------------------------------------------
 
-import Data.Aeson                qualified as Aeson (object, withObject,
-                                                     withText)
-import Data.Aeson.Types          (FromJSON (parseJSON), KeyValue ((.=)), Parser,
-                                  ToJSON (toJSON), Value (String), (.:))
+import Data.Aeson          qualified as Aeson (object, withObject, withText)
+import Data.Aeson.Types    (FromJSON (parseJSON), KeyValue ((.=)), Parser,
+                            ToJSON (toJSON), Value (String), (.:))
 
-import Data.Kind                 (Type)
-import Data.Text                 (Text)
-import Data.Text                 qualified as Text (filter, pack)
-import Data.Text.Read            qualified as Text.Read (decimal, double)
-import Data.Time                 (UTCTime)
+import Data.Kind           (Type)
+import Data.Text           (Text)
+import Data.Text           qualified as Text (filter, pack)
+import Data.Text.Read      qualified as Text.Read (decimal, double)
+import Data.Time           (UTCTime)
 
 --------------------------------------------------------------------------------
 
 import Swapi.Color         (EyeColor, HairColor, SkinColor)
 
-import Swapi.Id            (FilmId, PersonId, PlanetId, SpeciesId,
-                                  StarshipId, VehicleId)
+import Swapi.Id            (FilmId, PersonId, PlanetId, SpeciesId, StarshipId,
+                            VehicleId)
 
 import Swapi.Internal.Page (Index (Index, iCount, iNextPage, iPreviousPage, iResults))
 
