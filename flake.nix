@@ -1,26 +1,40 @@
 {
   description = ''
-  Clients & client libraries for the Star Wars API.
+    Clients & client libraries for the Star Wars API.
   '';
 
   inputs = {
-    nixpkgs.url      = "github:NixOS/nixpkgs";
-    flake-utils.url  = "github:numtide/flake-utils";
+    nixpkgs.url = "github:NixOS/nixpkgs";
+    flake-utils.url = "github:numtide/flake-utils";
     unstablepkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
+    pre-commit-hooks.url = "github:cachix/pre-commit-hooks.nix";
   };
 
-  outputs = { self, nixpkgs, flake-utils, unstablepkgs }:
+  outputs = { self, nixpkgs, flake-utils, unstablepkgs, pre-commit-hooks }:
     flake-utils.lib.eachSystem [ "x86_64-linux" ] (system:
       let
         pkgs = nixpkgs.legacyPackages.${system};
         lib = nixpkgs.lib;
         unstable = unstablepkgs.legacyPackages.${system};
-      in {
+      in
+      {
+        checks = {
+          pre-commit-check = pre-commit-hooks.lib.${system}.run {
+            src = ./.;
+            hooks = {
+              nixpkgs-fmt.enable = true;
+              # stylish-haskell.enable = true;
+            };
+          };
+        };
+
         # Loaded automatically into shell by `direnv` + `nix-direnv`. You could
         # also use `nix develop` if you want.
         #
         # `nix-direnv`: https://github.com/nix-community/nix-direnv
         devShell = pkgs.mkShell rec {
+          inherit (self.checks.${system}.pre-commit-check) shellHook;
+
           buildInputs = [
             unstable.ghc
             unstable.ghcid
@@ -29,22 +43,23 @@
             # I had to wrestle with `cabal`'s resolver and so I decided to switch.
             # I will look into using `haskell.nix`, but only when I get my fiber
             # internet back.
-            pkgs.stack                           # Build tool
-            unstable.haskell-language-server     # Haskell LSP
-            pkgs.hlint                           # Linter
-            pkgs.haskellPackages.implicit-hie    # To deal with HLS + cabal oddities
+            pkgs.stack # Build tool
+            unstable.haskell-language-server # Haskell LSP
+            pkgs.hlint # Linter
+            pkgs.haskellPackages.implicit-hie # To deal with HLS + cabal oddities
             pkgs.haskellPackages.stylish-haskell # Code formatter
-            pkgs.haskell-ci                      # Github Actions generator
+            pkgs.haskellPackages.stan # Idk how to use this yet
+            pkgs.haskell-ci # Github Actions generator
 
             # Front-end
-            unstable.nodePackages.tailwindcss    # Styling with utility classes
-            unstable.esbuild                     # Node.JS? What's that?
+            unstable.nodePackages.tailwindcss # Styling with utility classes
+            unstable.esbuild # Node.JS? What's that?
 
             # Deploy
-            pkgs.flyctl                          # Fly's CLI for deploy
+            pkgs.flyctl # Fly's CLI for deploy
 
             # Misc.
-            pkgs.watchexec                       # Watch changes and execute something
+            pkgs.watchexec # Watch changes and execute something
 
             # Set `~/.stack/config.yaml` with this:
             # ```yaml
@@ -56,7 +71,7 @@
             # Otherwise it'll complain about `zlib` while building.
             # https://github.com/commercialhaskell/stack/issues/2975
             pkgs.zlib
-            ];
+          ];
 
           LD_LIBRARY_PATH = lib.makeLibraryPath buildInputs;
         };
