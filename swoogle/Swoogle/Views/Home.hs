@@ -64,7 +64,7 @@ content = do
 
       div_ [class_ "text-su-fg dark:text-su-dark-fg flex flex-col sm:flex-row gap-2 text-sm sm:text-base"] $ do
         span_ [class_ "text-center sm:text-left font-light"] "A Star Wars search engine. "
-        span_ [class_ "text-center sm:text-left font-semibold"] (a_ [class_ "text-yellow-600 dark:text-yellow-500 hover:text-yellow-300", href_ "https://ko-fi.com/sekun", target_ "blank"] "Support me on Kofi")
+        span_ [class_ "text-center sm:text-left font-semibold"] (a_ [class_ "text-yellow-600 dark:text-yellow-500 hover:text-yellow-500", href_ "https://ko-fi.com/sekun", target_ "blank"] "Support me on Kofi")
 
     div_ [class_ "absolute bottom-0 pb-8"] ""
 
