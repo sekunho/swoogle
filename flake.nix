@@ -24,7 +24,7 @@
             hooks = {
               nixpkgs-fmt.enable = true;
               cabal-fmt.enable = true;
-              hlint.enable = true;
+              # hlint.enable = true;
 
               my-stylish-haskell = {
                 enable = true;

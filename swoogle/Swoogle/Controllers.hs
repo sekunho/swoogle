@@ -27,7 +27,10 @@ import Swoogle.Views.Layout        qualified as Layout (noFooterRoot, root)
 import Swoogle.Views.SearchResults qualified as Results (content)
 
 -- Swapi
-import Swapi
+
+import Swapi                       (Index, Page (Page), searchFilms,
+                                    searchPeople, searchPlanets, searchSpecies,
+                                    searchStarships, searchVehicles)
 
 --------------------------------------------------------------------------------
 -- List of content types:

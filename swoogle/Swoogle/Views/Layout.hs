@@ -50,6 +50,8 @@ noFooterRoot content = doctypehtml_ $ do
     [ href_ "https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Vollkorn:wght@400;500;600;700;800&display=swap"
     , rel_ "stylesheet"]
 
+  favicon
+
   title_ "swoogle: A Star Wars search engine"
 
   body_ [class_ "bg-gray-100 dark:bg-su-dark-bg relative min-h-screen flex flex-col"] $
@@ -84,6 +86,8 @@ root content = doctypehtml_ $ do
   link_
     [ href_ "https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Vollkorn:wght@400;500;600;700;800&display=swap"
     , rel_ "stylesheet"]
+
+  favicon
 
   title_ "swoogle: A Star Wars search engine"
 
@@ -127,3 +131,13 @@ footer =
             , class_ "hover:text-gray-500 underline"
             ]
             "Sek Un"
+
+favicon :: Html ()
+favicon =
+  Lucid.toHtmlRaw $
+    mconcat @Text
+      [ "<link rel=\"apple-touch-icon\" sizes=\"180x180\" href=\"/images/apple-touch-icon.png\">"
+      , "<link rel=\"icon\" type=\"image/png\" sizes=\"32x32\" href=\"/images/favicon-32x32.png\">"
+      , "<link rel=\"icon\" type=\"image/png\" sizes=\"16x16\" href=\"/images/favicon-16x16.png\">"
+      , "<link rel=\"manifest\" href=\"/assets/site.webmanifest\">"
+      ]
