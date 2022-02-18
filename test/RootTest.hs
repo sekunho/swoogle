@@ -5,12 +5,11 @@ module RootTest
 
 --------------------------------------------------------------------------------
 
-import Data.Aeson                qualified as Aeson (decodeFileStrict',
-                                                     encodeFile)
-import Test.Hspec                (Spec)
-import Test.Hspec                qualified as Hspec (describe, it, shouldBe)
-import Test.Tasty                (TestTree)
-import Test.Tasty.Golden         qualified as Tasty.Golden (goldenVsFile)
+import Data.Aeson          qualified as Aeson (decodeFileStrict', encodeFile)
+import Test.Hspec          (Spec)
+import Test.Hspec          qualified as Hspec (describe, it, shouldBe)
+import Test.Tasty          (TestTree)
+import Test.Tasty.Golden   qualified as Tasty.Golden (goldenVsFile)
 
 --------------------------------------------------------------------------------
 
