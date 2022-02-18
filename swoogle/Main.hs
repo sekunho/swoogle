@@ -49,3 +49,6 @@ swapiWeb = do
   -- Page routes
   Scotty.get "/" Controllers.home
   Scotty.get "/search" Controllers.search
+
+  -- Non-HTML routes
+  Scotty.get "/suggest" Controllers.suggest

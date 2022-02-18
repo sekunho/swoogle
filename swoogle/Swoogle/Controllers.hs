@@ -3,6 +3,8 @@ module Swoogle.Controllers where
 
 --------------------------------------------------------------------------------
 
+import Data.Coerce                 (coerce)
+import Data.List                   (foldl')
 import Data.Text                   (Text)
 import Data.Text.Internal.Search   qualified as Search (indices)
 import Data.Text.Lazy              qualified as Text.Lazy (toStrict)
@@ -16,6 +18,7 @@ import Web.Scotty                  qualified as Scotty (file, html,
 
 --------------------------------------------------------------------------------
 
+import Swoogle.Components.Search   qualified as Search (suggestionsEntry)
 import Swoogle.Entry               (Entry)
 import Swoogle.Entry               qualified as Entry
 import Swoogle.SearchData
@@ -28,9 +31,11 @@ import Swoogle.Views.SearchResults qualified as Results (content)
 
 -- Swapi
 
-import Swapi                       (Index, Page (Page), searchFilms,
+import Swapi                       (Index (iResults), Page (Page), searchFilms,
                                     searchPeople, searchPlanets, searchSpecies,
                                     searchStarships, searchVehicles)
+
+import Swapi.Resource.Person       (Person (pName), PersonName (PersonName))
 
 --------------------------------------------------------------------------------
 -- List of content types:
@@ -131,7 +136,6 @@ search = flip Scotty.rescue (renderException . Text.Lazy.toStrict) $ do
         content = Layout.root (Results.content searchData entries)
       in Scotty.html (Lucid.renderText content)
 
-
     renderException message =
       let search404 =
             Search.indices
@@ -146,6 +150,29 @@ search = flip Scotty.rescue (renderException . Text.Lazy.toStrict) $ do
         Scotty.html
           $ Lucid.renderText
           $ Layout.noFooterRoot template
+
+suggest :: ActionM ()
+suggest = do
+  query    <- Scotty.param @Text "query"
+  resource <- Scotty.param @Text "resource"
+
+  case resource of
+    "people" -> do
+      peopleResults <- Scotty.liftAndCatchIO $ searchPeople query (Page 1)
+
+      let
+        ps :: [Person]
+        ps = take 5 (iResults peopleResults)
+
+      Scotty.html
+        $ Lucid.renderText
+        $ foldl'
+            (\suggestions p ->
+               suggestions <>
+                 Search.suggestionsEntry
+                   resource (coerce @PersonName @Text (pName p)))
+            mempty
+            ps
 
 --------------------------------------------------------------------------------
 
