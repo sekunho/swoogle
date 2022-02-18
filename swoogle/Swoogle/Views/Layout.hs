@@ -101,7 +101,7 @@ root content = doctypehtml_ $ do
 
 footer :: Html ()
 footer =
-  footer_ [class_ "bg-white dark:bg-su-dark-bg"] $ do
+  footer_ [class_ "bg-gray-100 dark:bg-su-dark-bg"] $ do
     div_ [class_ "max-w-7xl mx-auto pb-6 pt-2 px-4 sm:px-6 md:flex md:items-center md:justify-between lg:px-8"] $ do
       div_ [class_ "flex justify-center space-x-6 md:order-2"] $ do
 
