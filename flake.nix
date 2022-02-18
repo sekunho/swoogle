@@ -23,7 +23,14 @@
             src = ./.;
             hooks = {
               nixpkgs-fmt.enable = true;
-              # stylish-haskell.enable = true;
+              cabal-fmt.enable = true;
+              # hlint.enable = true;
+
+              my-stylish-haskell = {
+                enable = true;
+                entry = "${pkgs.haskellPackages.stylish-haskell}/bin/stylish-haskell --config .stylish-haskell.yml --inplace";
+                files = "\\.l?hs$";
+              };
             };
           };
         };

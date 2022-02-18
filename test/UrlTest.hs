@@ -7,11 +7,11 @@ module UrlTest
 
 --------------------------------------------------------------------------------
 
-import Data.Map.Strict               (Map)
-import Data.Map.Strict               qualified as Map (empty, fromList)
-import Data.Text                     (Text)
-import Test.Hspec                    (Spec)
-import Test.Hspec                    qualified as Hspec (describe, it, shouldBe)
+import Data.Map.Strict         (Map)
+import Data.Map.Strict         qualified as Map (empty, fromList)
+import Data.Text               (Text)
+import Test.Hspec              (Spec)
+import Test.Hspec              qualified as Hspec (describe, it, shouldBe)
 
 --------------------------------------------------------------------------------
 
@@ -19,7 +19,7 @@ import Swapi.Internal.Resource (Resource (FilmResource, PeopleResource, PlanetRe
 import Swapi.Internal.Resource qualified as Resource (resourceToUrlText)
 import Swapi.Internal.UrlData  (UrlData (UrlData, udParams, udSubdir))
 import Swapi.Internal.UrlData  qualified as UrlData (fromUrlText, getId,
-                                                           toUrlText)
+                                                     toUrlText)
 import Swapi.Url               qualified as Url (baseUrl)
 
 --------------------------------------------------------------------------------

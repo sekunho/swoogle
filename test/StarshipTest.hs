@@ -2,20 +2,20 @@ module StarshipTest where
 
 --------------------------------------------------------------------------------
 
-import Data.Aeson                    qualified as Aeson (decodeFileStrict,
-                                                         eitherDecodeStrict,
-                                                         encodeFile)
-import Data.ByteString               (ByteString)
-import Data.ByteString               qualified as ByteString (readFile)
-import Data.Maybe                    qualified as Maybe (fromJust)
-import Test.Tasty                    (TestTree)
-import Test.Tasty.Golden             qualified as Golden (findByExtension)
+import Data.Aeson              qualified as Aeson (decodeFileStrict,
+                                                   eitherDecodeStrict,
+                                                   encodeFile)
+import Data.ByteString         (ByteString)
+import Data.ByteString         qualified as ByteString (readFile)
+import Data.Maybe              qualified as Maybe (fromJust)
+import Test.Tasty              (TestTree)
+import Test.Tasty.Golden       qualified as Golden (findByExtension)
 
 --------------------------------------------------------------------------------
 
 import Swapi.Page              (Index)
 import Swapi.Resource.Starship (Starship)
-import Util                          qualified (batchGoldenVsFile)
+import Util                    qualified (batchGoldenVsFile)
 
 --------------------------------------------------------------------------------
 

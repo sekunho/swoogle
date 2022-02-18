@@ -3,6 +3,8 @@ module Swoogle.Controllers where
 
 --------------------------------------------------------------------------------
 
+import Data.Coerce                 (coerce)
+import Data.List                   (foldl')
 import Data.Text                   (Text)
 import Data.Text.Internal.Search   qualified as Search (indices)
 import Data.Text.Lazy              qualified as Text.Lazy (toStrict)
@@ -16,6 +18,7 @@ import Web.Scotty                  qualified as Scotty (file, html,
 
 --------------------------------------------------------------------------------
 
+import Swoogle.Components.Search   qualified as Search (suggestionsEntry)
 import Swoogle.Entry               (Entry)
 import Swoogle.Entry               qualified as Entry
 import Swoogle.SearchData
@@ -27,7 +30,20 @@ import Swoogle.Views.Layout        qualified as Layout (noFooterRoot, root)
 import Swoogle.Views.SearchResults qualified as Results (content)
 
 -- Swapi
-import Swapi
+
+import Swapi                       (Index (iResults), Page (Page), searchFilms,
+                                    searchPeople, searchPlanets, searchSpecies,
+                                    searchStarships, searchVehicles)
+
+import Swapi.Resource.Film         (Film (fTitle))
+import Swapi.Resource.Person       (Person (pName), PersonName (PersonName))
+import Swapi.Resource.Planet       (Planet (plName), PlanetName (MkPlanetName))
+import Swapi.Resource.Species      (OriginlessSpecies (hSpName),
+                                    Species (spName), SpeciesName (SpeciesName),
+                                    SpeciesType (HasOrigin, NoOrigin))
+import Swapi.Resource.Starship     (Starship (sName),
+                                    StarshipName (StarshipName))
+import Swapi.Resource.Vehicle      (Vehicle (vName), VehicleName (VehicleName))
 
 --------------------------------------------------------------------------------
 -- List of content types:
@@ -128,7 +144,6 @@ search = flip Scotty.rescue (renderException . Text.Lazy.toStrict) $ do
         content = Layout.root (Results.content searchData entries)
       in Scotty.html (Lucid.renderText content)
 
-
     renderException message =
       let search404 =
             Search.indices
@@ -143,6 +158,124 @@ search = flip Scotty.rescue (renderException . Text.Lazy.toStrict) $ do
         Scotty.html
           $ Lucid.renderText
           $ Layout.noFooterRoot template
+
+suggest :: ActionM ()
+suggest = do
+  query    <- Scotty.param @Text "query"
+  resource <- Scotty.param @Text "resource"
+
+  case resource of
+    "people" -> do
+      peopleResults <- Scotty.liftAndCatchIO $ searchPeople query (Page 1)
+
+      let
+        ps :: [Person]
+        ps = take 5 (iResults peopleResults)
+
+      Scotty.html
+        $ Lucid.renderText
+        $ foldl'
+            (\suggestions p ->
+               suggestions <>
+                 Search.suggestionsEntry
+                   resource (coerce @PersonName @Text (pName p)))
+            mempty
+            ps
+
+    "film" -> do
+      filmResults <- Scotty.liftAndCatchIO $ searchFilms query (Page 1)
+
+      let
+        fs :: [Film]
+        fs = take 5 (iResults filmResults)
+
+      Scotty.html
+        $ Lucid.renderText
+        $ foldl'
+            (\suggestions f ->
+               suggestions <>
+                 Search.suggestionsEntry
+                   resource (fTitle f))
+            mempty
+            fs
+
+    "starship" -> do
+      starshipResults <- Scotty.liftAndCatchIO $ searchStarships query (Page 1)
+
+      let
+        ss :: [Starship]
+        ss = take 5 (iResults starshipResults)
+
+      Scotty.html
+        $ Lucid.renderText
+        $ foldl'
+            (\suggestions s ->
+               suggestions <>
+                 Search.suggestionsEntry
+                   resource (coerce @StarshipName @Text $ sName s))
+            mempty
+            ss
+
+    "vehicle" -> do
+      vehicleResults <- Scotty.liftAndCatchIO $ searchVehicles query (Page 1)
+
+      let
+        vs :: [Vehicle]
+        vs = take 5 (iResults vehicleResults)
+
+      Scotty.html
+        $ Lucid.renderText
+        $ foldl'
+            (\suggestions v ->
+               suggestions <>
+                 Search.suggestionsEntry
+                   resource (coerce @VehicleName @Text $ vName v))
+            mempty
+            vs
+
+    "species" -> do
+      speciesResults <- Scotty.liftAndCatchIO $ searchSpecies query (Page 1)
+
+      let
+        sps :: [SpeciesType]
+        sps = take 5 (iResults speciesResults)
+
+      Scotty.html
+        $ Lucid.renderText
+        $ foldl'
+            (\suggestions sp ->
+               suggestions <>
+                 case sp of
+                   HasOrigin sp ->
+                       Search.suggestionsEntry
+                         resource (coerce @SpeciesName @Text $ spName sp)
+
+                   NoOrigin hsp ->
+                     Search.suggestionsEntry
+                       resource (coerce @SpeciesName @Text $ hSpName hsp)
+            )
+            mempty
+            sps
+
+    "planet" -> do
+      planetResults <- Scotty.liftAndCatchIO $ searchPlanets query (Page 1)
+
+      let
+        ps :: [Planet]
+        ps = take 5 (iResults planetResults)
+
+      Scotty.html
+        $ Lucid.renderText
+        $ foldl'
+            (\suggestions p ->
+               suggestions <>
+                 Search.suggestionsEntry
+                   resource (coerce @PlanetName @Text $ plName p))
+            mempty
+            ps
+
+    _ ->
+      Scotty.raise "Unexpected category/resource"
 
 --------------------------------------------------------------------------------
 

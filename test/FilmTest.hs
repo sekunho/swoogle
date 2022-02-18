@@ -2,20 +2,20 @@ module FilmTest where
 
 --------------------------------------------------------------------------------
 
-import Data.Aeson                (FromJSON)
-import Data.Aeson                qualified as Aeson (decodeFileStrict,
-                                                     eitherDecodeFileStrict,
-                                                     encodeFile)
-import Data.ByteString           qualified as ByteString (writeFile)
-import Data.ByteString.Char8     qualified as Char8 (pack)
-import Data.Maybe                qualified as Maybe (fromJust)
-import Test.Tasty                (TestTree)
-import Test.Tasty.Golden         qualified as Golden (goldenVsFile)
+import Data.Aeson            (FromJSON)
+import Data.Aeson            qualified as Aeson (decodeFileStrict,
+                                                 eitherDecodeFileStrict,
+                                                 encodeFile)
+import Data.ByteString       qualified as ByteString (writeFile)
+import Data.ByteString.Char8 qualified as Char8 (pack)
+import Data.Maybe            qualified as Maybe (fromJust)
+import Test.Tasty            (TestTree)
+import Test.Tasty.Golden     qualified as Golden (goldenVsFile)
 
 --------------------------------------------------------------------------------
 
-import Swapi.Page          (Index)
-import Swapi.Resource.Film (Film)
+import Swapi.Page            (Index)
+import Swapi.Resource.Film   (Film)
 
 --------------------------------------------------------------------------------
 

@@ -2,17 +2,17 @@ module PlanetTest where
 
 --------------------------------------------------------------------------------
 
-import Data.Aeson                  qualified as Aeson (eitherDecodeStrict)
-import Data.ByteString             (ByteString)
-import Data.ByteString             qualified as ByteString (readFile)
-import Test.Tasty                  (TestTree)
-import Test.Tasty.Golden           qualified as Golden (findByExtension)
+import Data.Aeson            qualified as Aeson (eitherDecodeStrict)
+import Data.ByteString       (ByteString)
+import Data.ByteString       qualified as ByteString (readFile)
+import Test.Tasty            (TestTree)
+import Test.Tasty.Golden     qualified as Golden (findByExtension)
 
 --------------------------------------------------------------------------------
 
 import Swapi.Page            (Index)
 import Swapi.Resource.Planet (Planet)
-import Util                        qualified (batchGoldenVsFile)
+import Util                  qualified (batchGoldenVsFile)
 
 --------------------------------------------------------------------------------
 

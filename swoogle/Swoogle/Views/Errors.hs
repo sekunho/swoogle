@@ -50,7 +50,7 @@ unexpectedResource searchData = renderError500 $ do
         span_
           [class_ "font-light"]
           "Here are the resources that I know of: "
-        span_ [class_ "space-x-2.5"] $ do
+        span_ [class_ "flex flex-col sm:flex-row items-center justify-center space-x-2.5"] $ do
           foldl'
             (\items resource ->
                items <> renderResource (searchData { sdResource = resource }))
@@ -83,7 +83,7 @@ unexpectedResource searchData = renderError500 $ do
 renderQuote :: Text -> Text -> Html ()
 renderQuote quote source = do
   div_ [class_ "absolute bottom-7"] $ do
-     p_ [class_ "font-semibold text-lg text-su-fg/[0.7] dark:text-su-dark-fg/[0.8]"] $ do
+     p_ [class_ "text-center sm:text-justify font-semibold text-base sm:text-lg text-su-fg/[0.7] dark:text-su-dark-fg/[0.8]"] $ do
       "“" <> Lucid.toHtml quote <> "”"
 
-     span_ [class_ "font-light"] (" – " <> Lucid.toHtml source <> ".")
+     p_ [class_ "text-center font-light"] (" – " <> Lucid.toHtml source <> ".")
