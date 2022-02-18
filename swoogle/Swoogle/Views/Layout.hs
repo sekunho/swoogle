@@ -118,6 +118,6 @@ footer =
           a_
             [ href_ "https://sekun.dev"
             , target_ "_blank"
-            , class_ "hover:text-gray-500"
+            , class_ "hover:text-gray-500 underline"
             ]
             "Sek Un"

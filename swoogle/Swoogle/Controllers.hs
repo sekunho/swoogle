@@ -4,6 +4,8 @@ module Swoogle.Controllers where
 --------------------------------------------------------------------------------
 
 import Data.Text (Text)
+import Data.Text.Lazy qualified as Text.Lazy (toStrict)
+import Data.Text.Internal.Search qualified as Search (indices)
 import Lucid
 import Lucid qualified (renderText)
 import Web.Scotty (ActionM)
@@ -56,7 +58,7 @@ home =
   Scotty.html (Lucid.renderText (Layout.root Home.content))
 
 search :: ActionM ()
-search = do
+search = flip Scotty.rescue (renderException . Text.Lazy.toStrict) $ do
     searchQuery    <- Scotty.param @Text "query"
     searchResource <- Scotty.param @Text "resource"
     searchPage     <- Scotty.param @Word "page"
@@ -80,6 +82,7 @@ search = do
       "film" -> do
         filmResults <-
           Scotty.liftAndCatchIO (searchFilms searchQuery (Page searchPage))
+
 
         renderResults searchData (Entry.fromFilm <$> filmResults)
 
@@ -116,7 +119,11 @@ search = do
         -- TODO: Implement own template because the default is too barebones
         Scotty.rescue
           (Scotty.raise "Invalid resource")
-          (const $ Scotty.html $ Lucid.renderText $ Layout.noFooterRoot $ Errors.unexpectedResource searchData)
+          (const
+             $ Scotty.html
+             $ Lucid.renderText
+             $ Layout.noFooterRoot
+             $ Errors.unexpectedResource searchData)
 
   where
     renderResults :: SearchData -> Index Entry -> ActionM ()
@@ -125,6 +132,22 @@ search = do
         content :: Html ()
         content = Layout.root (Results.content searchData entries)
       in Scotty.html (Lucid.renderText content)
+
+
+    renderException message =
+      let search404 =
+            Search.indices
+              "(Response {responseStatus = Status {statusCode = 404, statusMessage = \"NOT FOUND\"}"
+              message
+
+          template =
+            case search404 of
+              [] -> "I have no idea what happened"
+              _ -> Errors.httpNotFound
+      in
+        Scotty.html
+          $ Lucid.renderText
+          $ Layout.noFooterRoot template
 
 --------------------------------------------------------------------------------
 
