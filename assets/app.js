@@ -3,9 +3,21 @@ const searchBarWrapper  = document.getElementById("search-bar-wrapper")
 const searchSuggestions = document.getElementById("search-suggestions")
 const searchCategory    = document.getElementById("category-options")
 
+// Yeah, yeah I know, global state. Ew yucky! *spits*
+let prevQuery = ""
+let prevCategory = ""
+
 searchBar.addEventListener("focus", function() {
   if (searchBar.value.trim() != "") {
-    querySuggestions()
+    if (searchBar.value.trim() != prevQuery && searchCategory.value != prevCategory) {
+      // Cache query and category
+      prevQuery = searchBar.value.trim()
+      prevCategory = searchCategory.value
+
+      querySuggestions()
+    } else {
+      showSuggestions()
+    }
   }
 })
 
@@ -27,13 +39,15 @@ function querySuggestions() {
   const query = searchBar.value
   const resource = searchCategory.value
 
-  fetch(`/suggest?query=${query}&resource=${resource}`)
+  if (resource.trim() != "") {
+   fetch(`/suggest?query=${query}&resource=${resource}`)
     .then(res => res.text())
     .then(data => {
       searchSuggestions.innerHTML = data
 
       showSuggestions()
     })
+  }
 }
 
 function showSuggestions() {
