@@ -66,7 +66,6 @@ COPY swoogle swoogle
 
 # Copy swoogle static files
 COPY assets assets
-COPY priv/static/fonts priv/static/fonts
 COPY priv/static/images priv/static/images
 
 # Build and minify stylesheet
