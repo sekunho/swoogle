@@ -4,7 +4,6 @@ description:
   @__swapi-lib__@ is a client library for SWAPI (@https://swapi.dev/@).
   You can query resources from the JSON API which is decoded into easy to
   use types.
-
   == Queryable resources
   * People
   * Films
@@ -23,80 +22,76 @@ synopsis:           A Haskell client for SWAPI
 category:           Web
 extra-source-files:
   CHANGELOG.md
-  testdata/fixtures/**/*.json
-  testdata/**/*.golden
   testdata/**/*.data
+  testdata/**/*.golden
+  testdata/fixtures/**/*.json
 
-extra-doc-files:
-  swapi-haskell.svg
-
-tested-with:        GHC == 8.10.7
+extra-doc-files:    swapi-haskell.svg
+tested-with:        GHC ==8.10.7
 
 source-repository head
-  type: git
+  type:     git
   location: https://github.com/sekunho/swapi.git
 
 -- Some day GHC2021 will come. Or better yet, Haskell 202x Language Report.
 -- One can dream...
 common default-extensions
   default-extensions:
-     OverloadedStrings
-   , InstanceSigs
-   , TypeApplications
-   , StrictData
-   , LambdaCase
-   , KindSignatures
-   , NoStarIsType
-   , ImportQualifiedPost
-   , ExplicitForAll
-   , DerivingStrategies
-   , GeneralizedNewtypeDeriving
-   , DerivingVia
-   , ScopedTypeVariables
-   , FlexibleInstances
-   , FlexibleContexts
-   , StandaloneKindSignatures
+    NoStarIsType
+    DerivingStrategies
+    DerivingVia
+    ExplicitForAll
+    FlexibleContexts
+    FlexibleInstances
+    GeneralizedNewtypeDeriving
+    ImportQualifiedPost
+    InstanceSigs
+    KindSignatures
+    LambdaCase
+    OverloadedStrings
+    ScopedTypeVariables
+    StandaloneKindSignatures
+    StrictData
+    TypeApplications
 
 library
-    import: default-extensions
-    exposed-modules:
-        Swapi
-      , Swapi.Internal.Url
-      , Swapi.Internal.UrlData
-      , Swapi.Internal.Page
-      , Swapi.Internal.Resource
-      , Swapi.Internal.UrlData.Types
-      , Swapi.Internal.Page.Types
-      , Swapi.Internal.Id.Types
-      , Swapi.Api
-      , Swapi.Id
-      , Swapi.Color
-      , Swapi.Url
-      , Swapi.Page
-      , Swapi.Resource.Root
-      , Swapi.Resource.Person
-      , Swapi.Resource.Film
-      , Swapi.Resource.Starship
-      , Swapi.Resource.Vehicle
-      , Swapi.Resource.Species
-      , Swapi.Resource.Planet
+  import:           default-extensions
+  exposed-modules:
+    Swapi
+    Swapi.Api
+    Swapi.Color
+    Swapi.Id
+    Swapi.Internal.Id.Types
+    Swapi.Internal.Page
+    Swapi.Internal.Page.Types
+    Swapi.Internal.Resource
+    Swapi.Internal.Url
+    Swapi.Internal.UrlData
+    Swapi.Internal.UrlData.Types
+    Swapi.Page
+    Swapi.Resource.Film
+    Swapi.Resource.Person
+    Swapi.Resource.Planet
+    Swapi.Resource.Root
+    Swapi.Resource.Species
+    Swapi.Resource.Starship
+    Swapi.Resource.Vehicle
+    Swapi.Url
 
-    hs-source-dirs:     src
-    default-language:   Haskell2010
-
-    ghc-options:      -Wall
-
-    build-depends:
-        base         >= 4.7 && <5
-      , aeson
-      , bytestring
-      , containers
-      , unordered-containers
-      , text
-      , scientific
-      , time
-      , req
-      , text-show
+  hs-source-dirs:   src
+  default-language: Haskell2010
+  ghc-options:      -Wall
+  build-depends:
+    , aeson
+    , base                  >=4.7 && <5
+    , bytestring
+    , containers
+    , req
+    , scientific
+    , text
+    , text-show
+    , time
+    , unordered-containers
 
 -- executable swoogle-tui
 --     import: default-extensions
@@ -111,75 +106,70 @@ library
 --     default-language: Haskell2010
 
 executable swoogle
-    import: default-extensions
-    build-depends:
-       base      >= 4.7 && <5
-     , containers
-     , bytestring
-     , word8
-     , swapi
-     , text
-     , text-show
-     , lucid
-     , scotty
-     , wai-extra
+  import:           default-extensions
+  build-depends:
+    , base        >=4.7 && <5
+    , bytestring
+    , containers
+    , http-types
+    , lucid
+    , scotty
+    , swapi
+    , text
+    , text-show
+    , wai-extra
+    , word8
 
-    main-is: Main.hs
-    hs-source-dirs: swoogle
+  main-is:          Main.hs
+  hs-source-dirs:   swoogle
+  other-modules:
+    Swoogle.Components.Icon
+    Swoogle.Components.Search
+    Swoogle.Controllers
+    Swoogle.Entry
+    Swoogle.SearchData
+    Swoogle.Views.Errors
+    Swoogle.Views.Home
+    Swoogle.Views.Layout
+    Swoogle.Views.SearchResults
 
-    other-modules:
-       Swoogle.Entry
-     , Swoogle.SearchData
-     , Swoogle.Controllers
-     , Swoogle.Views.Errors
-     , Swoogle.Views.Home
-     , Swoogle.Views.Layout
-     , Swoogle.Views.SearchResults
-     , Swoogle.Components.Icon
-     , Swoogle.Components.Search
-
-    -- I got the ghc options from here:
-    -- https://gilmi.me/blog/post/2020/12/05/scotty-bulletin-board
-    -- ghc-options: -static -optl-static -optl-pthread -fPIC -threaded -rtsopts -with-rtsopts=-N
-    ghc-options: -threaded -rtsopts -with-rtsopts=-N -split-sections -O2
-
-    default-language: Haskell2010
+  -- I got the ghc options from here:
+  -- https://gilmi.me/blog/post/2020/12/05/scotty-bulletin-board
+  -- ghc-options: -static -optl-static -optl-pthread -fPIC -threaded -rtsopts -with-rtsopts=-N
+  ghc-options:      -threaded -rtsopts -with-rtsopts=-N -split-sections -O2
+  default-language: Haskell2010
 
 test-suite swapi-lib-test
-    import:             default-extensions
-    type:               exitcode-stdio-1.0
-    main-is:            Driver.hs
-    hs-source-dirs:     test
-    default-language:   Haskell2010
+  import:             default-extensions
+  type:               exitcode-stdio-1.0
+  main-is:            Driver.hs
+  hs-source-dirs:     test
+  default-language:   Haskell2010
+  other-modules:
+    FilmTest
+    PersonTest
+    PlanetTest
+    RootTest
+    SpeciesTest
+    StarshipTest
+    UrlTest
+    Util
+    VehicleTest
 
-    other-modules:
-        RootTest
-      , UrlTest
-      , PersonTest
-      , FilmTest
-      , StarshipTest
-      , VehicleTest
-      , SpeciesTest
-      , PlanetTest
-      , Util
+  ghc-options:        -threaded -rtsopts -with-rtsopts=-N -Wall
+  build-depends:
+    , aeson
+    , base            >=4.7 && <5
+    , bytestring
+    , containers
+    , hspec
+    , scientific
+    , swapi
+    , tasty
+    , tasty-discover
+    , tasty-golden
+    , tasty-hspec
+    , tasty-hunit
+    , text
 
-    ghc-options:
-      -threaded -rtsopts -with-rtsopts=-N -Wall
-
-    build-depends:
-        base >= 4.7 && <5
-      , aeson
-      , bytestring
-      , containers
-      , text
-      , scientific
-      , swapi
-      , tasty
-      , tasty-golden
-      , tasty-hunit
-      , hspec
-      , tasty-hspec
-      , tasty-discover
-
-    build-tool-depends:
-      tasty-discover:tasty-discover
+  build-tool-depends: tasty-discover:tasty-discover -any

@@ -10,11 +10,12 @@ import Data.Text.Internal.Search   qualified as Search (indices)
 import Data.Text.Lazy              qualified as Text.Lazy (toStrict)
 import Lucid
 import Lucid                       qualified (renderText)
+import Network.HTTP.Types.Status   qualified as Status (status404)
 import Web.Scotty                  (ActionM)
 import Web.Scotty                  qualified as Scotty (file, html,
                                                         liftAndCatchIO, param,
-                                                        raise, rescue,
-                                                        setHeader)
+                                                        raise, raiseStatus,
+                                                        rescue, setHeader)
 
 --------------------------------------------------------------------------------
 
@@ -60,6 +61,8 @@ assets asset =
     "app.js" ->
       Scotty.setHeader "Content-Type" "application/javascript"
         >> Scotty.file (staticPath <> "assets/app.js")
+
+    _ -> Scotty.raiseStatus Status.status404 "That asset does not exist"
 
 images :: FilePath -> ActionM ()
 images = Scotty.file . (<>) (staticPath <> "images/")
