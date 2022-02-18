@@ -30,7 +30,6 @@ function querySuggestions() {
   fetch(`/suggest?query=${query}&resource=${resource}`)
     .then(res => res.text())
     .then(data => {
-      console.log(data)
       searchSuggestions.innerHTML = data
 
       showSuggestions()
