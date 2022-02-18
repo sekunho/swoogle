@@ -21,7 +21,7 @@ import Swapi.Url
 
 content :: SearchData -> Index Entry -> Html ()
 content searchData entryIndex = do
-    div_ [class_ "w-full sm:w-2/3 py-6 flex flex-col min-h-screen mx-auto"] $ do
+    div_ [class_ "w-full sm:w-2/3 py-6 flex flex-col mx-auto"] $ do
       searchBar searchData
 
       -- Search results are rendered here
@@ -39,7 +39,7 @@ content searchData entryIndex = do
               span_ [class_ "font-light"] "."
 
         _ -> do
-          div_ [class_ "mt-4 sm:mt-12 w-full flex flex-col gap-8"] $ do
+          div_ [class_ "mt-4 sm:mt-12 w-full flex flex-col gap-8"] $
             foldl' (\acc -> (<>) acc . renderEntry) mempty (iResults entryIndex)
 
           div_ [class_ "mt-4 sm:mt-6 flex justify-center gap-4"] $ do
@@ -77,7 +77,7 @@ navLink label href =
 searchBar :: SearchData -> Html ()
 searchBar searchData =
   div_ [class_ "flex flex-col sm:flex-row justify-center items-center gap-4 w-full"] $ do
-    a_ [href_ "/", class_ "font-serif text-center text-2xl sm:text-4xl text-5xl text-su-fg dark:text-su-dark-fg"]
+    a_ [href_ "/", class_ "font-serif font-semibold text-center text-2xl sm:text-4xl text-5xl text-su-fg dark:text-su-dark-fg"]
       (span_ [class_ "text-yellow-500"] "sw" <> "oogle")
 
     form_
@@ -93,7 +93,8 @@ searchBar searchData =
           , class_ "rounded-l outline-none bg-inherit w-full p-2 font-sans text-su-fg dark:text-white text-base"
           ]
 
-        select_ [name_ "resource", class_ "bg-white dark:bg-su-dark-bg-alt text-su-fg dark:text-su-dark-fg"] $ do
+        -- Resource selector
+        select_ [name_ "resource", class_ "font-semibold bg-white dark:bg-su-dark-bg-alt text-su-fg dark:text-su-dark-fg"] $ do
           option_ [disabled_ "disabled", selected_ ""] "Category"
 
           foldl'
@@ -135,7 +136,7 @@ buildDescriptiveEntry entry =
   div_ [class_ "flex flex-col gap-2"] $ do
     a_
       [ href_ (deLink entry)
-      , class_ "hover:underline text-su-fg dark:text-su-dark-fg text-base sm:text-xl"
+      , class_ "hover:underline font-semibold text-su-fg dark:text-su-dark-fg text-base sm:text-xl"
       ]
       (Lucid.toHtml (deTitle entry))
 
@@ -148,7 +149,7 @@ buildDescriptiveEntry entry =
         (\html tagName ->
           html <>
             span_
-              [class_ "inline-flex px-2 py-1 mr-1 sm:mr-2.5 rounded bg-su-accent-1/[0.2] dark:bg-su-dark-bg-alt/[0.5]"]
+              [class_ "inline-flex font-medium px-2 py-1 mr-1 sm:mr-2.5 rounded bg-su-accent-1/[0.2] dark:bg-su-dark-bg-alt/[0.5]"]
               (Lucid.toHtml tagName))
         mempty
         (deTags entry)
@@ -159,7 +160,7 @@ buildBriefEntry entry =
   div_ [class_ "flex flex-col gap-2"] $ do
     a_
       [ href_ (beLink entry)
-      , class_ "hover:underline text-su-fg dark:text-su-dark-fg text-base sm:text-xl"
+      , class_ "hover:underline font-semibold text-su-fg dark:text-su-dark-fg text-base sm:text-xl"
       ]
       (Lucid.toHtml (beTitle entry))
 
@@ -168,7 +169,7 @@ buildBriefEntry entry =
         (\html tagName ->
           html <>
             span_
-              [class_ "inline-flex px-2 py-1 mr-1 sm:mr-2.5 rounded bg-su-accent-1/[0.1] dark:bg-su-dark-bg-alt/[0.5]"]
+              [class_ "inline-flex font-medium px-2 py-1 mr-1 sm:mr-2.5 rounded bg-su-accent-1/[0.1] dark:bg-su-dark-bg-alt/[0.5]"]
               (Lucid.toHtml tagName))
         mempty
         (beTags entry)

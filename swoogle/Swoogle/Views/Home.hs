@@ -28,16 +28,17 @@ import Lucid
       disabled_,
       selected_,
       placeholder_,
+      footer_,
       ToHtml(toHtml, toHtmlRaw) )
 
-import Swoogle.Components.Icon qualified as Icon (search, github)
+import Swoogle.Components.Icon qualified as Icon (search)
 import Swoogle.Components.Search qualified as Search (suggestionsEntry)
 
 content :: Html ()
 content = do
-  div_ [class_ "flex flex-col relative items-center justify-center h-screen"] $ do
+  div_ [class_ "flex-1 flex flex-col relative items-center justify-center"] $ do
     h1_
-      [class_ "font-serif text-center text-5xl sm:text-6xl text-7xl text-su-fg dark:text-su-dark-fg mb-12"]
+      [class_ "font-serif font-semibold text-center text-5xl sm:text-6xl text-7xl text-su-fg dark:text-su-dark-fg mb-12"]
       (a_ [href_ "/", class_ ""] (span_ [class_ "text-yellow-600 dark:text-yellow-500"] "sw" <> "oogle"))
 
     -- TODO: Move this to a component
@@ -61,7 +62,7 @@ content = do
         -- Category options
         select_
           [ name_ "resource"
-          , class_ "bg-white dark:bg-su-dark-bg-alt text-su-fg dark:text-su-dark-fg"
+          , class_ "bg-white font-semibold dark:bg-su-dark-bg-alt text-su-fg dark:text-su-dark-fg"
           , required_ "required"
           ] $ do
           option_ [disabled_ "disabled", selected_ "selected", value_ ""] "Category"
@@ -80,19 +81,11 @@ content = do
           Search.suggestionsEntry "People" "luke"
 
       div_ [class_ "text-su-fg dark:text-su-dark-fg flex flex-col sm:flex-row gap-2 text-sm sm:text-base"] $ do
-        span_ [class_ "text-center sm:text-left font-light"] "A Star Wars search engine"
-        middot
-        span_ [class_ "text-center sm:text-left"] (a_ [class_ "text-yellow-600 dark:text-yellow-500 hover:text-yellow-300", href_ "https://ko-fi.com/sekun", target_ "blank"] "Support me on Kofi")
-        middot
-        span_
-          [class_ "text-center sm:text-left"]
-          ("Made by " <> a_ [class_ "text-yellow-600 dark:text-yellow-500 hover:text-yellow-300", href_ "https://twitter.com/hsekun", target_ "_blank"] "Sek Un")
-        middot
-        span_
-          [class_ "flex justify-center sm:block"]
-          (a_ [class_ "text-yellow-600 dark:text-yellow-500 hover:text-yellow-300", href_ "https://github.com/sekunho/swapi", target_ "blank"] Icon.github)
+        span_ [class_ "text-center sm:text-left font-light"] "A Star Wars search engine. "
+        span_ [class_ "text-center sm:text-left font-semibold"] (a_ [class_ "text-yellow-600 dark:text-yellow-500 hover:text-yellow-300", href_ "https://ko-fi.com/sekun", target_ "blank"] "Support me on Kofi")
 
     div_ [class_ "absolute bottom-0 pb-8"] ""
 
 middot :: Html ()
 middot = span_ [class_ "hidden sm:block"] "·"
+

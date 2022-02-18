@@ -25,7 +25,7 @@ import Swoogle.Entry qualified as Entry
 
 -- Swoogle's views
 import Swoogle.Views.Home qualified as Home (content)
-import Swoogle.Views.Layout qualified as Layout (root)
+import Swoogle.Views.Layout qualified as Layout (root, noFooterRoot)
 import Swoogle.Views.SearchResults qualified as Results (content)
 import Swoogle.Views.Errors qualified as Errors
 
@@ -33,21 +33,20 @@ import Swoogle.Views.Errors qualified as Errors
 import Swapi
 
 --------------------------------------------------------------------------------
+-- List of content types:
+-- https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Common_types
 
 assets :: Text -> ActionM ()
 assets asset =
   -- TODO: Handle other cases
   case asset of
     "app.css" ->
-      Scotty.setHeader "Content-Type" "text/css; charset=utf-8" >>
-        Scotty.file (staticPath <> "assets/app.css")
+      Scotty.setHeader "Content-Type" "text/css; charset=utf-8"
+        >> Scotty.file (staticPath <> "assets/app.css")
 
     "app.js" ->
-      Scotty.setHeader "Content-Type" "application/javascript" >>
-       Scotty.file (staticPath <> "assets/app.js")
-
-fonts :: FilePath -> ActionM ()
-fonts = Scotty.file . (<>) (staticPath <> "fonts/")
+      Scotty.setHeader "Content-Type" "application/javascript"
+        >> Scotty.file (staticPath <> "assets/app.js")
 
 images :: FilePath -> ActionM ()
 images = Scotty.file . (<>) (staticPath <> "images/")
@@ -117,7 +116,7 @@ search = do
         -- TODO: Implement own template because the default is too barebones
         Scotty.rescue
           (Scotty.raise "Invalid resource")
-          (const $ Scotty.html $ Lucid.renderText $ Layout.root $ Errors.unexpectedResource searchData)
+          (const $ Scotty.html $ Lucid.renderText $ Layout.noFooterRoot $ Errors.unexpectedResource searchData)
 
   where
     renderResults :: SearchData -> Index Entry -> ActionM ()
@@ -125,7 +124,7 @@ search = do
       let
         content :: Html ()
         content = Layout.root (Results.content searchData entries)
-      in Scotty.html (Lucid.renderText (Layout.root content))
+      in Scotty.html (Lucid.renderText content)
 
 --------------------------------------------------------------------------------
 
