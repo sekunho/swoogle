@@ -1,8 +1,8 @@
 module Swoogle.Components.Icon where
 
 import Data.Text (Text)
-import Lucid (Html)
-import Lucid qualified (toHtmlRaw)
+import Lucid     (Html)
+import Lucid     qualified (toHtmlRaw)
 
 search :: Html ()
 search =

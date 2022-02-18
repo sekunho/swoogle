@@ -2,33 +2,29 @@ module Main where
 
 --------------------------------------------------------------------------------
 
-import Control.Monad.IO.Class qualified as IO (liftIO)
-import Data.Text (Text)
-import Web.Scotty (ScottyM, ActionM)
-import Web.Scotty qualified as Scotty
-  ( scotty
-  , html
-  , get
-  , param
-  , file
-  , setHeader
-  , liftAndCatchIO
-  , middleware
-  )
-import TextShow qualified as Show (showt)
+import Control.Monad.IO.Class               qualified as IO (liftIO)
+import Data.Text                            (Text)
+import Network.Wai.Middleware.Gzip          (GzipFiles (GzipCompress),
+                                             GzipSettings (gzipFiles))
+import Network.Wai.Middleware.Gzip          qualified as Gzip (def, gzip)
 import Network.Wai.Middleware.RequestLogger qualified as Logger (logStdout)
-import Network.Wai.Middleware.Gzip
-    ( GzipFiles(GzipCompress), GzipSettings(gzipFiles) )
-import Network.Wai.Middleware.Gzip qualified as Gzip (def, gzip)
+import TextShow                             qualified as Show (showt)
+import Web.Scotty                           (ActionM, ScottyM)
+import Web.Scotty                           qualified as Scotty (file, get,
+                                                                 html,
+                                                                 liftAndCatchIO,
+                                                                 middleware,
+                                                                 param, scotty,
+                                                                 setHeader)
 
 --------------------------------------------------------------------------------
 
 -- Views
-import Swoogle.Views.Layout qualified as Layout (root)
-import Swoogle.Views.SearchResults qualified as Results (content)
+import Swoogle.Views.Layout                 qualified as Layout (root)
+import Swoogle.Views.SearchResults          qualified as Results (content)
 
 -- Controllers
-import Swoogle.Controllers qualified as Controllers
+import Swoogle.Controllers                  qualified as Controllers
 
 --------------------------------------------------------------------------------
 

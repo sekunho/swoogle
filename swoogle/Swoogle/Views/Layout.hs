@@ -4,39 +4,20 @@ module Swoogle.Views.Layout where
 
 --------------------------------------------------------------------------------
 
-import Data.List (foldl')
-import Data.Text (Text)
-import Lucid
-  ( a_
-  , body_
-  , class_
-  , crossorigin_
-  , div_
-  , doctypehtml_
-  , footer_
-  , href_
-  , link_
-  , main_
-  , meta_
-  , p_
-  , rel_
-  , script_
-  , src_
-  , target_
-  , title_
-  , charset_
-  , httpEquiv_
-  , content_
-  , name_
-  , Html
-  )
+import Data.List               (foldl')
+import Data.Text               (Text)
+import Lucid                   (Html, a_, body_, charset_, class_, content_,
+                                crossorigin_, div_, doctypehtml_, footer_,
+                                href_, httpEquiv_, link_, main_, meta_, name_,
+                                p_, rel_, script_, src_, target_, title_)
 
-import Lucid qualified (toHtmlRaw)
-import Lucid.Base (makeAttribute)
+import Lucid                   qualified (toHtmlRaw)
+import Lucid.Base              (makeAttribute)
 
 --------------------------------------------------------------------------------
 
-import Swoogle.Components.Icon qualified as Icon (search, github, twitter, youtube)
+import Swoogle.Components.Icon qualified as Icon (github, search, twitter,
+                                                  youtube)
 
 --------------------------------------------------------------------------------
 

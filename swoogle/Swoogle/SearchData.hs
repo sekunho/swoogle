@@ -1,11 +1,11 @@
 module Swoogle.SearchData where
 
 import Data.Text (Text)
-import TextShow qualified as Show (showt)
+import TextShow  qualified as Show (showt)
 
 data SearchData = SearchData
-  { sdQuery :: Text
-  , sdPage :: Word
+  { sdQuery    :: Text
+  , sdPage     :: Word
   -- TOOD: Will change this to an actual resource type
   , sdResource :: Text
   }

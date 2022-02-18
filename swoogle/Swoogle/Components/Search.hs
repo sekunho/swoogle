@@ -5,7 +5,7 @@ module Swoogle.Components.Search
 --------------------------------------------------------------------------------
 
 import Data.Text (Text)
-import Lucid (Html)
+import Lucid     (Html)
 import Lucid qualified
 
 --------------------------------------------------------------------------------

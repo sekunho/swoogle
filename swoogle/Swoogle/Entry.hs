@@ -2,70 +2,50 @@ module Swoogle.Entry where
 
 --------------------------------------------------------------------------------
 
-import Data.Coerce (coerce)
-import Data.Text (Text)
-import Data.Text qualified as Text (intercalate)
-import TextShow qualified as Show (showt)
+import Data.Coerce             (coerce)
+import Data.Text               (Text)
+import Data.Text               qualified as Text (intercalate)
+import TextShow                qualified as Show (showt)
 
 --------------------------------------------------------------------------------
 
-import Swapi.Resource.Person
-  ( Height (Height, UnknownHeight)
-  , Mass (Mass, UnknownMass)
-  , Person
-      ( pName
-      , pHeight
-      , pMass
-      , pHairColor
-      , pEyeColor
-      , pId
-      )
-  , PersonName (PersonName)
-  )
+import Swapi.Resource.Person   (Height (Height, UnknownHeight),
+                                Mass (Mass, UnknownMass),
+                                Person (pEyeColor, pHairColor, pHeight, pId, pMass, pName),
+                                PersonName (PersonName))
 
-import Swapi.Resource.Film
-  ( Film (fTitle, fOpeningCrawl, fId)
-  , OpeningCrawl (OpeningCrawl)
-  )
+import Swapi.Resource.Film     (Film (fId, fOpeningCrawl, fTitle),
+                                OpeningCrawl (OpeningCrawl))
 
-import Swapi.Resource.Starship
-  ( Starship (sName, sId)
-  , StarshipName (StarshipName)
-  )
+import Swapi.Resource.Starship (Starship (sId, sName),
+                                StarshipName (StarshipName))
 
-import Swapi.Resource.Vehicle
-  ( Vehicle (vName, vId)
-  , VehicleName (VehicleName)
-  )
+import Swapi.Resource.Vehicle  (Vehicle (vId, vName), VehicleName (VehicleName))
 
-import Swapi.Resource.Species
-  ( OriginlessSpecies (hSpName, hSpId),
-    Species (spName, spId),
-    SpeciesName (SpeciesName),
-    SpeciesType (HasOrigin, NoOrigin)
-  )
+import Swapi.Resource.Species  (OriginlessSpecies (hSpId, hSpName),
+                                Species (spId, spName),
+                                SpeciesName (SpeciesName),
+                                SpeciesType (HasOrigin, NoOrigin))
 
-import Swapi.Resource.Planet
-  ( Planet (plName, plId)
-  , PlanetName (MkPlanetName)
-  )
+import Swapi.Resource.Planet   (Planet (plId, plName),
+                                PlanetName (MkPlanetName))
 
 --------------------------------------------------------------------------------
 
 -- | An entry with a description
 data DescriptiveEntry = DescriptiveEntry
-  { deTitle :: Text
+  { deTitle       :: Text
   , deDescription :: Text
-  , deTags :: [Text]
-  , deLink :: Text
+  , deTags        :: [Text]
+  , deLink        :: Text
   }
   deriving stock (Eq, Show)
 
 -- | An entry without a description
 data BriefEntry = BriefEntry
   { beTitle :: Text
-  , beTags :: [Text]
-  , beLink :: Text
+  , beTags  :: [Text]
+  , beLink  :: Text
   }
   deriving stock (Eq, Show)
 
@@ -164,11 +144,11 @@ fromPlanet p =
 heightToText :: Height -> Text
 heightToText height =
   case height of
-    Height num -> Show.showt num <> "m"
+    Height num    -> Show.showt num <> "m"
     UnknownHeight -> "unknown height"
 
 massToText :: Mass -> Text
 massToText mass =
   case mass of
-    Mass num -> Show.showt num <> " kg"
+    Mass num    -> Show.showt num <> " kg"
     UnknownMass -> "unknown mass"

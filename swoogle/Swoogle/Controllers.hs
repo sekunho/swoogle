@@ -3,33 +3,28 @@ module Swoogle.Controllers where
 
 --------------------------------------------------------------------------------
 
-import Data.Text (Text)
-import Data.Text.Lazy qualified as Text.Lazy (toStrict)
-import Data.Text.Internal.Search qualified as Search (indices)
+import Data.Text                   (Text)
+import Data.Text.Internal.Search   qualified as Search (indices)
+import Data.Text.Lazy              qualified as Text.Lazy (toStrict)
 import Lucid
-import Lucid qualified (renderText)
-import Web.Scotty (ActionM)
-import Web.Scotty qualified as Scotty
-  ( liftAndCatchIO
-  , html
-  , raise
-  , rescue
-  , param
-  , setHeader
-  , file
-  )
+import Lucid                       qualified (renderText)
+import Web.Scotty                  (ActionM)
+import Web.Scotty                  qualified as Scotty (file, html,
+                                                        liftAndCatchIO, param,
+                                                        raise, rescue,
+                                                        setHeader)
 
 --------------------------------------------------------------------------------
 
+import Swoogle.Entry               (Entry)
+import Swoogle.Entry               qualified as Entry
 import Swoogle.SearchData
-import Swoogle.Entry (Entry)
-import Swoogle.Entry qualified as Entry
 
 -- Swoogle's views
-import Swoogle.Views.Home qualified as Home (content)
-import Swoogle.Views.Layout qualified as Layout (root, noFooterRoot)
+import Swoogle.Views.Errors        qualified as Errors
+import Swoogle.Views.Home          qualified as Home (content)
+import Swoogle.Views.Layout        qualified as Layout (noFooterRoot, root)
 import Swoogle.Views.SearchResults qualified as Results (content)
-import Swoogle.Views.Errors qualified as Errors
 
 -- Swapi
 import Swapi
@@ -143,7 +138,7 @@ search = flip Scotty.rescue (renderException . Text.Lazy.toStrict) $ do
           template =
             case search404 of
               [] -> "I have no idea what happened"
-              _ -> Errors.httpNotFound
+              _  -> Errors.httpNotFound
       in
         Scotty.html
           $ Lucid.renderText

@@ -2,11 +2,11 @@ module Swoogle.Views.Errors where
 
 --------------------------------------------------------------------------------
 
-import Data.List (foldl')
-import Data.Text (Text)
-import Lucid (a_, br_, class_, div_, h1_, href_, p_, span_, Html)
-import Lucid qualified (toHtml)
-import TextShow qualified as Show (showt)
+import Data.List          (foldl')
+import Data.Text          (Text)
+import Lucid              (Html, a_, br_, class_, div_, h1_, href_, p_, span_)
+import Lucid              qualified (toHtml)
+import TextShow           qualified as Show (showt)
 
 import Swoogle.SearchData (SearchData (SearchData, sdResource))
 import Swoogle.SearchData qualified as SearchData (toParamsText)
@@ -37,14 +37,14 @@ unexpectedResource searchData = renderError500 $ do
       span_ [class_ "font-light"] ". "
 
       case sdResource searchData of
-        "films" -> renderSuggestion (searchData {sdResource = "film"})
-        "peoples" -> renderSuggestion (searchData {sdResource = "people"})
-        "planets" -> renderSuggestion (searchData {sdResource = "planet"})
-        "specie" -> renderSuggestion (searchData {sdResource = "species"})
-        "vehicles" -> renderSuggestion (searchData {sdResource = "vehicle"})
+        "films"     -> renderSuggestion (searchData {sdResource = "film"})
+        "peoples"   -> renderSuggestion (searchData {sdResource = "people"})
+        "planets"   -> renderSuggestion (searchData {sdResource = "planet"})
+        "specie"    -> renderSuggestion (searchData {sdResource = "species"})
+        "vehicles"  -> renderSuggestion (searchData {sdResource = "vehicle"})
         "starships" -> renderSuggestion (searchData {sdResource = "starship"})
 
-        _ -> ""
+        _           -> ""
 
       span_ [class_ ""] $ do
         span_
