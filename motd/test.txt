@@ -1,0 +1,9 @@
+╔═══╦╗╔╗╔╦═══╦═══╦═══╦╗──╔═══╗
+║╔═╗║║║║║║╔═╗║╔═╗║╔═╗║║──║╔══╝
+║╚══╣║║║║║║─║║║─║║║─╚╣║──║╚══╗
+╚══╗║╚╝╚╝║║─║║║─║║║╔═╣║─╔╣╔══╝
+║╚═╝╠╗╔╗╔╣╚═╝║╚═╝║╚╩═║╚═╝║╚══╗
+╚═══╝╚╝╚╝╚═══╩═══╩═══╩═══╩═══╝
+
+This is the test environment. If you're using this for anything other than running
+tests in a CI, reconsider please!
