@@ -1,11 +1,14 @@
 #!/usr/bin/env bash
 
-ghcup install cabal 3.6.2.0
-ghcup set cabal 3.6.2.0
-cabal update
-cabal install swapi:exe:swoogle-server \
-    --project-file=/mnt/cabal.project \
+# ghcup install cabal 3.6.2.0
+# ghcup set cabal 3.6.2.0
+
+cd /mnt/ || return
+cabal new-update
+cabal new-install swapi:exe:swoogle-server \
     --install-method=copy \
     --installdir=. \
     --overwrite-policy=always \
-    --enable-executable-static # Just to test it out because something wrong happened
+    --project-file=cabal.project
+
+ldd ./swoogle-server

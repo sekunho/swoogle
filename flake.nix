@@ -43,9 +43,10 @@
           inherit (self.checks.${system}.pre-commit-check) shellHook;
 
           buildInputs = [
-            unstable.ghc
+            # pkgs.musl
+            # unstable.ghc
             unstable.ghcid
-            # pkgs.haskell.compiler.integer-simple.ghc8107
+            unstable.haskell.compiler.integer-simple.ghc8107
 
             pkgs.cabal-install # Build tool
             unstable.haskell-language-server # Haskell LSP

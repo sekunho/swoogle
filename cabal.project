@@ -1,18 +1,17 @@
 packages: .
 
-package swoogle-server
-  -- tests: True
-  optimization: 2
+package swapi
+  -- optimization: 2
   executable-static: True
-  split-sections: True
-  executable-stripping: True
+  -- split-sections: True
+  -- executable-stripping: True
   ghc-options: -threaded -rtsopts -with-rtsopts=-N -optl-pthread -fPIC
-
--- package swoogle
---   tests: true
 --
--- package swapi
---   tests: true
+-- -- package swoogle
+-- --   tests: true
+-- --
+-- -- package swapi
+-- --   tests: true
 
 package text
   flags: +integer-simple
