@@ -28,12 +28,8 @@ jobs:
           ghc-version: ${{ matrix.ghc }}
           cabal-version: ${{ matrix.cabal }}
 
-      - name: Configure
-        run: |
-          cabal configure --enable-tests --enable-benchmarks --enable-documentation --test-show-details=direct --write-ghc-environment-files=always
-
       - name: Freeze Cabal plan
-        run: cabal freeze
+        run: cabal freeze --project-file cabal.project.local
 
       - uses: actions/cache@v2
         name: Cache ~/.cabal/store
@@ -43,80 +39,38 @@ jobs:
 
       - name: Install dependencies
         run: |
-          cabal build all --only-dependencies
+          cabal build all --only-dependencies --project-file cabal.project.local
 
       - name: Build
         run: |
-          cabal build all
+          cabal build all --project-file cabal.project.local
 
       - name: Test
         run: |
-          cabal test all
+          cabal test all --project-file cabal.project.local
 
       - name: Documentation
         run: |
-          cabal haddock
+          cabal haddock --project-file cabal.project.local
 
   deploy:
     name: Build release and deploy to Fly.io
     runs-on: ubuntu-20.04
     needs: [build-and-test]
     if: ${{ github.ref == 'refs/heads/main' }}
-    strategy:
-      matrix:
-        cabal: ["3.6.2.0"]
-        ghc: ["8.10.7"]
-
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
 
-      - name: Setup GHC ${{ matrix.ghc }} and Cabal ${{ matrix.cabal }}
-        id: setup-haskell-cabal
-        uses: haskell/actions/setup@v1.2
-        with:
-          ghc-version: ${{ matrix.ghc }}
-          cabal-version: ${{ matrix.cabal }}
-
-      - name: Configure
-        run: |
-          cabal configure --enable-documentation
-
-      - name: Freeze Cabal plan
-        run: cabal freeze
-
-      - uses: actions/cache@v2
-        name: Cache ~/.cabal/store
-        with:
-          path: ${{ steps.setup-haskell-cabal.outputs.cabal-store }}
-          key: ${{ runner.os }}-${{ matrix.ghc }}-${{ hashFiles('cabal.project.freeze') }}
-
-      - name: Install dependencies
-        run: |
-          cabal build all --only-dependencies
-
-      - name: Install dynamic libs
-        run: |
-            sudo apt-get install -y software-properties-common
-            sudo apt-get install -y build-essential pkg-config curl libffi-dev libffi7 libgmp-dev libgmp10 libncurses-dev libncurses5 libtinfo5
-            sudo apt-get install -y libsodium-dev sqlite zlib1g-dev libssl-dev
-
       - name: Build swoogle-server
         run: |
-          cabal install swapi:exe:swoogle-server \
-            --enable-optimization=2 \
-            --enable-split-sections \
-            --enable-executable-stripping \
-            --enable-library-stripping \
-            --ghc-option=-threaded \
-            --ghc-option=-rtsopts \
-            --ghc-option=-with-rtsopts=-N \
-            --install-method=copy \
-            --installdir=.
+          docker run \
+            --volume $PWD:/mnt \
+            utdemir/ghc-musl:v23-ghc8107 \
+            /mnt/bin/build-static
 
       - name: What's in here?
         run: |
-          ldd swoogle-server
           sudo apt install tree
           tree .
 

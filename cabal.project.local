@@ -1,0 +1,10 @@
+packages: .
+write-ghc-environment-files: always
+ignore-project: False
+tests: True
+benchmarks: True
+documentation: True
+test-show-details: direct
+
+package *
+  documentation: True
