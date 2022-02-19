@@ -68,6 +68,10 @@ COPY swoogle swoogle
 COPY assets assets
 COPY priv/static/images priv/static/images
 
+RUN apk add tree
+
+RUN tree .
+
 # Build and minify stylesheet
 RUN \
     mkdir priv/static/assets && \
@@ -90,7 +94,7 @@ FROM alpine:3.14.0
 WORKDIR /app
 
 RUN chown nobody /app
-RUN apk add gmp-dev ncurses-dev libffi-dev zlib zlib-dev tree
+RUN apk add gcc g++ gmp-dev ncurses-dev libffi-dev make xz tar perl zlib zlib-dev
 
 COPY --chown=nobody:root swoogle-server swoogle
 COPY --from=assets --chown=nobody:root /app/priv priv

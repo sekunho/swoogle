@@ -95,6 +95,13 @@ jobs:
         run: |
           cabal build all --only-dependencies
 
+      - name: Install dynamic libs
+        run: |
+            sudo apt-get install -y software-properties-common
+            sudo apt-get install -y build-essential pkg-config curl libffi-dev libffi6 libgmp-dev libgmp10 libncurses-dev libncurses5 libtinfo5
+            sudo apt-get install -y libsodium-dev sqlite zlib1g-dev libssl-dev
+            rm -rf /var/lib/apt/lists/*
+
       - name: Build swoogle-server
         run: |
           cabal install swapi:exe:swoogle-server \
@@ -102,6 +109,9 @@ jobs:
             --enable-split-sections \
             --enable-executable-stripping \
             --enable-library-stripping \
+            --ghc-option=-threaded \
+            --ghc-option=-rtsopts \
+            --ghc-option=-with-rtsopts=-N \
             --install-method=copy \
             --installdir=.
 
