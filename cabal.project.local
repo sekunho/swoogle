@@ -8,3 +8,21 @@ test-show-details: direct
 
 package *
   documentation: True
+
+package text
+  flags: +integer-simple
+
+package hashable
+  flags: -integer-gmp
+
+package scientific
+  flags: +integer-simple
+
+package integer-logarithms
+  flags: -integer-gmp
+
+package cryptonite
+  flags: -integer-gmp
+
+package text-show
+  flags: -integer-gmp
