@@ -29,7 +29,7 @@ jobs:
           cabal-version: ${{ matrix.cabal }}
 
       - name: Freeze Cabal plan
-        run: cabal freeze --project-file cabal.project.local
+        run: cabal freeze --project-file=cabal.project.local
 
       - uses: actions/cache@v2
         name: Cache ~/.cabal/store
@@ -39,19 +39,19 @@ jobs:
 
       - name: Install dependencies
         run: |
-          cabal build all --only-dependencies --project-file cabal.project.local
+          cabal build all --only-dependencies --project-file=cabal.project.local
 
       - name: Build
         run: |
-          cabal build all --project-file cabal.project.local
+          cabal build all --project-file=cabal.project.local
 
       - name: Test
         run: |
-          cabal test all --project-file cabal.project.local
+          cabal test all --project-file=cabal.project.local
 
       - name: Documentation
         run: |
-          cabal haddock --project-file cabal.project.local
+          cabal haddock --project-file=cabal.project.local
 
   deploy:
     name: Build release and deploy to Fly.io

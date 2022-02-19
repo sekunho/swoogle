@@ -1,9 +1,10 @@
 #!/usr/bin/env bash
 
-# ghcup install cabal 3.6.2.0
-# ghcup set cabal 3.6.2.0
+ghcup install cabal 3.6.2.0
+ghcup set cabal 3.6.2.0
 
 cd /mnt/ || return
+cabal clean
 cabal new-update
 cabal new-install swapi:exe:swoogle-server \
     --install-method=copy \
