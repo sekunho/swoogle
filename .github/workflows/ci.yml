@@ -11,7 +11,7 @@ on:
 jobs:
   build-and-test:
     name: cabal ${{ matrix.cabal }} / ghc ${{ matrix.ghc }}
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     strategy:
       matrix:
         cabal: ["3.6.2.0"]
@@ -59,7 +59,7 @@ jobs:
 
   deploy:
     name: Build release and deploy to Fly.io
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     needs: [build-and-test]
     if: ${{ github.ref == 'refs/heads/main' }}
     strategy:
@@ -98,9 +98,8 @@ jobs:
       - name: Install dynamic libs
         run: |
             sudo apt-get install -y software-properties-common
-            sudo apt-get install -y build-essential pkg-config curl libffi-dev libffi6 libgmp-dev libgmp10 libncurses-dev libncurses5 libtinfo5
+            sudo apt-get install -y build-essential pkg-config curl libffi-dev libffi7 libgmp-dev libgmp10 libncurses-dev libncurses5 libtinfo5
             sudo apt-get install -y libsodium-dev sqlite zlib1g-dev libssl-dev
-            rm -rf /var/lib/apt/lists/*
 
       - name: Build swoogle-server
         run: |
@@ -117,6 +116,7 @@ jobs:
 
       - name: What's in here?
         run: |
+          ldd swoogle-server
           sudo apt install tree
           tree .
 

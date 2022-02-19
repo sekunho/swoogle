@@ -110,13 +110,13 @@ fromVehicle v =
 fromSpecies :: SpeciesType -> Entry
 fromSpecies s =
   case s of
-    HasOrigin s ->
+    HasOrigin sp ->
       NoDescription $ BriefEntry
-        { beTitle = coerce @SpeciesName @Text (spName s)
+        { beTitle = coerce @SpeciesName @Text (spName sp)
         , beTags =
             [
             ]
-        , beLink = "/species/" <> Show.showt (spId s)
+        , beLink = "/species/" <> Show.showt (spId sp)
         }
 
     NoOrigin os ->

@@ -33,3 +33,5 @@ result
 
 priv/static/assets/*
 .pre-commit-config.yaml
+
+swoogle-server
