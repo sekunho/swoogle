@@ -31,7 +31,7 @@ jobs:
       # --bench --no-run-benchmarks
       - name: Install dependencies
         run: |
-          cabal build
+          cabal build \
             --only-dependencies \
             --enable-tests
 
