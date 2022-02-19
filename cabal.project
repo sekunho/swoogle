@@ -1,4 +1,4 @@
-packages: .
+packages: swapi.cabal
 
 package swapi
   optimization: 2

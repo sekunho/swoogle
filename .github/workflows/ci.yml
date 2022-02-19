@@ -16,7 +16,6 @@ jobs:
       matrix:
         cabal: ["3.6.2.0"]
         ghc: ["8.10.7"]
-
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
@@ -29,7 +28,7 @@ jobs:
           cabal-version: ${{ matrix.cabal }}
 
       - name: Freeze Cabal plan
-        run: cabal freeze --project-file=cabal.project.local
+        run: cabal freeze --project-file=cabal.project.test
 
       - uses: actions/cache@v2
         name: Cache ~/.cabal/store
@@ -39,19 +38,19 @@ jobs:
 
       - name: Install dependencies
         run: |
-          cabal build all --only-dependencies --project-file=cabal.project.local
+          cabal build all --only-dependencies --project-file=cabal.project.test
 
       - name: Build
         run: |
-          cabal build all --project-file=cabal.project.local
+          cabal build all --project-file=cabal.project.test
 
       - name: Test
         run: |
-          cabal test all --project-file=cabal.project.local
+          cabal test all --project-file=cabal.project.test
 
       - name: Documentation
         run: |
-          cabal haddock --project-file=cabal.project.local
+          cabal haddock --project-file=cabal.project.test
 
   deploy:
     name: Build release and deploy to Fly.io

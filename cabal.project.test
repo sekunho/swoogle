@@ -1,3 +1,5 @@
+packages: swapi.cabal
+
 write-ghc-environment-files: always
 ignore-project: False
 benchmarks: True
@@ -9,10 +11,8 @@ package swapi
   documentation: True
   test-show-details: direct
 
-package *
-  documentation: True
-
 package text
+  documentation: True
   flags: +integer-simple
 
 package hashable
