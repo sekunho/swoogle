@@ -5,7 +5,6 @@ ignore-project: False
 benchmarks: True
 
 package swapi
-  coverage: True
   tests: True
   benchmarks: True
   documentation: True

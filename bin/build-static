@@ -12,4 +12,4 @@ cabal new-install swapi:exe:swoogle-server \
     --overwrite-policy=always \
     --project-file=cabal.project
 
-ldd ./swoogle-server
+# ldd ./swoogle-server

@@ -35,6 +35,18 @@
           };
         };
 
+        devShells.test = pkgs.mkShell rec {
+          buildInputs = [
+            unstable.haskell.compiler.integer-simple.ghc8107
+            unstable.cabal-install
+            pkgs.zlib
+          ];
+
+          shellHook = "cat motd/test.txt";
+
+          LD_LIBRARY_PATH = lib.makeLibraryPath buildInputs;
+        };
+
         # Loaded automatically into shell by `direnv` + `nix-direnv`. You could
         # also use `nix develop` if you want.
         #
@@ -43,8 +55,6 @@
           inherit (self.checks.${system}.pre-commit-check) shellHook;
 
           buildInputs = [
-            # pkgs.musl
-            # unstable.ghc
             unstable.ghcid
             unstable.haskell.compiler.integer-simple.ghc8107
 

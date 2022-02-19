@@ -10,47 +10,60 @@ on:
 
 jobs:
   build-and-test:
-    name: cabal ${{ matrix.cabal }} / ghc ${{ matrix.ghc }}
+    name: cabal 3.6.2.0 / ghc 8.10.7
     runs-on: ubuntu-20.04
-    strategy:
-      matrix:
-        cabal: ["3.6.2.0"]
-        ghc: ["8.10.7"]
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
 
-      - name: Setup GHC ${{ matrix.ghc }} and Cabal ${{ matrix.cabal }}
-        uses: haskell/actions/setup@v1.2
-        id: setup-haskell-cabal
+      - name: Setup nix
+        uses: cachix/install-nix-action@v15
         with:
-          ghc-version: ${{ matrix.ghc }}
-          cabal-version: ${{ matrix.cabal }}
+          extra_nix_config: |
+            trusted-public-keys = hydra.iohk.io:f/Ea+s+dFdN+3Y/G+FDgSq+a5NEWhJGzdjvKNGv0/EQ= cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY=
+            substituters = https://hydra.iohk.io https://cache.nixos.org/
+
+      - run: nix flake show
+
+      - name: Update cabal index
+        run: nix develop .#devShells.x86_64-linux.test --command cabal update
 
       - name: Freeze Cabal plan
-        run: cabal freeze --project-file=cabal.project.test
+        run: |
+          nix develop .#devShells.x86_64-linux.test \
+            --command cabal freeze --project-file=cabal.project.test
+
+      - uses: actions/cache@v2
+        name: Cache /nix/store
+        with:
+          path: /nix/store
+          key: ${{ runner.os }}-${{ hashFiles('flake.lock') }}
+
+      - name: Install dependencies
+        run: |
+          nix develop .#devShells.x86_64-linux.test \
+            --command cabal build all --only-dependencies --project-file=cabal.project.test
 
       - uses: actions/cache@v2
         name: Cache ~/.cabal/store
         with:
-          path: ${{ steps.setup-haskell-cabal.outputs.cabal-store }}
-          key: ${{ runner.os }}-${{ matrix.ghc }}-${{ hashFiles('cabal.project.freeze') }}
-
-      - name: Install dependencies
-        run: |
-          cabal build all --only-dependencies --project-file=cabal.project.test
+          path: ~/.cabal/store
+          key: ${{ runner.os }}-${{ hashFiles('cabal.project.freeze') }}
 
       - name: Build
         run: |
-          cabal build all --project-file=cabal.project.test
+          nix develop .#devShells.x86_64-linux.test \
+            --command cabal build all --project-file=cabal.project.test
 
       - name: Test
         run: |
-          cabal test all --project-file=cabal.project.test
+          nix develop .#devShells.x86_64-linux.test \
+            --command cabal test --project-file=cabal.project.test
 
       - name: Documentation
         run: |
-          cabal haddock --project-file=cabal.project.test
+          nix develop .#devShells.x86_64-linux.test \
+            --command cabal haddock --project-file=cabal.project.test
 
   deploy:
     name: Build release and deploy to Fly.io
