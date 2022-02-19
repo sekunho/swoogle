@@ -97,9 +97,9 @@ module Swapi.Resource.Species
 
 import Data.Aeson          ((.:))
 import Data.Aeson          qualified as Aeson (withObject, withText)
+import Data.Aeson.KeyMap   qualified as KeyMap (lookup)
 import Data.Aeson.Types    (FromJSON, Parser, Value (Null, Object, String),
                             parseJSON)
-import Data.HashMap.Strict qualified as HashMap
 import Data.Kind           (Type)
 import Data.Text           (Text)
 import Data.Text           qualified as Text (toLower, unpack)
@@ -548,7 +548,7 @@ instance FromJSON (SpeciesType :: Type) where
   parseJSON =
     Aeson.withObject "SpeciesType" $
       \val ->
-        case HashMap.lookup "homeworld" val of
+        case KeyMap.lookup "homeworld" val of
           Nothing -> fail "Species is supposed to contain a homeworld field."
           Just val' -> case val' of
             String _ -> HasOrigin <$> parseJSON @Species (Object val)

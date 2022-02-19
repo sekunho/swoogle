@@ -1,4 +1,4 @@
-module Swoogle.Components.Icon where
+module SwoogleWeb.Components.Icon where
 
 import Data.Text (Text)
 import Lucid     (Html)

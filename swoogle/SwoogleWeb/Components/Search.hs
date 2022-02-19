@@ -1,4 +1,4 @@
-module Swoogle.Components.Search
+module SwoogleWeb.Components.Search
   ( suggestionsEntry
   ) where
 

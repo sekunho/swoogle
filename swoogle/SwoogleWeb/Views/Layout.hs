@@ -1,24 +1,24 @@
 -- | Contains the default layouts. I guess the outer styles or something idk how
 -- to explain this lol.
-module Swoogle.Views.Layout where
+module SwoogleWeb.Views.Layout where
 
 --------------------------------------------------------------------------------
 
-import Data.List               (foldl')
-import Data.Text               (Text)
-import Lucid                   (Html, a_, async_, body_, charset_, class_,
-                                content_, crossorigin_, defer_, div_,
-                                doctypehtml_, footer_, href_, httpEquiv_, link_,
-                                main_, meta_, name_, p_, rel_, script_, src_,
-                                target_, title_)
+import Data.List                  (foldl')
+import Data.Text                  (Text)
+import Lucid                      (Html, a_, async_, body_, charset_, class_,
+                                   content_, crossorigin_, defer_, div_,
+                                   doctypehtml_, footer_, href_, httpEquiv_,
+                                   link_, main_, meta_, name_, p_, rel_,
+                                   script_, src_, target_, title_)
 
-import Lucid                   qualified (toHtmlRaw)
-import Lucid.Base              (makeAttribute)
+import Lucid                      qualified (toHtmlRaw)
+import Lucid.Base                 (makeAttribute)
 
 --------------------------------------------------------------------------------
 
-import Swoogle.Components.Icon qualified as Icon (github, search, twitter,
-                                                  youtube)
+import SwoogleWeb.Components.Icon qualified as Icon (github, search, twitter,
+                                                     youtube)
 
 --------------------------------------------------------------------------------
 

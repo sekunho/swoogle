@@ -47,10 +47,7 @@
             unstable.ghcid
             # pkgs.haskell.compiler.integer-simple.ghc8107
 
-            # I had to wrestle with `cabal`'s resolver and so I decided to switch.
-            # I will look into using `haskell.nix`, but only when I get my fiber
-            # internet back.
-            pkgs.stack # Build tool
+            pkgs.cabal-install # Build tool
             unstable.haskell-language-server # Haskell LSP
             pkgs.hlint # Linter
             pkgs.haskellPackages.implicit-hie # To deal with HLS + cabal oddities

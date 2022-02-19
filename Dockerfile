@@ -1,4 +1,3 @@
-
 # From https://gist.github.com/hasufell/f0893abfbba63ac4ea40feb0520946ee
 FROM alpine:3.14.0 AS builder
 
@@ -8,6 +7,7 @@ WORKDIR /app
 ENV GHC_VERSION=8.10.7
 # ENV GHC_OPTIONS="'-threaded -rtsopts -with-rtsopts=-N -split-sections -O2'"
 
+# FIXME: CABAL NOT STACK
 # install ghc and stack
 RUN \
 	apk add curl gcc g++ gmp-dev ncurses-dev libffi-dev make xz tar perl zlib zlib-dev && \

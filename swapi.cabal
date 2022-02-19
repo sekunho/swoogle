@@ -54,7 +54,7 @@ common default-extensions
     StrictData
     TypeApplications
 
-library
+library swapi-lib
   import:           default-extensions
   exposed-modules:
     Swapi
@@ -78,20 +78,46 @@ library
     Swapi.Resource.Vehicle
     Swapi.Url
 
-  hs-source-dirs:   src
+  hs-source-dirs:   swapi-lib
   default-language: Haskell2010
   ghc-options:      -Wall
   build-depends:
-    , aeson
-    , base                  >=4.7 && <5
-    , bytestring
-    , containers
-    , req
-    , scientific
-    , text
-    , text-show
-    , time
-    , unordered-containers
+    , aeson       ^>=2.0.3
+    , base        >=4.7     && <5
+    , bytestring  ^>=0.10.12
+    , containers  ^>=0.6.5
+    , req         ^>=3.10.0
+    , scientific  ^>=0.3.7
+    , text        ^>=1.2.5.0
+    , text-show   ^>=3.9.6
+    , time        ^>=1.9.3
+
+library swoogle
+  import:           default-extensions
+  exposed-modules:
+    Swoogle.Entry
+    Swoogle.SearchData
+    SwoogleWeb.Components.Icon
+    SwoogleWeb.Components.Search
+    SwoogleWeb.Controllers
+    SwoogleWeb.Server
+    SwoogleWeb.Views.Errors
+    SwoogleWeb.Views.Home
+    SwoogleWeb.Views.Layout
+    SwoogleWeb.Views.SearchResults
+
+  hs-source-dirs:   swoogle
+  default-language: Haskell2010
+  ghc-options:      -Wall
+  build-depends:
+    , base        >=4.7     && <5
+    , containers  ^>=0.6.5.1
+    , http-types  ^>=0.12.3
+    , lucid       ^>=2.11.0
+    , scotty      ^>=0.12
+    , swapi-lib
+    , text        ^>=1.2.5.0
+    , text-show   ^>=3.9.6
 
 -- executable swoogle-tui
 --     import: default-extensions
@@ -105,38 +131,24 @@ library
 --     ghc-options:      -Wall
 --     default-language: Haskell2010
 
-executable swoogle
+executable swoogle-server
   import:           default-extensions
   build-depends:
-    , base        >=4.7 && <5
-    , bytestring
-    , containers
-    , http-types
-    , lucid
-    , scotty
-    , swapi
-    , text
-    , text-show
-    , wai-extra
-    , word8
+    , base        >=4.7     && <5
+    , containers  ^>=0.6.5.1
+    , scotty      ^>=0.12
+    , swoogle
+    , text        ^>=1.2.5.0
+    , wai-extra   ^>=3.1.8
 
   main-is:          Main.hs
-  hs-source-dirs:   swoogle
-  other-modules:
-    Swoogle.Components.Icon
-    Swoogle.Components.Search
-    Swoogle.Controllers
-    Swoogle.Entry
-    Swoogle.SearchData
-    Swoogle.Views.Errors
-    Swoogle.Views.Home
-    Swoogle.Views.Layout
-    Swoogle.Views.SearchResults
+  hs-source-dirs:   app/server
+  ghc-options:      -Wall
 
   -- I got the ghc options from here:
   -- https://gilmi.me/blog/post/2020/12/05/scotty-bulletin-board
   -- ghc-options: -static -optl-static -optl-pthread -fPIC -threaded -rtsopts -with-rtsopts=-N
-  ghc-options:      -threaded -rtsopts -with-rtsopts=-N -split-sections -O2
+  -- ghc-options:      -threaded -rtsopts -with-rtsopts=-N -split-sections -O2
   default-language: Haskell2010
 
 test-suite swapi-lib-test
@@ -158,18 +170,18 @@ test-suite swapi-lib-test
 
   ghc-options:        -threaded -rtsopts -with-rtsopts=-N -Wall
   build-depends:
-    , aeson
-    , base            >=4.7 && <5
-    , bytestring
-    , containers
-    , hspec
-    , scientific
-    , swapi
-    , tasty
-    , tasty-discover
-    , tasty-golden
-    , tasty-hspec
-    , tasty-hunit
-    , text
+    , aeson           ^>=2.0.3
+    , base            >=4.7      && <5
+    , bytestring      ^>=0.10.12
+    , containers      ^>=0.6.5
+    , hspec           ^>=2.9.4
+    , scientific      ^>=0.3.7
+    , swapi-lib
+    , tasty           ^>=1.4.2.1
+    , tasty-discover  ^>=4.2.2
+    , tasty-golden    ^>=2.3.5
+    , tasty-hspec     ^>=1.2
+    , tasty-hunit     ^>=0.10.0.3
+    , text            ^>=1.2.5.0
 
   build-tool-depends: tasty-discover:tasty-discover -any

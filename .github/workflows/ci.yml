@@ -8,52 +8,37 @@ on:
       - main
 
 jobs:
+  # FIXME: YEAH I CAVED AND MOVED BACK TO CABAL. NOW I GOTTA FIX THIS
   build-and-test:
-    name: stack ${{ matrix.stack }} / ghc ${{ matrix.ghc }}
+    name: cabal ${{ matrix.cabal }} / ghc ${{ matrix.ghc }}
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        stack: ["2.7.3"]
+        cabal: ["3.6.2.0"]
         ghc: ["8.10.7"]
 
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
 
-      - name: Setup GHC ${{ matrix.ghc }} and Stack ${{ matrix.stack }}
+      - name: Setup GHC ${{ matrix.ghc }} and Cabal ${{ matrix.cabal }}
         uses: haskell/actions/setup@v1
         with:
           ghc-version: ${{ matrix.ghc }}
-          enable-stack: true
-          stack-version: ${{ matrix.stack }}
-
-      - uses: actions/cache@v2
-        name: Cache ~/.stack
-        with:
-          path: ~/.stack
-          key: ${{ runner.os }}-${{ matrix.ghc }}-stack-${{ matrix.stack }}
+          cabal-version: ${{ matrix.cabal }}
 
       # TODO: Include benchmarks if ever I do end up writing some
       # --bench --no-run-benchmarks
       - name: Install dependencies
         run: |
-          stack build \
-            --system-ghc \
-            --test \
-            --no-run-tests \
+          cabal build
             --only-dependencies \
-            --no-nix
+            --enable-tests
 
-      # TODO: Include benchmarks if ever I do end up writing some
-      # --bench --no-run-benchmarks
       - name: Build
         run: |
-          stack build \
-            --system-ghc \
-            --test \
-            --no-run-tests \
-            --no-nix
+          cabal build
 
       - name: Test
         run: |
-          stack test --system-ghc --no-nix
+          cabal test

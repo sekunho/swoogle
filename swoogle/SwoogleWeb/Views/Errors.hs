@@ -1,4 +1,4 @@
-module Swoogle.Views.Errors where
+module SwoogleWeb.Views.Errors where
 
 --------------------------------------------------------------------------------
 
