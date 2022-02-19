@@ -1,4 +1,4 @@
-module Swoogle.Views.Errors where
+module SwoogleWeb.Views.Errors where
 
 --------------------------------------------------------------------------------
 
@@ -6,9 +6,10 @@ import Data.List          (foldl')
 import Data.Text          (Text)
 import Lucid              (Html, a_, br_, class_, div_, h1_, href_, p_, span_)
 import Lucid              qualified (toHtml)
-import TextShow           qualified as Show (showt)
 
-import Swoogle.SearchData (SearchData (SearchData, sdResource))
+--------------------------------------------------------------------------------
+
+import Swoogle.SearchData (SearchData (sdResource))
 import Swoogle.SearchData qualified as SearchData (toParamsText)
 
 --------------------------------------------------------------------------------
@@ -63,18 +64,18 @@ unexpectedResource searchData = renderError500 $ do
 
   where
     renderResource :: SearchData -> Html ()
-    renderResource searchData =
+    renderResource searchData' =
       a_
         [ class_ "font-bold text-yellow-600 dark:text-yellow-500"
         , href_ ("search" <> SearchData.toParamsText searchData)
         ]
-        (Lucid.toHtml $ sdResource searchData)
+        (Lucid.toHtml $ sdResource searchData')
 
     renderSuggestion :: SearchData -> Html ()
-    renderSuggestion searchData =
+    renderSuggestion searchData' =
       mconcat
         [ span_ [class_ "font-light"] "Perhaps you meant "
-        , renderResource searchData
+        , renderResource searchData'
         , "? "
         , br_ []
         , br_ []

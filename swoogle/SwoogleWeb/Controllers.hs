@@ -1,50 +1,56 @@
 -- | Oh look at Sekun! Trying to shoehorn MVC into a non-MVC library.
-module Swoogle.Controllers where
+module SwoogleWeb.Controllers where
 
 --------------------------------------------------------------------------------
 
-import Data.Coerce                 (coerce)
-import Data.List                   (foldl')
-import Data.Text                   (Text)
-import Data.Text.Internal.Search   qualified as Search (indices)
-import Data.Text.Lazy              qualified as Text.Lazy (toStrict)
-import Lucid
-import Lucid                       qualified (renderText)
-import Network.HTTP.Types.Status   qualified as Status (status404)
-import Web.Scotty                  (ActionM)
-import Web.Scotty                  qualified as Scotty (file, html,
-                                                        liftAndCatchIO, param,
-                                                        raise, raiseStatus,
-                                                        rescue, setHeader)
+import Data.Coerce                    (coerce)
+import Data.List                      (foldl')
+import Data.Text                      (Text)
+import Data.Text.Internal.Search      qualified as Search (indices)
+import Data.Text.Lazy                 qualified as Text.Lazy (toStrict)
+import Lucid                          (Html)
+import Lucid                          qualified (renderText)
+import Network.HTTP.Types.Status      qualified as Status (status404)
+import Web.Scotty                     (ActionM)
+import Web.Scotty                     qualified as Scotty (file, html,
+                                                           liftAndCatchIO,
+                                                           param, raise,
+                                                           raiseStatus, rescue,
+                                                           setHeader)
 
 --------------------------------------------------------------------------------
 
-import Swoogle.Components.Search   qualified as Search (suggestionsEntry)
-import Swoogle.Entry               (Entry)
-import Swoogle.Entry               qualified as Entry
+import Swoogle.Entry                  (Entry)
+import Swoogle.Entry                  qualified as Entry
 import Swoogle.SearchData
 
--- Swoogle's views
-import Swoogle.Views.Errors        qualified as Errors
-import Swoogle.Views.Home          qualified as Home (content)
-import Swoogle.Views.Layout        qualified as Layout (noFooterRoot, root)
-import Swoogle.Views.SearchResults qualified as Results (content)
+-- Components
+import SwoogleWeb.Components.Search   qualified as Search (suggestionsEntry)
+
+-- Views
+import SwoogleWeb.Views.Errors        qualified as Errors
+import SwoogleWeb.Views.Home          qualified as Home (content)
+import SwoogleWeb.Views.Layout        qualified as Layout (noFooterRoot, root)
+import SwoogleWeb.Views.SearchResults qualified as Results (content)
 
 -- Swapi
+import Swapi                          (Index (iResults), Page (Page),
+                                       searchFilms, searchPeople, searchPlanets,
+                                       searchSpecies, searchStarships,
+                                       searchVehicles)
 
-import Swapi                       (Index (iResults), Page (Page), searchFilms,
-                                    searchPeople, searchPlanets, searchSpecies,
-                                    searchStarships, searchVehicles)
-
-import Swapi.Resource.Film         (Film (fTitle))
-import Swapi.Resource.Person       (Person (pName), PersonName (PersonName))
-import Swapi.Resource.Planet       (Planet (plName), PlanetName (MkPlanetName))
-import Swapi.Resource.Species      (OriginlessSpecies (hSpName),
-                                    Species (spName), SpeciesName (SpeciesName),
-                                    SpeciesType (HasOrigin, NoOrigin))
-import Swapi.Resource.Starship     (Starship (sName),
-                                    StarshipName (StarshipName))
-import Swapi.Resource.Vehicle      (Vehicle (vName), VehicleName (VehicleName))
+import Swapi.Resource.Film            (Film (fTitle))
+import Swapi.Resource.Person          (Person (pName), PersonName (PersonName))
+import Swapi.Resource.Planet          (Planet (plName),
+                                       PlanetName (MkPlanetName))
+import Swapi.Resource.Species         (OriginlessSpecies (hSpName),
+                                       Species (spName),
+                                       SpeciesName (SpeciesName),
+                                       SpeciesType (HasOrigin, NoOrigin))
+import Swapi.Resource.Starship        (Starship (sName),
+                                       StarshipName (StarshipName))
+import Swapi.Resource.Vehicle         (Vehicle (vName),
+                                       VehicleName (VehicleName))
 
 --------------------------------------------------------------------------------
 -- List of content types:
@@ -249,9 +255,9 @@ suggest = do
             (\suggestions sp ->
                suggestions <>
                  case sp of
-                   HasOrigin sp ->
+                   HasOrigin osp ->
                        Search.suggestionsEntry
-                         resource (coerce @SpeciesName @Text $ spName sp)
+                         resource (coerce @SpeciesName @Text $ spName osp)
 
                    NoOrigin hsp ->
                      Search.suggestionsEntry
@@ -279,6 +285,10 @@ suggest = do
 
     _ ->
       Scotty.raise "Unexpected category/resource"
+
+-- TODO: Implement this
+-- viewResource :: ActionM ()
+-- viewResource = _
 
 --------------------------------------------------------------------------------
 

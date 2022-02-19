@@ -1,37 +1,13 @@
 cradle:
-  stack:
-    - path: "./src"
-      component: "swapi:lib"
+  cabal:
+    - path: "swapi-lib"
+      component: "swapi:lib:swapi-lib"
 
-    - path: "./swoogle/Main.hs"
-      component: "swapi:exe:swoogle"
+    - path: "swoogle"
+      component: "swapi:lib:swoogle"
 
-    - path: "./swoogle/Swoogle/Entry.hs"
-      component: "swapi:exe:swoogle"
+    - path: "app/server/Main.hs"
+      component: "swapi:exe:swoogle-server"
 
-    - path: "./swoogle/Swoogle/SearchData.hs"
-      component: "swapi:exe:swoogle"
-
-    - path: "./swoogle/Swoogle/Controllers.hs"
-      component: "swapi:exe:swoogle"
-
-    - path: "./swoogle/Swoogle/Views/Errors.hs"
-      component: "swapi:exe:swoogle"
-
-    - path: "./swoogle/Swoogle/Views/Home.hs"
-      component: "swapi:exe:swoogle"
-
-    - path: "./swoogle/Swoogle/Views/Layout.hs"
-      component: "swapi:exe:swoogle"
-
-    - path: "./swoogle/Swoogle/Views/SearchResults.hs"
-      component: "swapi:exe:swoogle"
-
-    - path: "./swoogle/Swoogle/Components/Icon.hs"
-      component: "swapi:exe:swoogle"
-
-    - path: "./swoogle/Swoogle/Components/Search.hs"
-      component: "swapi:exe:swoogle"
-
-    - path: "./test"
+    - path: "test"
       component: "swapi:test:swapi-lib-test"

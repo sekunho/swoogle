@@ -1,18 +1,16 @@
-module Swoogle.Views.Home where
+module SwoogleWeb.Views.Home where
 
 --------------------------------------------------------------------------------
 
-import Lucid                     (Html, ToHtml (toHtml, toHtmlRaw), a_, action_,
-                                  autocomplete_, autofocus_, button_, class_,
-                                  disabled_, div_, footer_, form_, h1_, h2_,
-                                  hidden_, href_, id_, input_, method_, name_,
-                                  option_, placeholder_, required_, select_,
-                                  selected_, span_, target_, type_, value_)
+import Lucid                      (Html, a_, action_, autocomplete_, autofocus_,
+                                   button_, class_, disabled_, div_, form_, h1_,
+                                   hidden_, href_, id_, input_, method_, name_,
+                                   option_, required_, select_, selected_,
+                                   span_, target_, type_, value_)
 
 --------------------------------------------------------------------------------
 
-import Swoogle.Components.Icon   qualified as Icon (search)
-import Swoogle.Components.Search qualified as Search (suggestionsEntry)
+import SwoogleWeb.Components.Icon qualified as Icon (search)
 
 --------------------------------------------------------------------------------
 
