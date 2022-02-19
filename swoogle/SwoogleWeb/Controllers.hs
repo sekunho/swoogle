@@ -8,7 +8,7 @@ import Data.List                      (foldl')
 import Data.Text                      (Text)
 import Data.Text.Internal.Search      qualified as Search (indices)
 import Data.Text.Lazy                 qualified as Text.Lazy (toStrict)
-import Lucid
+import Lucid                          (Html)
 import Lucid                          qualified (renderText)
 import Network.HTTP.Types.Status      qualified as Status (status404)
 import Web.Scotty                     (ActionM)
@@ -255,9 +255,9 @@ suggest = do
             (\suggestions sp ->
                suggestions <>
                  case sp of
-                   HasOrigin sp ->
+                   HasOrigin osp ->
                        Search.suggestionsEntry
-                         resource (coerce @SpeciesName @Text $ spName sp)
+                         resource (coerce @SpeciesName @Text $ spName osp)
 
                    NoOrigin hsp ->
                      Search.suggestionsEntry
