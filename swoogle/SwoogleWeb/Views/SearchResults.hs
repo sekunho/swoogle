@@ -2,31 +2,28 @@ module SwoogleWeb.Views.SearchResults where
 
 --------------------------------------------------------------------------------
 
-import Data.List                    (foldl')
-import Data.Map                     qualified as Map (lookup, update)
-import Data.Text                    (Text)
-import Data.Text                    qualified as Text (toLower)
-import Lucid                        (Html, a_, action_, autocomplete_, br_,
-                                     button_, class_, disabled_, div_, form_,
-                                     hidden_, href_, id_, input_, method_, min_,
-                                     name_, option_, p_, required_, select_,
-                                     selected_, span_, type_, value_)
+import Data.List                  (foldl')
+import Data.Text                  (Text)
+import Data.Text                  qualified as Text (toLower)
+import Lucid                      (Html, a_, action_, autocomplete_, br_,
+                                   button_, class_, disabled_, div_, form_,
+                                   hidden_, href_, id_, input_, method_, name_,
+                                   option_, p_, required_, select_, selected_,
+                                   span_, type_, value_)
 
-import Lucid                        qualified (toHtml)
-import TextShow                     qualified as Show (showt)
+import Lucid                      qualified (toHtml)
 
 --------------------------------------------------------------------------------
 
-import Swoogle.Entry                (BriefEntry (beLink, beTags, beTitle),
-                                     DescriptiveEntry (deDescription, deLink, deTags, deTitle),
-                                     Entry (HasDescription, NoDescription))
-import Swoogle.SearchData           (SearchData (sdPage, sdQuery, sdResource))
-import Swoogle.SearchData           qualified as SearchData
+import Swoogle.Entry              (BriefEntry (beLink, beTags, beTitle),
+                                   DescriptiveEntry (deDescription, deLink, deTags, deTitle),
+                                   Entry (HasDescription, NoDescription))
+import Swoogle.SearchData         (SearchData (sdPage, sdQuery, sdResource))
+import Swoogle.SearchData         qualified as SearchData
 
-import Swapi                        (Index (iNextPage, iPreviousPage, iResults),
-                                     Page (NoPage, Page))
-import SwoogleWeb.Components.Icon   qualified as Icon (github, search)
-import SwoogleWeb.Components.Search qualified as Search (suggestionsEntry)
+import Swapi                      (Index (iNextPage, iPreviousPage, iResults),
+                                   Page (NoPage, Page))
+import SwoogleWeb.Components.Icon qualified as Icon (search)
 
 --------------------------------------------------------------------------------
 -- Layouts

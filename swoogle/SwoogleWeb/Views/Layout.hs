@@ -17,8 +17,7 @@ import Lucid.Base                 (makeAttribute)
 
 --------------------------------------------------------------------------------
 
-import SwoogleWeb.Components.Icon qualified as Icon (github, search, twitter,
-                                                     youtube)
+import SwoogleWeb.Components.Icon qualified as Icon (github, twitter, youtube)
 
 --------------------------------------------------------------------------------
 
