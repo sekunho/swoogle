@@ -11,7 +11,6 @@ data SearchData = SearchData
   }
   deriving (Eq, Show)
 
-
 toParamsText :: SearchData -> Text
 toParamsText searchData =
   mconcat

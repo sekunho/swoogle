@@ -2,28 +2,25 @@ module SwoogleWeb.Views.SearchResults where
 
 --------------------------------------------------------------------------------
 
-import Data.List                  (foldl')
-import Data.Text                  (Text)
-import Data.Text                  qualified as Text (toLower)
-import Lucid                      (Html, a_, action_, autocomplete_, br_,
-                                   button_, class_, disabled_, div_, form_,
-                                   hidden_, href_, id_, input_, method_, name_,
-                                   option_, p_, required_, select_, selected_,
-                                   span_, type_, value_)
+import Data.List                    (foldl')
+import Data.Text                    (Text)
+import Lucid                        (Html, a_, br_, class_, div_, href_, p_,
+                                     span_)
 
-import Lucid                      qualified (toHtml)
+import Lucid                        qualified (toHtml)
 
 --------------------------------------------------------------------------------
 
-import Swoogle.Entry              (BriefEntry (beLink, beTags, beTitle),
-                                   DescriptiveEntry (deDescription, deLink, deTags, deTitle),
-                                   Entry (HasDescription, NoDescription))
-import Swoogle.SearchData         (SearchData (sdPage, sdQuery, sdResource))
-import Swoogle.SearchData         qualified as SearchData
+import Swoogle.Entry                (BriefEntry (beLink, beTags, beTitle),
+                                     DescriptiveEntry (deDescription, deLink, deTags, deTitle),
+                                     Entry (HasDescription, NoDescription))
+import Swoogle.SearchData           (SearchData (sdPage))
+import Swoogle.SearchData           qualified as SearchData
 
-import Swapi                      (Index (iNextPage, iPreviousPage, iResults),
-                                   Page (NoPage, Page))
-import SwoogleWeb.Components.Icon qualified as Icon (search)
+import SwoogleWeb.Components.Search qualified as Search (searchBar)
+
+import Swapi                        (Index (iNextPage, iPreviousPage, iResults),
+                                     Page (NoPage, Page))
 
 --------------------------------------------------------------------------------
 -- Layouts
@@ -31,7 +28,7 @@ import SwoogleWeb.Components.Icon qualified as Icon (search)
 content :: SearchData -> Index Entry -> Html ()
 content searchData entryIndex = do
     div_ [class_ "w-full sm:w-2/3 py-6 flex flex-col mx-auto"] $ do
-      searchBar searchData
+      Search.searchBar searchData
 
       -- Search results are rendered here
       case iResults entryIndex of
@@ -83,58 +80,6 @@ navLink label href =
     ]
     (Lucid.toHtml label)
 
--- TODO: Move this to a component
-searchBar :: SearchData -> Html ()
-searchBar searchData =
-  div_ [class_ "flex flex-col sm:flex-row justify-center items-center gap-4 w-full"] $ do
-    a_ [href_ "/", class_ "font-serif font-semibold text-center text-2xl sm:text-4xl text-5xl text-su-fg dark:text-su-dark-fg"]
-      (span_ [class_ "text-yellow-500"] "sw" <> "oogle")
-
-    form_
-      [autocomplete_ "off", action_ "/search", method_ "GET", id_ "search", class_ "relative flex flex-col gap-8 items-center justify-center w-full"] $ do
-      div_ [id_ "search-bar-wrapper", class_ "w-full flex shadow-md dark:shadow-black/[0.2] bg-white dark:bg-su-dark-bg-alt rounded-t rounded-b relative"] $ do
-        -- This will set page to always be `1`. I need this because every new
-        -- search should start from the first page. Even if it means I was at the
-        -- nth page, having a new query should take me back to the top of whatever
-        -- the results of the new query are.
-        input_ [required_ "required", type_ "text", name_ "page", hidden_ "hidden", value_ "1"]
-
-        input_
-          [ value_ (sdQuery searchData)
-          , type_ "text"
-          , id_ "search-bar"
-          , name_ "query"
-          , class_ "rounded-l outline-none bg-inherit w-full p-2 font-sans text-su-fg dark:text-white text-base"
-          , required_ ""
-          ]
-
-        -- Resource selector
-        select_
-          [ id_ "category-options"
-          , name_ "resource"
-          , class_ "font-semibold bg-white dark:bg-su-dark-bg-alt text-su-fg dark:text-su-dark-fg"
-          ] $ do
-          option_ [disabled_ "disabled", selected_ ""] "Category"
-
-          foldl'
-            (\opts label ->
-               let
-                 defaultAttrs =
-                   if sdResource searchData == Text.toLower label
-                   then [selected_ ""]
-                   else []
-               in
-                 opts <>
-                   option_
-                     (value_ (Text.toLower label):defaultAttrs)
-                     (Lucid.toHtml label))
-            mempty
-            ["People", "Film", "Starship", "Vehicle", "Species", "Planet"]
-
-        button_ [type_ "submit", class_"w-2/8 px-2.5 text-su-fg dark:text-su-dark-fg rounded-r hover:bg-white/[0.1]"] $
-          span_ Icon.search
-
-      div_ [id_ "search-suggestions", class_ "z-10 border-t border-su-bg dark:border-su-dark-bg hidden bg-white dark:bg-su-dark-bg-alt absolute w-full top-full rounded-b shadow-md dark:shadow-black/[0.2]"] ""
 
 resourceButton :: Text -> Text -> Text -> Html ()
 resourceButton query label resource  =

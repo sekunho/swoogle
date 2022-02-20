@@ -17,6 +17,7 @@ routes = do
   -- Page routes
   Scotty.get "/" Controllers.home
   Scotty.get "/search" Controllers.search
+  Scotty.get "/people/:id" Controllers.showPerson
 
   -- Non-HTML routes
   Scotty.get "/suggest" Controllers.suggest
