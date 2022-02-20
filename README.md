@@ -25,7 +25,7 @@
 ``` sh
 # Restart web server on change
 # This one is so much faster than manually rebuilding!
-ghcid --command stack ghci swoogle/Main.hs --test :main
+ghcid --target=swoogle-server --restart="swoogle" --test 'Main.main'
 
 # Have tailwind automatically parse and purge classes
 tailwindcss --input assets/app.css \

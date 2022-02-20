@@ -43,7 +43,6 @@
           ];
 
           shellHook = "cat motd/test.txt";
-
           LD_LIBRARY_PATH = lib.makeLibraryPath buildInputs;
         };
 
@@ -52,39 +51,61 @@
         #
         # `nix-direnv`: https://github.com/nix-community/nix-direnv
         devShell = pkgs.mkShell rec {
-          inherit (self.checks.${system}.pre-commit-check) shellHook;
+          shellHook = ''
+            ${self.checks.${system}.pre-commit-check.shellHook}
+            cat motd/dev.txt
+          '';
 
           buildInputs = [
+            ## HASKELL TOOLS
+
+            # I use this to auto-reload swoogle-server
             unstable.ghcid
+
+            # Glorious Glasgow Haskell Compiler, without integer-gmp
             unstable.haskell.compiler.integer-simple.ghc8107
 
-            pkgs.cabal-install # Build tool
-            unstable.haskell-language-server # Haskell LSP
-            pkgs.hlint # Linter
-            pkgs.haskellPackages.implicit-hie # To deal with HLS + cabal oddities
-            pkgs.haskellPackages.stylish-haskell # Code formatter
-            pkgs.haskellPackages.stan # Idk how to use this yet
-            pkgs.haskell-ci # Github Actions generator
+            # Haskell build tool
+            pkgs.cabal-install
 
-            # Front-end
-            unstable.nodePackages.tailwindcss # Styling with utility classes
-            unstable.esbuild # Node.JS? What's that?
+            # Haskell LSP
+            unstable.haskell-language-server
 
-            # Deploy
-            pkgs.flyctl # Fly's CLI for deploy
+            # Haskell Linter
+            pkgs.hlint
 
-            # Misc.
-            pkgs.watchexec # Watch changes and execute something
+            # To appease HLS
+            pkgs.haskellPackages.implicit-hie
 
-            # Set `~/.stack/config.yaml` with this:
-            # ```yaml
-            #   nix:
-            #     enable: true
-            #     packages: [zlib.dev, zlib.out]
-            # ```
-            #
-            # Otherwise it'll complain about `zlib` while building.
-            # https://github.com/commercialhaskell/stack/issues/2975
+            # Code formatter so I can take care of a lot of mental overhead
+            pkgs.haskellPackages.stylish-haskell
+
+            # Static code analyzer
+            pkgs.haskellPackages.stan
+
+            # Github Actions generator; I'm not really using this these days.
+            pkgs.haskell-ci
+
+            ## FRONT-END TOOLS
+
+            # Styling with CSS utility classes
+            unstable.nodePackages.tailwindcss
+
+            # Because I'm sick and tired of Node.JS and its nth "fundamentally
+            # different" bundler/framework when they're all slow, and annoying.
+            # Why bother roping in an entire JS runtime just to bundle assets?
+            unstable.esbuild
+
+            ## MISC.
+
+            # For deploying applications
+            pkgs.flyctl
+
+            # I can't remember the exact flags to use so I just stuffed 'em in a
+            # Makefile
+            pkgs.gnumake
+
+            # A shared library that GHC requires
             pkgs.zlib
           ];
 

@@ -1,9 +1,17 @@
-╔═══╦╗╔╗╔╦═══╦═══╦═══╦╗──╔═══╗
-║╔═╗║║║║║║╔═╗║╔═╗║╔═╗║║──║╔══╝
-║╚══╣║║║║║║─║║║─║║║─╚╣║──║╚══╗
-╚══╗║╚╝╚╝║║─║║║─║║║╔═╣║─╔╣╔══╝
-║╚═╝╠╗╔╗╔╣╚═╝║╚═╝║╚╩═║╚═╝║╚══╗
-╚═══╝╚╝╚╝╚═══╩═══╩═══╩═══╩═══╝
 
-This is the test environment. If you're using this for anything other than running
-tests in a CI, reconsider please!
+                      ╔═══╦╗╔╗╔╦═══╦═══╦═══╦╗──╔═══╗
+                      ║╔═╗║║║║║║╔═╗║╔═╗║╔═╗║║──║╔══╝
+                      ║╚══╣║║║║║║─║║║─║║║─╚╣║──║╚══╗
+                      ╚══╗║╚╝╚╝║║─║║║─║║║╔═╣║─╔╣╔══╝
+                      ║╚═╝╠╗╔╗╔╣╚═╝║╚═╝║╚╩═║╚═╝║╚══╗
+                      ╚═══╝╚╝╚╝╚═══╩═══╩═══╩═══╩═══╝
+                        A Star Wars search engine.
+                                 (TEST)
+
+================================================================================
+
+Note: Only use this when running tests in a CI! This shell only includes a min
+set of dependencies to run tests. It does not come with any other useful dev
+tools, nor does it have the proper packages to build a static binary for prod.
+
+================================================================================

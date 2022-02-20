@@ -31,10 +31,12 @@ import SwoogleWeb.Components.Search   qualified as Search (suggestionsEntry)
 import SwoogleWeb.Views.Errors        qualified as Errors
 import SwoogleWeb.Views.Home          qualified as Home (content)
 import SwoogleWeb.Views.Layout        qualified as Layout (noFooterRoot, root)
+import SwoogleWeb.Views.People.Show   qualified as Resource.Show (content)
 import SwoogleWeb.Views.SearchResults qualified as Results (content)
 
 -- Swapi
 import Swapi                          (Index (iResults), Page (Page),
+                                       PersonId (PersonId), getPerson,
                                        searchFilms, searchPeople, searchPlanets,
                                        searchSpecies, searchStarships,
                                        searchVehicles)
@@ -287,8 +289,17 @@ suggest = do
       Scotty.raise "Unexpected category/resource"
 
 -- TODO: Implement this
--- viewResource :: ActionM ()
--- viewResource = _
+showPerson :: ActionM ()
+showPerson = do
+  pId <- Scotty.param @Word "id"
+  person <- Scotty.liftAndCatchIO $ getPerson (PersonId pId)
+
+  Scotty.liftAndCatchIO (print person)
+
+  Scotty.html
+    $ Lucid.renderText
+    $ Layout.root
+    $ Resource.Show.content person
 
 --------------------------------------------------------------------------------
 

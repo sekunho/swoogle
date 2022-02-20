@@ -1,0 +1,44 @@
+
+                      ╔═══╦╗╔╗╔╦═══╦═══╦═══╦╗──╔═══╗
+                      ║╔═╗║║║║║║╔═╗║╔═╗║╔═╗║║──║╔══╝
+                      ║╚══╣║║║║║║─║║║─║║║─╚╣║──║╚══╗
+                      ╚══╗║╚╝╚╝║║─║║║─║║║╔═╣║─╔╣╔══╝
+                      ║╚═╝╠╗╔╗╔╣╚═╝║╚═╝║╚╩═║╚═╝║╚══╗
+                      ╚═══╝╚╝╚╝╚═══╩═══╩═══╩═══╩═══╝
+                        A Star Wars search engine.
+                                  (DEV)
+
+================================================================================
+
+  PROJECT STRUCTURE
+
+    app/                       Source files for the swoogle-server executable
+    swoogle/                   Routes, views, components for swoogle-server
+    swapi-lib/
+    test/
+    testdata/
+    cabal.project              For production env only
+    cabal.project.local        For dev envs only
+    cabal.project.test         For test envs in CIs only
+    swapi.cabal                Haskell package definition
+    .stylish-haskell.yml       Haskell code formatter rules
+    hie.yaml                   To appease HLS. Be sure to regenerate this often!
+
+    assets/                    Front-end assets that need to be processed
+    priv/static/               Images, favicons.
+
+    flake.nix                  Defines the local environment, and CI shells
+    flake.lock                 Pins the inputs to a specific version
+
+    bin/build-static           Builds a static binary of swoogle-server
+    fly.toml                   Fly.io configuration for deploying
+    .github/workflows/ci.yml   GitHub Actions. Build, test, and deploy.
+    Dockerfile                 The prod image used in a VPS/VM
+
+    motd/                      Contains the "message of the day"s
+    LICENSE
+    CHANGELOG                  Changelog, but I'm not updating this lol
+    NOTES.md                   A brain dump of things while working on this
+    README.md                  Read it!
+
+================================================================================

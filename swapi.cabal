@@ -104,6 +104,7 @@ library swoogle
     SwoogleWeb.Views.Errors
     SwoogleWeb.Views.Home
     SwoogleWeb.Views.Layout
+    SwoogleWeb.Views.People.Show
     SwoogleWeb.Views.SearchResults
 
   hs-source-dirs:   swoogle
